@@ -25,8 +25,26 @@ module.exports.policies = {
   * access)                                                                  *
   *                                                                          *
   ***************************************************************************/
-
-  // '*': true,
+	
+  security: {
+	index: ['flashAlert'],
+	create: ['flashAlert']
+  },
+  session: {
+  	'new': ['flashAlert'],
+  },
+  
+  forms: {
+  	'myforms': ['flashAlert'],
+  },
+  
+  users: {
+  	show: ['flashAlert'],
+  	edit: ['flashAlert'],
+  	'new': ['flashAlert'],
+  	'emailpassword': ['flashAlert'],
+  	'resetpassword': ['flashAlert'],
+  },
 
   /***************************************************************************
   *                                                                          *
