@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Password Reset Link</title>
+</head>
+
+<body bgcolor="#f6f6f6">
+
+<!-- body -->
+<table class="body-wrap" bgcolor="#f6f6f6">
+  <tr>
+    <td class="container" bgcolor="#FFFFFF">
+	  
+      <!-- content -->
+      <div class="content">
+     	<!-- Reads the root url <%= protocol %>://<%= host %>:<%= port %> -->
+		<a href="<%= protocol %>://<%= host %>:<%= port %>/users/resetpassword?email=<%= senderEmail %>" id="password-link">Click Link to Reset Password</a>
+      </div>
+      <!-- /content -->
+      
+    </td>
+  </tr>
+</table>
+<!-- /body -->
+
+<!-- footer -->
+<table class="footer-wrap">
+  <tr>
+    <td></td>
+    <td class="container">
+      
+      <!-- content -->
+      <div class="content">
+        <table>
+          <tr>
+            <td align="center">
+              <p>Don't like these annoying emails? <a href="#"><unsubscribe>Unsubscribe</unsubscribe></a>.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- /content -->
+      
+    </td>
+    <td></td>
+  </tr>
+</table>
+<!-- /footer -->
+</body>
+</html>

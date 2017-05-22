@@ -1,0 +1,31 @@
+	<div id="user-registration">
+		<form action="/users/create" method="POST" id="sign-up-form" class="form-signin">
+			<img id="loading-image" src="/images/mblais.png" width="100" height="100" alt="Loading..." />
+			<h1>Registration</h1>
+			<div class="control-group">
+				<input type="text" class="form-control" placeholder="First Name..." name="firstname">
+				<br/>
+			</div>
+			<div class="control-group">
+				<input type="text" class="form-control" placeholder="Last Name..." name="lastname">
+				<br/>
+			</div>
+			<div class="control-group">
+				<input type="text" class="form-control" placeholder="Email..." name="email">
+				<br/>
+			</div>
+			<div class="control-group">
+				<input type="password" id="password" class="form-control" placeholder="Password..." name="password">
+				<br/>
+			</div>
+			<div class="control-group">
+				<input type="password" class="form-control" placeholder="Password Confirmation..." name="confirmation">
+				<br/>	
+			</div>
+		
+			<button type="submit" id="createNewUser" class="btn btn-lg btn-primary">Create Account</button>
+			<a href="/session/new" class="newSessionLink" >Sign In</a>
+			<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+		
+		</form>
+	</div>

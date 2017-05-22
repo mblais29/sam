@@ -1,0 +1,121 @@
+<html>
+	<head>
+		<title>Security Page</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	</head>
+	<body>
+		<div class="container-fluid users">
+			<% if (messages && messages['error'].length > 0) { %>
+			  <div class="alert alert-danger securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['error'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<% if (messages && messages['warning'].length > 0) { %>
+			  <div class="alert alert-warning securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['warning'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<% if (messages && messages['success'].length > 0) { %>
+			  <div class="alert alert-success securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['success'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %> 
+			<h3 id="table-title">Security Groups</h3>
+			<div id="sec-add" class="panel panel-default">
+			  <div class="panel-heading">Create Security Group</div>
+			  <div class="panel-body">
+			  	<form class="form-horizontal" id="secCreate" action="/security/create">
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="secName">Name:</label>
+				    <div class="col-sm-9">
+				      <input type="text" class="form-control" id="secName" name="secName" placeholder="Enter Security Group Name...">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="secId">Security ID:</label>
+				    <div class="col-sm-9"> 
+				      <input type="text" class="form-control" id="secId" name="secId" placeholder="Enter Security ID...">
+				    </div>
+				  </div>
+				  <div class="form-group"> 
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <button type="submit" class="btn btn-default pull-right">Submit</button>
+				      <button type="button" id="secAddClose" class="btn btn-default pull-right" onclick="closeSecAddPanel()">Close</button>
+			  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				    </div>
+				  </div>
+				</form>
+			  </div>
+			</div>
+			<div id="sec-edit" class="panel panel-default">
+			  <div class="panel-heading">Edit Security Group</div>
+			  <div class="panel-body">
+			  	<form class="form-horizontal" id="secEdit" action="/security/update">
+			  	  <div class="form-group">
+				    <label class="control-label col-sm-3" for="sec-id">Security ID:</label>
+				    <div class="col-sm-9">
+				      <input type="text" class="form-control" id="sec-id" name="sec-id" readonly>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="secname">Security Name:</label>
+				    <div class="col-sm-9">
+				      <input type="text" class="form-control" id="secname" name="secname" >
+				    </div>
+				  </div>
+				  <div class="form-group"> 
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <button type="submit" class="btn btn-default pull-right">Submit</button>
+				      <button type="button" id="secEditClose" class="btn btn-default pull-right">Close</button>
+			  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				    </div>
+				  </div>
+				</form>
+			  </div>
+			</div>
+			<table id="table-sec" class="table table-striped" data-sorting="true" data-filtering="true">
+				<thead>
+					<tr>
+						<th>Security Group Name</th>
+						<th data-type="html" data-breakpoints="all" data-title="Security ID">Security ID</th>
+						<th data-type="html" data-breakpoints="all" data-title="Edit Security" data-filterable="false"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Delete Security Group" data-filterable="false"></th>
+						<th data-filterable="false" data-sortable="false"><button class="btn btn-sm btn-primary pull-right" id="securityAdd" onclick="$('#sec-add').show()" >Add</button></th>	
+					</tr>
+				</thead>
+				<tbody>
+				  <% _.each(security, function(security){ %>
+					<tr data-expanded="false" id="sec-records" data-id="<%= security.secid %>" data-model="security">
+						<td><%= security.secname %></td>
+						<td><%= security.secid %></td>
+						<td><button id="secEdit<%= security.secid %>" class="btn btn-sm btn-warning" onclick="getSecurityValue('<%= security.secid %>')" value="<%= security.secid %>">Edit</button></td>	
+						<td>
+							<form action="/security/destroy?secid=<%= security.secid %>" method="POST">
+								<input type="hidden" name="_method" value="delete" />
+								<input type="submit" class="btn btn-sm btn-danger" value="Delete" />
+								<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+							</form>
+						</td>
+					</tr>
+				   <% }) %>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html> 

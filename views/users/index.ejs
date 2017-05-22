@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<title>Leaflet Mobile Map</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	</head>
+	<body>
+		<div class="container-fluid users">
+			<h3 id="table-title">Users</h3>
+			<table id="table" class="table table-striped" data-sorting="true" data-filtering="true">
+				<thead>
+					<tr>
+						<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th data-type="html" data-breakpoints="all" data-title="Email"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Admin User"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Security"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Show User" data-filterable="false"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Edit User" data-filterable="false"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Delete User" data-filterable="false"></th>
+					</tr>
+				</thead>
+				<tbody>
+				  <% _.each(users, function(user){ %>
+					<tr data-expanded="false" id="user-records" data-id="<%= user.id %>" data-model="user">
+						<td><%= user.firstname %></td>
+						<td><%= user.lastname %></td>
+						<td><%= user.email %></td>
+						<% if(user.admin) { %>
+							<td><span class="glyphicon glyphicon-eye-open"></span>  Administrator</td>
+						<% } else { %>
+							<td><span class="glyphicon glyphicon-eye-close"></span>  Not Administrator</td>
+						<% } %>
+						<td>
+						<% for(var i=0; i < user.securitygroups.length; i++) {%>
+							<%	if (i == user.securitygroups.length-1) {%>
+								<%= user.securitygroups[i].secname %>
+							<% } else { %>
+								<%= user.securitygroups[i].secname %>,
+							<% } %>
+						<% } %>
+						</td>
+						<td><a href="/users/show?email=<%= user.email %>" class="btn btn-sm btn-primary">Show</a></td>
+						<td><a href="/users/edit?email=<%= user.email %>" class="btn btn-sm btn-warning">Edit</a></td>
+						<td>
+							<form action="/users/destroy?email=<%= user.email %>" method="POST">
+								<input type="hidden" name="_method" value="delete" />
+								<input type="submit" class="btn btn-sm btn-danger" value="Delete" />
+								<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+							</form>
+						</td>			
+					</tr>
+				   <% }) %>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html> 
