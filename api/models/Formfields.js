@@ -22,18 +22,10 @@ autoPK: false,
 	},
 	formfieldtype: {
 		type: 'string',
-    	enum: ['string', 'text', 'integer', 'float', 'date', 'datetime', 'binary', 'boolean', 'json', 'mediumtext', 'longtext'],
+    	enum: ['character varying', 'text', 'integer', 'numeric', 'date', 'datetime', 'binary', 'boolean'],
     	defaultsTo: 'string'
 	}
   },
-  //Before create create an autoincremented formid using the sequence model
-  beforeCreate : function (values, cb) {
-        // add seq number, use
-        FormfieldSequence.next("order", function(err, num) {
-            if (err) return cb(err);
-            values.formfieldid = num;
-            cb();
-        });
-    }
+  
 };
 

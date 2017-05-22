@@ -9,13 +9,18 @@ module.exports = {
 	
 	//List of Security Groups page
 	index: function(req, res, next){
-		Security.find(function foundSecurity(err,security){
-			if(err) return next(err);
-			res.view({
-				security: security,
-				title: 'Security Groups'
+		if(req.session.authenticated){
+			Security.find(function foundSecurity(err,security){
+				if(err) return next(err);
+				res.view({
+					security: security,
+					title: 'Security Groups'
+				});
 			});
-		});
+		}else{
+			res.redirect('/session/new');
+			return;
+		}
 	},
 	
 	create: function(req,res,next){
@@ -26,15 +31,13 @@ module.exports = {
 		
 		Security.create(secObj, function secGroupCreated(err,sec){
 			if(err){
-				req.session.flash = {
-				err: err
-				};
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/security');
 			};
 
 			AlertService.success(req, 'You have created the ' + req.param('secName') + ' Security Group!');
 
-			//res.redirect('/security');
-			//console.log('Created Security Group ' + req.param('secName') + ' Successfully');
+			res.redirect('/security');
 		});
 	},
 	
@@ -54,11 +57,9 @@ module.exports = {
 		//console.log(secObj);
 		Security.update(req.param('sec-id'), secObj, function securityGroupUpdated(err){
 			if(err){
-				req.session.flash = {
-				err: err
-				};
-			res.redirect('/security');
-			return;
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/security');
+				return;
 			}
 			return res.redirect('/security');
 		}); 
@@ -67,8 +68,14 @@ module.exports = {
 	//Delete a Security Group
 	destroy: function(req, res, next){
 		Security.findOne(req.param('secid'), function foundUser(err,secGroup){
-			if(err) return next(err);
-			if(!secGroup) return next('Security Group doesn\'t exist...');
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/security');
+			}
+			if(!secGroup) {
+				AlertService.warning(req, 'Security Group doesn\'t exist...');
+				res.redirect('/security');
+			}
 			Security.destroy(req.param('secid'), function secGroupDestroyed(err){
 				if(err) return next(err);
 			});

@@ -35,7 +35,15 @@ module.exports.policies = {
   },
   
   forms: {
+  	index: ['flashAlert'],
+  	create: ['flashAlert'],
+  	destroy: ['flashAlert'],
   	'myforms': ['flashAlert'],
+  },
+  
+  formfields: {
+  	index: ['flashAlert'],
+ 	create: ['flashAlert'],
   },
   
   users: {

@@ -17,7 +17,7 @@ module.exports = {
 		type: 'string',
 		required: true
 	},
-	collectionname: {
+	tablename: {
 		type: 'string',
 		required: true
 	},
@@ -29,16 +29,7 @@ module.exports = {
 		collection: 'Formfields',
         via: 'formid'
 	}
-  },
- //Before create create an autoincremented formid using the sequence model
-  beforeCreate : function (values, cb) {
-        // add seq number, use
-        FormSequence.next("order", function(err, num) {
-            if (err) return cb(err);
-            values.formid = num;
-            cb();
-        });
-   }
+  }
     
 };
 
