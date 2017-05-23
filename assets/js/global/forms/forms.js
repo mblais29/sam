@@ -7,18 +7,6 @@ if($('body').is('#formIndex')){
 		$('#formPreview').empty();
 	});
 	
-	$('#myformClose').on('click', function(){
-		$('#myform-selected').slideUp();
-		//Removes all children elements within form
-		$('#formSelected').empty();
-	});
-	
-	$('#myformViewRecordClose').on('click', function(){
-		$('#myform-viewrecords').slideUp();
-		//Removes all children elements within form
-		$('#myform-panel-records').empty();
-	});
-	
 	$('#formEditClose').on('click', function(){
 		$('#form-edit').slideUp();
 		$('#formname').val("");
@@ -62,6 +50,20 @@ if($('body').is('#formIndex')){
 		$("#seceditgrouphidden").val(secId);
     });
     
+};
+
+if($('body').is('#myForm')){
+	$('#myformClose').on('click', function(){
+		$('#myform-selected').slideUp();
+		//Removes all children elements within form
+		$('#formSelected').empty();
+	});
+	
+	$('#myformViewRecordClose').on('click', function(){
+		$('#myform-viewrecords').slideUp();
+		//Removes all children elements within form
+		$('#myform-panel-records').empty();
+	});
 };
 
 /* FUNCTIONS */
