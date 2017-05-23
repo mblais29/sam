@@ -68,39 +68,6 @@
 				</div>
 			  </div>
 			</div>
-			<div id="myform-viewdocs" class="panel panel-default">
-			  <div class="panel-heading" id="myform-viewdocs-title">
-			  	Documents
-			  </div>
-			  <div class="panel-body" id="myform-panel-docs">
-				  
-			  </div>
-			  <div class="col-sm-12">
-				<div class="form-group"> 
-					<div class="col-sm-offset-2 col-sm-10">
-					  <button type="button" id="myformViewDocClose" class="btn btn-default pull-right">Close</button>
-					</div>
-				</div>
-			  </div>
-			</div>
-			<div id="myform-addDoc" class="panel panel-default">
-			  <div class="panel-heading" id="myform-adddocs-title">
-			  	Upload
-			  </div>
-			  <div class="panel-body" id="myform-panel-addDocs">
-				<form class="form-horizontal" id="addDocForm" action="/formfields/addDoc" method="POST" enctype="multipart/form-data">
-					<input type="hidden" name="_csrf" value="<%= _csrf %>" />
-				</form>
-			  </div>
-			  <div class="col-sm-12">
-				<div class="form-group"> 
-					<div class="col-sm-offset-2 col-sm-10">
-					  <button type="button" id="submitFiles" class="btn btn-default pull-right">Submit</button>
-					  <button type="button" id="myformAddDocClose" class="btn btn-default pull-right">Close</button>
-					</div>
-				</div>
-			  </div>
-			</div>
 			<h3 id="table-title">My Forms</h3>
 			<table id="table-form" class="table table-striped" data-sorting="true" data-filtering="true">
 				<thead>

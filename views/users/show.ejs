@@ -43,7 +43,7 @@
 				<img id="imageProfile" src="/user/profileImg?email=<%- user[0].email %>" height="300" width="300"><br/>
 			<% } %>
 			<h1><%- user[0].firstname %> <%- user[0].lastname %></h1>
-			<% if(user.admin){ %>
+			<% if(user[0].admin){ %>
 				<span class="glyphicon glyphicon-eye-open" style="font-size: 20px;"> Administrator</span> 
 			<% }else{ %>
 				<span class="glyphicon glyphicon-eye-close" style="font-size: 20px;"> Viewer</span> 

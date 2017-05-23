@@ -36,7 +36,7 @@ module.exports = {
 			if(err){
 				AlertService.error(req, JSON.stringify(err));
 			};
-			console.log('Created Form ' + req.param('formName') + ' Successfully');
+			AlertService.success(req, 'Created Form ' + req.param('formName') + ' Successfully');
 			res.redirect('/forms');
 		});
 	},

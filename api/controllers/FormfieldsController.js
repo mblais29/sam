@@ -28,6 +28,7 @@ module.exports = {
 		var formObj = {
 			formid: req.param('form'),
 			formfieldname: req.param('formfieldname'),
+			fieldname: req.param('fieldName'),
 			formfieldtype: req.param('formfieldtypehidden')
 		};
 		
@@ -44,6 +45,25 @@ module.exports = {
 	edit: function(req,res,next){
 		Formfields.findOne(req.param('formfieldid')).exec(function (err, formfield) {
 			return res.ok(formfield);
+		});
+	},
+	
+	//Update the Form Field from edit page
+	update: function(req, res, next){
+		var formFieldObj = {};
+			 formFieldObj = {
+				formfieldid: req.param('formfieldid'),
+				formfieldname: req.param('formfieldName'),
+				fieldname: req.param('fieldName'),
+				formfieldtype: req.param('formfield-type-hidden')
+			};
+
+		Formfields.update(req.param('formfieldid'), formFieldObj, function formfieldsUpdated(err){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				};
+			res.redirect('/formfields');
+			return;
 		});
 	},
 	

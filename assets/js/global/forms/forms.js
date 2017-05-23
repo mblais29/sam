@@ -1,12 +1,5 @@
-$(window).on('load',function(){
-	$( "#form-add" ).draggable();
-	$( "#formfieldadd" ).draggable();
-	$( "#form-edit" ).draggable();
-	$( "#form-preview" ).draggable();
-	$( "#myform-selected" ).draggable();
-	$( "#myform-viewrecords" ).draggable();
-	$( "#myform-viewdocs" ).draggable();
-	$( "#myform-addDoc" ).draggable();
+if($('body').is('#formIndex')){
+	$(".panel").draggable();
 	
 	$('#formPreviewClose').on('click', function(){
 		$('#form-preview').slideUp();
@@ -26,16 +19,6 @@ $(window).on('load',function(){
 		$('#myform-panel-records').empty();
 	});
 	
-	$('#myformViewDocClose').on('click', function(){
-		$('#myform-viewdocs').slideUp();
-		//Removes all children elements within form
-		$('#myform-panel-docs').empty();
-		$('#add-doc').remove();
-		$('#doc-delete').remove();
-		
-	});
-	
-	
 	$('#formEditClose').on('click', function(){
 		$('#form-edit').slideUp();
 		$('#formname').val("");
@@ -45,11 +28,6 @@ $(window).on('load',function(){
 		$('#formfieldadd').slideUp();
 		$("#btn-formfieldtype").text('Select Type');
 		$('#formfieldname').val("");
-	});
-	
-	$('#myformAddDocClose').on('click', function(){
-		$('#myform-addDoc').slideUp();
-		$('#myform-panel-addDocs').empty();
 	});
 	
 	$("#addNewFormField").on('click', 'li a', function(){
@@ -84,7 +62,7 @@ $(window).on('load',function(){
 		$("#seceditgrouphidden").val(secId);
     });
     
-});
+};
 
 /* FUNCTIONS */
 
@@ -114,7 +92,6 @@ function getFormValue(formid){
 	$('#form-edit').show();
 	$.ajax('/forms/edit?formid=' + formid,{
       success: function(data) {
-      	console.log(data);
       	$('#form-id').val(data.formid);
       	$('#formname').val(data.formname);
       	getFormSec(data.formid);
@@ -238,106 +215,6 @@ function openFormRecords(collection,formid){
 	      }
     });
 
-}
-
-function openDocumentRecords(recordId, collection, formid){
-	$('#myform-viewdocs').show();
-	$.ajax({
-		url:'/formfields/getDocs?recordid=' + recordId + '&collection=' + collection,
-		dataType : 'json',
-      	success : function(result) {
-      		//Create the table if it does not already exist
-      		if($("#table-docs").length === 0){
-	      		$('#myform-panel-docs').append('<table id="table-docs" class="table table-striped" data-paging="true" data-sorting="true" data-filtering="true"></table>');
-	 			
-	      		var table = $('#table-docs');
-	
-	      		getFormFieldType(result, formid, collection, recordId);
-      		}
-      	}
-		
-	});
-}
-
-function getFormFieldType(result, formid, collection, recordId){
-	$.each(result, function(idx, obj) {
-		$.each(obj, function(key, value) {
-			$.ajax({
-				url:'/formfields/checkField?formid=' + formid + '&formfieldname=' + key,
-				type: "GET",
-		      	success : function(data) {
-		      		if(data === "binary"){
-		      			var binaryField = "";
-		      			if(obj[key] instanceof Array){
-			      			for(var ii = 0; ii < obj[key].length; ii++){
-			      				binaryField = key;
-			      				var values = {};
-			      				values["record"] = recordId;
-			      				values["docid"] = obj['docid'][ii];
-			      				values["docname"] = obj[key][ii];
-			      				values["collection"] = collection;
-			      				values["formfield"] = key;
-								var stringifiedValue = JSON.stringify(values);
-
-								$('#table-docs').append('<tr><td><a href="/formfields/streamFile?docid=' + obj['docid'][ii] + '"><button type="button" class="btn btn-info">' + obj[key][ii] + '</button></a><label class="checkbox-inline pull-right"><input type="checkbox" class="deleteDoc" value=' + stringifiedValue + '></label></td></tr>');
-		        			}
-		        		}else{
-		        			binaryField = key;
-		        			$('#table-docs').append('<tr><td><a href="/formfields/streamFile?docid=' + obj['docid'][ii] + '"><button type="button" class="btn btn-info">' + obj[key] + '</button></a><label class="checkbox-inline pull-right"><input type="checkbox" class="deleteDoc" value=' + stringifiedValue + '></label></td></tr>');
-		        		}
-		        		if($('#doc-delete').length < 1 && $('#add-doc').length < 1){
-		        			$('#myform-viewdocs-title').append('<div class="btn-group pull-right"><button type="button" id="add-doc" class="btn btn-primary btn-sm" onclick="createUploadButton(' + '\'' + collection + '\',' + '\'' + recordId + '\'' + ',\'' + binaryField + '\'' + ')">Add</button><button type="button" id="doc-delete" class="btn btn-danger btn-sm" onclick="deleteDocuments()">Delete</button></div>');
-		        		}
-		        		
-		        	}
-		      	}
-		 	});
-		});
-	});
-}
-
-function createUploadButton(collection, recordId, binaryField){
-	$('#myform-addDoc').show();
-	$('form#addDocForm').append('<input type="hidden" name="collection" value="' + collection + '"><input type="hidden" name="id" value="' + recordId + '"><input type="hidden" name="binaryField" value="' + binaryField + '"><label for="addNewDoc">Upload Files:</label><input type="file" class="form-control" id="addNewDoc" name="addNewDoc" multiple />');
-	
-	$('#addNewDoc').filestyle({
-		size: 'sm',
-		buttonName : 'btn-info',
-		buttonText : 'Upload'
-	});
-	
-	$('#submitFiles').on('click', function(){
-		insertNewFiles(collection, recordId);
-	});
-	
-};
-
-function insertNewFiles(name, recordId){
-	$('#addDocForm').submit();
-};
-
-function deleteDocuments(){
-	var deleteDocuments = [];
-	$('.deleteDoc').each(function () {
-	    var checkedVal = (this.checked ? $(this).val() : "");
-	    if(checkedVal != ""){
-	    	console.log(JSON.parse(checkedVal));
-	    	var objVal = JSON.parse(checkedVal);
-	    	
-	    	$.ajax({
-				url:'/formfields/deleteDoc?record=' + objVal["record"] + '&docid=' + objVal["docid"] + '&docname=' + objVal["docname"] + '&collection=' + objVal["collection"] + '&formfield=' + objVal["formfield"],
-				type: "GET",
-		      	success : function(data) {
-		      		
-		      	}
-		      	
-		    }).done(function(data){
-		    	console.log(data);
-		    });
-	    	
-	    }
-	});
-	
 }
 
 function arrayCheck(array, val){

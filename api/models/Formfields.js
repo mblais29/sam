@@ -20,6 +20,10 @@ autoPK: false,
 		type: 'string',
 		required: true
 	},
+	fieldname: {
+		type: 'string',
+		required: true
+	},
 	formfieldtype: {
 		type: 'string',
     	enum: ['character varying', 'text', 'integer', 'numeric', 'date', 'datetime', 'binary', 'boolean'],

@@ -44,6 +44,7 @@ module.exports.policies = {
   formfields: {
   	index: ['flashAlert'],
  	create: ['flashAlert'],
+ 	update: ['flashAlert'],
   },
   
   users: {

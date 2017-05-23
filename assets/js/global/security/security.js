@@ -1,4 +1,4 @@
-$(window).on('load',function(){
+if($('body').is('#securityIndex')){
 	$('#securityAdd').on('click', function(){
 		$('#sec-add').show();
 	});
@@ -8,7 +8,7 @@ $(window).on('load',function(){
       $("#btn-formfield-type").val($(this).text());
       $("#formfield-type-hidden").val($(this).text());
    });
-});
+};
 
 /* FUNCTIONS */
 

@@ -2,7 +2,7 @@
 	LOADING USER UPLOAD PROFILE PAGE 
 *****************************/
 /* When screen loads check document size and adjust button accordingly */
-$(document).ready(function () {
+if($('body').is('#usersIndex')){
   $('#loading').css('display', 'none');
   $( '#addUserSecGroup-panel' ).draggable();
   var win = $(this); //this = window
@@ -44,7 +44,7 @@ $(document).ready(function () {
 		removeUserSecGroup(JSONvalue);
   });
   
-});
+};
 
 /* When screen size changes adjust button accordingly */
 $(window).on('resize', function(){
@@ -62,7 +62,6 @@ $(window).on('resize', function(){
 /* EVENT HANDLERS */
 
 $('#adminCheckbox').on('click', function(){
-	//console.log($(this).is(':checked'));
 	// Checks to see if the user is an admin or not and adjusts the hidden checkbox value accordingly
 	$('#hiddenAdminCheckbox').attr('value', $(this).is(':checked'));
 });

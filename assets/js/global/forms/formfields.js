@@ -1,4 +1,4 @@
-$(window).on('load',function(){
+if($('body').is('#formfieldIndex')){
 	$( "#formfield-edit" ).draggable();
 	$('#formfieldclosebutton').on('click', function(){
 		$('#formfield-edit').slideUp();
@@ -8,7 +8,7 @@ $(window).on('load',function(){
       $("#btn-formfield-type").val($(this).text());
       $("#formfield-type-hidden").val($(this).text());
    });
-});
+};
 
 /* FUNCTIONS */
 
@@ -19,6 +19,7 @@ function getformfieldsrecords(formfieldid){
       	$('#formfieldid').val(data.formfieldid);
       	$('#formID').val(data.formid);
       	$('#formfieldName').val(data.formfieldname);
+      	$('#fieldName').val(data.fieldname);
       	$('#previous-field-name').val(data.formfieldname);
       	$('#btn-formfield-type').text(data.formfieldtype);
       	$('#formfield-type-hidden').val(data.formfieldtype);

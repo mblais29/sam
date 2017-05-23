@@ -3,7 +3,7 @@
 ****************************************/
 	var navBarMargin = 52;
 	
-$(window).on('load',function(){
+if($('body').is('#mapBody')){
 	/****************************************
 	ADJUST MAP BASED ON WINDOW HEIGHT
 	****************************************/
@@ -91,7 +91,7 @@ $(window).on('load',function(){
         });
     });
 	//styleAddFileButton();
-});
+};
 
 /****************************************
 	GLOBAL FUNCTIONS
