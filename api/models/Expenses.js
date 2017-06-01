@@ -44,6 +44,9 @@ module.exports = {
 		collection: 'Currencies',
         via: 'currency'
 	},
+	documents: {
+		type: 'json'
+	},
   }
 };
 

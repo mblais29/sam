@@ -26,6 +26,24 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
 	
+  expenses: {
+  	index: ['flashAlert'],
+  	create: ['flashAlert']
+  },
+  
+  forms: {
+  	index: ['flashAlert'],
+  	create: ['flashAlert'],
+  	destroy: ['flashAlert'],
+  	'myforms': ['flashAlert']
+  },
+  
+  formfields: {
+  	index: ['flashAlert'],
+ 	create: ['flashAlert'],
+ 	update: ['flashAlert']
+  },
+  
   security: {
 	index: ['flashAlert'],
 	create: ['flashAlert']
@@ -34,25 +52,12 @@ module.exports.policies = {
   	'new': ['flashAlert'],
   },
   
-  forms: {
-  	index: ['flashAlert'],
-  	create: ['flashAlert'],
-  	destroy: ['flashAlert'],
-  	'myforms': ['flashAlert'],
-  },
-  
-  formfields: {
-  	index: ['flashAlert'],
- 	create: ['flashAlert'],
- 	update: ['flashAlert'],
-  },
-  
   users: {
   	show: ['flashAlert'],
   	edit: ['flashAlert'],
   	'new': ['flashAlert'],
   	'emailpassword': ['flashAlert'],
-  	'resetpassword': ['flashAlert'],
+  	'resetpassword': ['flashAlert']
   },
 
   /***************************************************************************

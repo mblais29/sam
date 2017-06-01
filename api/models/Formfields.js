@@ -26,8 +26,8 @@ module.exports = {
 	},
 	formfieldtype: {
 		type: 'string',
-    	enum: ['character varying', 'text', 'integer', 'numeric', 'date', 'datetime', 'binary', 'boolean'],
-    	defaultsTo: 'string'
+    	enum: ['character varying', 'text', 'integer', 'numeric', 'date', 'datetime', 'binary', 'boolean', 'foreign key'],
+    	defaultsTo: 'character varying'
 	}
   },
   

@@ -28,5 +28,12 @@ module.exports = {
 			res.json(client);
 		});
 	},
+	'getRecords': function(req, res, next){
+		Clients.find().exec(function (err, response) {
+			if(err) return next(err);
+			//Must return res.ok() to send the data to the ajax call
+			return res.ok(response);
+		});
+	}
 };
 

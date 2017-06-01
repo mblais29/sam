@@ -228,9 +228,24 @@ function arrayCheck(array, val){
     return false;
 }
 
+function getForeignKeyRecords(table, field){
+	
+	$.ajax({
+		url:'/' + table + '/getRecords',
+		dataType : 'json',
+      	success : function(result) {
+      		console.log(result);
+      		for(var i in result){
+      			//NEED TO CREATE DROPDOWN WITH RETURNED RECORDS
+      			console.log(result[i][field]);
+      		}
+      	}
+  	});
+}
+
 function generatePreviewForm(data){
 	$('#formPreview').append('<div class="form-group" id="collection"></div>');
-	$('#collection').append('<input type="hidden" name="collection" value="' + data[0].collectionname + '" />');
+	console.log(data);
 	for (var i = 0; i < data.length; i++){
 		var obj = data[i];
 	    for (var key in obj){
@@ -324,6 +339,14 @@ function generatePreviewForm(data){
 						    }
 						    });
 					        break;
+					     
+					     case 'foreign key':
+
+					     	var table = formfieldObject.formfieldname;
+					     	var field = formfieldObject.fieldname;
+
+					     	getForeignKeyRecords(table, field);
+					     	break;
 					};
 				}
 	    	}
