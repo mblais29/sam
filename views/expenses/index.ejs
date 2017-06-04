@@ -1,0 +1,81 @@
+<html>
+	<head>
+		<title>Forms</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	</head>
+	<body id="formIndex">
+		<div class="container-fluid users">
+			<% if (messages && messages['error'].length > 0) { %>
+			  <div class="alert alert-danger securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['error'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<% if (messages && messages['warning'].length > 0) { %>
+			  <div class="alert alert-warning securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['warning'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<% if (messages && messages['success'].length > 0) { %>
+			  <div class="alert alert-success securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['success'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<h3 id="table-title">Expenses</h3>
+			<table id="table-expenses" class="table table-striped" data-sorting="true" data-filtering="true">
+				<thead>
+					<tr>
+						<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
+						<th>Name</th>
+						<th>Expense ID</th>
+						<th data-type="html" data-breakpoints="all" data-title="Employee">Employee</th>
+						<th data-type="html" data-breakpoints="all" data-title="Category">Category</th>
+						<th data-type="html" data-breakpoints="all" data-title="Client">Client</th>
+						<th data-type="html" data-breakpoints="all" data-title="Comment" data-filterable="false">Comment</th>
+						<th data-type="html" data-breakpoints="all" data-title="Date" data-filterable="false">Date</th>
+						<th data-type="html" data-breakpoints="all" data-title="Amount" data-filterable="false">Amount</th>
+						<th data-type="html" data-breakpoints="all" data-title="Currency" data-filterable="false">Currency</th>
+					</tr>
+				</thead>
+				<tbody>
+				  <% _.each(expenses, function(expense){ %>
+
+					<tr data-expanded="false" id="expense-records" data-id="<%= expense.id %>" data-model="expenses">
+						<td><%= expense.name %></td>
+						<td><%= expense.id %></td>
+						<td><%= expense.category %></td>
+						<td><%= expense.client %></td>
+						<td><%= expense.comment %></td>
+						<td><%= expense.date %></td>
+						<td><%= expense.amount %></td>
+						<td><%= expense.currency %></td>
+
+						<td>
+							<form action="/expenses/destroy?id=<%= expense.id %>" method="POST">
+								<input type="hidden" name="_method" value="delete" />
+								<input type="submit" class="btn btn-sm btn-danger" value="Delete" />
+								<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+							</form>
+						</td>	
+					</tr>
+				   <% }) %>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html> 

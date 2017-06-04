@@ -77,6 +77,58 @@ module.exports = {
 			});
 			res.redirect('/formfields');
 		});
-	}
+	},
+	
+	'insert': function(req, res, next){
+		var binaryField = "";
+		var record = req.allParams();
+
+		var table = req.param("collection").replace(/\w+/g, function(txt) {
+					  return txt.charAt(0).toUpperCase() + txt.substr(1);
+					});
+		var test = Model.table;
+
+		for(var prop in record) {
+	        if(record[prop] === '')
+	            delete record[prop];
+	        if(prop === 'binary')
+	        	binaryField = record[prop];
+	        	delete record[prop];
+	        
+	    }
+
+		/* Deletes the _csrf and collection records from the array */
+		 delete record._csrf; 
+		 delete record.collection;
+
+		 /* Converts the key to lowercase before saving to database */
+		 var lowercaseRecord = ObjectServices.convertLowercase(record);
+		 
+		 /* Removes any underscores in the field name when inserting new record */
+		 var finalRecord = ObjectServices.removeUnderscore(lowercaseRecord);
+		 
+		 //NEED TO DYNAMICALLY PASS IN MODELS TO THE CREATE FUNCTION
+		 table.create(finalRecord).exec(function (err, records) {
+			console.log(records);
+		 });
+
+		 //If files exist in the parameters upload the file to the docs bucket
+		 if(typeof req._fileparser.upstreams[0] !== 'undefined'){
+		 	var uploadFile = req._fileparser.upstreams[0];
+			var filesUploaded = {};
+		 	uploadFile.upload({
+			  dirname: sails.config.conf.docUrl
+			}, function(err, uploadedFiles) {
+			  if (err) { return res.serverError(err); }
+			  for(var i = 0; i < uploadedFiles.length; i++){
+			  	filesUploaded[uploadedFiles[i].filename] = uploadedFiles[i].fd;
+			  }
+			  console.log(filesUploaded);
+			  //return res.json(uploadedFiles)
+			});
+		 }
+		
+		
+	},
 };
 

@@ -262,7 +262,6 @@ function getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenIn
 
 function generatePreviewForm(data){
 	$('#formPreview').append('<div class="form-group" id="collection"></div>');
-	console.log(data);
 	for (var i = 0; i < data.length; i++){
 		var obj = data[i];
 	    for (var key in obj){
@@ -383,13 +382,12 @@ function generatePreviewForm(data){
 }
 
 function generateForm(data){
+	console.log(data);
 	$('#formSelected').append('<div class="form-group" id="collection"></div>');
-	$('#collection').append('<input type="hidden" name="collection" value="' + data[0].collectionname + '" />');
+	$('#collection').append('<input type="hidden" name="collection" value="' + data[0].tablename + '" />');
 	for (var i = 0; i < data.length; i++){
 		var obj = data[i];
 	    for (var key in obj){
-	    	//console.log('Key: ' + key);
-	    	//console.log('Key Value: ' + obj[key]);
 	    	if(key === 'formfields'){
 	    		for (var i = 0; i < obj[key].length; i++){
 	    			var formfieldObject = obj[key][i];
@@ -453,9 +451,13 @@ function generateForm(data){
 					    case 'binary':
 					    	/* If input string is file show the file upload else just create a text input */
 					    		inputType = "file";
+					    		var lowercase = formfieldObject.fieldname.toString().toLowerCase();
+					    	
+								$('<input name="binary" type="hidden" value="' + lowercase + '" />').appendTo('#formfieldid' + formfieldObject.formfieldid);
 					    		$('#formfieldid' + formfieldObject.formfieldid).append('<label for="' + inputName + formfieldObject.formfieldid + '">' + formfieldObject.formfieldname + ':</label>');
-			    				$('#formfieldid' + formfieldObject.formfieldid).append('<input type="' + inputType + '" class="form-control" id="' + inputName + formfieldObject.formfieldid + '" name="' + inputName + formfieldObject.formfieldid + '" multiple>');
-
+			    				$('#formfieldid' + formfieldObject.formfieldid).append('<input type="' + inputType + '" class="form-control" id="' + inputName + formfieldObject.formfieldid + '" name="' + inputName + formfieldObject.formfieldid + '" multiple />');
+								
+								
 								$('#' + inputName + formfieldObject.formfieldid).filestyle({
 									size: 'sm',
 									buttonName : 'btn-info',
@@ -480,6 +482,23 @@ function generateForm(data){
 						    }
 						    });
 					        break;
+					     
+					     case 'foreign key':
+							
+							var form = 'formfieldid' + formfieldObject.formfieldid;
+							var origName = formfieldObject.formfieldname;
+					     	var table = formfieldObject.formfieldname.replace(/\s/g, '').toLowerCase().replace(/\w+/g, function(txt) {
+							  return txt.charAt(0).toUpperCase() + txt.substr(1);
+							});
+
+					     	var field = formfieldObject.fieldname;
+					     	var keyId = "key-" + formfieldObject.formfieldid;
+					     	var buttonKey = 'foreign_key-' +  formfieldObject.formfieldid;
+					     	var hiddenInput = 'formfield_fkey_val' + formfieldObject.formfieldid;
+					     	var dropdown = 'formfield_f_key' + formfieldObject.formfieldid;
+					     	
+					     	getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenInput, dropdown, form);
+					     	break;
 					};
 				}
 	    	}
