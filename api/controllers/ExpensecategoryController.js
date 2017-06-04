@@ -25,5 +25,15 @@ module.exports = {
 			res.json(category);
 		});
 	},
+	'getRecords': function(req, res, next){
+		Expensecategory.find().exec(function (err, response) {
+			if(err) return next(err);
+			//Must return res.ok() to send the data to the ajax call
+			for(var i = 0; i < response.length; i++){
+				response[i]["primary_key"] = Expensecategory.primaryKey;
+			}
+			return res.ok(response);
+		});
+	}
 };
 

@@ -228,16 +228,33 @@ function arrayCheck(array, val){
     return false;
 }
 
-function getForeignKeyRecords(table, field){
+function getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenInput, dropdown, form){
 	
 	$.ajax({
 		url:'/' + table + '/getRecords',
 		dataType : 'json',
       	success : function(result) {
-      		console.log(result);
+
+      		$('#' + form).append('<label for="' + dropdown + '">' + origName + ':</label><div class="dropdown" id="' + dropdown + '"><button id="' +  buttonKey + '" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Select<span class="caret"></span></button>');
+			$('#' + dropdown).append('<input type="hidden" id="' + hiddenInput + '" name="' + hiddenInput + '" ><ul class="dropdown-menu" id="' + keyId + '" ><li><a href="#">None</a></li></ul></div>');
+      			
       		for(var i in result){
-      			//NEED TO CREATE DROPDOWN WITH RETURNED RECORDS
-      			console.log(result[i][field]);
+     			var primaryKey = result[i]["primary_key"];
+     			var primaryKeyRecord = result[i][primaryKey];
+     			
+      			$('#' + keyId).append('<li><a href="#">' + '[' + primaryKeyRecord + '] ' + result[i][field] + '</a></li>');
+      			$('#' + keyId).on('click', 'li a', function(){
+			    	$("#" + buttonKey).text($(this).text());
+		    		$("#" + buttonKey).val($(this).text());
+		    		
+		    		/* Removes the [] around the security.secid */
+			    	var str = $("#" + buttonKey).text();
+			    	var regex = /\[(.*?)\]/g;
+			    	var newStr = str.match(regex);
+			    	var id = newStr[0].replace(/[\[\]']+/g, '');
+					$("#" + hiddenInput).val(id);
+
+			    });
       		}
       	}
   	});
@@ -341,11 +358,21 @@ function generatePreviewForm(data){
 					        break;
 					     
 					     case 'foreign key':
+							
+							var form = 'formfieldid' + formfieldObject.formfieldid;
+							var origName = formfieldObject.formfieldname;
+					     	var table = formfieldObject.formfieldname.replace(/\s/g, '').toLowerCase().replace(/\w+/g, function(txt) {
+							  return txt.charAt(0).toUpperCase() + txt.substr(1);
+							});
+							console.log(table);
 
-					     	var table = formfieldObject.formfieldname;
 					     	var field = formfieldObject.fieldname;
-
-					     	getForeignKeyRecords(table, field);
+					     	var keyId = "key-" + formfieldObject.formfieldid;
+					     	var buttonKey = 'foreign_key-' +  formfieldObject.formfieldid;
+					     	var hiddenInput = 'formfield_fkey_val' + formfieldObject.formfieldid;
+					     	var dropdown = 'formfield_f_key' + formfieldObject.formfieldid;
+					     	
+					     	getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenInput, dropdown, form);
 					     	break;
 					};
 				}

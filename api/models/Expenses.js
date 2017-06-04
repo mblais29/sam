@@ -26,7 +26,7 @@ module.exports = {
         via: 'id'
 	},
 	client: {
-		collection: 'Clients',
+		collection: 'Client',
         via: 'id'
 	},
 	comment: {
@@ -41,7 +41,7 @@ module.exports = {
 		required: true
 	},
 	currency: {
-		collection: 'Currencies',
+		collection: 'Currency',
         via: 'currency'
 	},
 	documents: {

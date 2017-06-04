@@ -15,7 +15,7 @@ module.exports = {
 			email: req.param('email')
 		};
 		
-		Clients.create(obj, function clientscreate(err,client){
+		Client.create(obj, function clientscreate(err,client){
 			if(err){
 				//AlertService.error(req, JSON.stringify(err));
 				//res.redirect('/security');
@@ -29,9 +29,12 @@ module.exports = {
 		});
 	},
 	'getRecords': function(req, res, next){
-		Clients.find().exec(function (err, response) {
+		Client.find().exec(function (err, response) {
 			if(err) return next(err);
 			//Must return res.ok() to send the data to the ajax call
+			for(var i = 0; i < response.length; i++){
+				response[i]["primary_key"] = Client.primaryKey;
+			}
 			return res.ok(response);
 		});
 	}
