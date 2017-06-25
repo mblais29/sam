@@ -80,20 +80,24 @@ module.exports = {
 	},
 	
 	'insert': function(req, res, next){
-		var binaryField = "";
-		var record = req.allParams();
 
-		var table = req.param("collection").replace(/\w+/g, function(txt) {
-					  return txt.charAt(0).toUpperCase() + txt.substr(1);
-					});
-		var test = Model.table;
+		var record = req.allParams();
+		var binaryField = "";
+		var fileNames = {};
+
+		var table = req.param("collection");
+		
+		var currentModel = "'" + table + "'";
 
 		for(var prop in record) {
-	        if(record[prop] === '')
+	        if(record[prop] === ''){
 	            delete record[prop];
-	        if(prop === 'binary')
+	          }
+	            
+	        if(prop === 'binary'){
 	        	binaryField = record[prop];
 	        	delete record[prop];
+	        }
 	        
 	    }
 
@@ -107,28 +111,43 @@ module.exports = {
 		 /* Removes any underscores in the field name when inserting new record */
 		 var finalRecord = ObjectServices.removeUnderscore(lowercaseRecord);
 		 
-		 //NEED TO DYNAMICALLY PASS IN MODELS TO THE CREATE FUNCTION
-		 table.create(finalRecord).exec(function (err, records) {
-			console.log(records);
-		 });
+		 sails.models[table].create(finalRecord).exec(function (err, records) {
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/forms/myForms');
+			};
 
-		 //If files exist in the parameters upload the file to the docs bucket
-		 if(typeof req._fileparser.upstreams[0] !== 'undefined'){
-		 	var uploadFile = req._fileparser.upstreams[0];
-			var filesUploaded = {};
-		 	uploadFile.upload({
-			  dirname: sails.config.conf.docUrl
-			}, function(err, uploadedFiles) {
-			  if (err) { return res.serverError(err); }
-			  for(var i = 0; i < uploadedFiles.length; i++){
-			  	filesUploaded[uploadedFiles[i].filename] = uploadedFiles[i].fd;
-			  }
-			  console.log(filesUploaded);
-			  //return res.json(uploadedFiles)
-			});
-		 }
-		
-		
+			//If files exist in the parameters upload the file to the docs bucket
+			 if(typeof req._fileparser.upstreams[0] !== 'undefined'){
+			 	var uploadFile = req._fileparser.upstreams[0];
+				var filesUploaded = {};
+			 	uploadFile.upload({
+				  dirname: sails.config.conf.docUrl
+				}, function(err, uploadedFiles) {
+				  if (err) { return res.serverError(err); }
+				  for(var i = 0; i < uploadedFiles.length; i++){
+				  	filesUploaded[uploadedFiles[i].filename] = uploadedFiles[i].fd;
+				  }
+
+				  sails.models[table].findOne({id: records["id"]}).exec(
+					  function(err,foundRecords){
+					  	
+					    var getOneRecord = foundRecords;
+					    getOneRecord[binaryField] = filesUploaded;
+					    getOneRecord.save(
+					      function(err){
+					      	if(err){
+								AlertService.error(req, JSON.stringify(err));
+								res.redirect('/forms/myForms');
+							};
+					      });
+					});
+				});
+			 }
+			return res.ok();
+		 });
+		 AlertService.success(req, 'Record saved successfully!');
+		 res.redirect('/forms/myForms');
 	},
 };
 

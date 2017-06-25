@@ -382,7 +382,6 @@ function generatePreviewForm(data){
 }
 
 function generateForm(data){
-	console.log(data);
 	$('#formSelected').append('<div class="form-group" id="collection"></div>');
 	$('#collection').append('<input type="hidden" name="collection" value="' + data[0].tablename + '" />');
 	for (var i = 0; i < data.length; i++){
@@ -392,8 +391,8 @@ function generateForm(data){
 	    		for (var i = 0; i < obj[key].length; i++){
 	    			var formfieldObject = obj[key][i];
 	    			/* If name has a space replace with '_' */
-	    			var inputName = formfieldObject.formfieldname.replace(/\s/g, '_');
-	    			
+	    			var inputName = formfieldObject.fieldname.replace(/\s/g, '_');
+
 	    			$('#formSelected').append('<div class="form-group" id="' + 'formfieldid' + formfieldObject.formfieldid + '"></div>');
 	    			var inputType = "";
 	    			switch (formfieldObject.formfieldtype) {
