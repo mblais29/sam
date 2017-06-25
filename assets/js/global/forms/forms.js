@@ -57,6 +57,7 @@ if($('body').is('#myForm')){
 		$('#myform-selected').slideUp();
 		//Removes all children elements within form
 		$('#formSelected').empty();
+		$('#myform-title').empty();
 	});
 	
 	$('#myformViewRecordClose').on('click', function(){
@@ -229,21 +230,23 @@ function arrayCheck(array, val){
 }
 
 function getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenInput, dropdown, form){
-	
+
 	$.ajax({
 		url:'/' + table + '/getRecords',
 		dataType : 'json',
       	success : function(result) {
 
       		$('#' + form).append('<label for="' + dropdown + '">' + origName + ':</label><div class="dropdown" id="' + dropdown + '"><button id="' +  buttonKey + '" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Select<span class="caret"></span></button>');
-			$('#' + dropdown).append('<input type="hidden" id="' + hiddenInput + '" name="' + hiddenInput + '" ><ul class="dropdown-menu" id="' + keyId + '" ><li><a href="#">None</a></li></ul></div>');
-      			
+			$('#' + dropdown).append('<input type="hidden" id="' + hiddenInput + '" name="' + hiddenInput + '" value="" /><ul class="dropdown-menu" id="' + keyId + '" ><li><a href="#">None</a></li></ul></div>');
+
       		for(var i in result){
      			var primaryKey = result[i]["primary_key"];
      			var primaryKeyRecord = result[i][primaryKey];
-     			
+
       			$('#' + keyId).append('<li><a href="#">' + '[' + primaryKeyRecord + '] ' + result[i][field] + '</a></li>');
-      			$('#' + keyId).on('click', 'li a', function(){
+      			
+      		}
+      		$('#' + keyId).on('click', 'li a', function(){
 			    	$("#" + buttonKey).text($(this).text());
 		    		$("#" + buttonKey).val($(this).text());
 		    		
@@ -253,15 +256,17 @@ function getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenIn
 			    	var newStr = str.match(regex);
 			    	var id = newStr[0].replace(/[\[\]']+/g, '');
 					$("#" + hiddenInput).val(id);
+					console.log("#" + hiddenInput);
+					console.log($("#" + hiddenInput).val());
 
 			    });
-      		}
+      		
       	}
   	});
 }
 
 function generatePreviewForm(data){
-	$('#formPreview').append('<div class="form-group" id="collection"></div>');
+	$('#formSelected').append('<div class="form-group" id="collection"></div>');
 	for (var i = 0; i < data.length; i++){
 		var obj = data[i];
 	    for (var key in obj){
@@ -269,9 +274,9 @@ function generatePreviewForm(data){
 	    		for (var i = 0; i < obj[key].length; i++){
 	    			var formfieldObject = obj[key][i];
 	    			/* If name has a space replace with '_' */
-	    			var inputName = formfieldObject.formfieldname.replace(/\s/g, '_');
-	    			
-	    			$('#formPreview').append('<div class="form-group" id="' + 'formfieldid' + formfieldObject.formfieldid + '"></div>');
+	    			var inputName = formfieldObject.fieldname.replace(/\s/g, '_');
+
+	    			$('#formSelected').append('<div class="form-group" id="' + 'formfieldid' + formfieldObject.formfieldid + '"></div>');
 	    			var inputType = "";
 	    			switch (formfieldObject.formfieldtype) {
 					    case 'character varying':
@@ -328,9 +333,13 @@ function generatePreviewForm(data){
 					    case 'binary':
 					    	/* If input string is file show the file upload else just create a text input */
 					    		inputType = "file";
+					    		var lowercase = formfieldObject.fieldname.toString().toLowerCase();
+					    	
+								$('<input name="binary" type="hidden" value="' + lowercase + '" />').appendTo('#formfieldid' + formfieldObject.formfieldid);
 					    		$('#formfieldid' + formfieldObject.formfieldid).append('<label for="' + inputName + formfieldObject.formfieldid + '">' + formfieldObject.formfieldname + ':</label>');
-			    				$('#formfieldid' + formfieldObject.formfieldid).append('<input type="' + inputType + '" class="form-control" id="' + inputName + formfieldObject.formfieldid + '" name="' + inputName + formfieldObject.formfieldid + '" multiple>');
-
+			    				$('#formfieldid' + formfieldObject.formfieldid).append('<input type="' + inputType + '" class="form-control" id="' + inputName + formfieldObject.formfieldid + '" name="' + inputName + formfieldObject.formfieldid + '" multiple />');
+								
+								
 								$('#' + inputName + formfieldObject.formfieldid).filestyle({
 									size: 'sm',
 									buttonName : 'btn-info',
@@ -363,13 +372,13 @@ function generatePreviewForm(data){
 					     	var table = formfieldObject.formfieldname.replace(/\s/g, '').toLowerCase().replace(/\w+/g, function(txt) {
 							  return txt.charAt(0).toUpperCase() + txt.substr(1);
 							});
-							console.log(table);
 
 					     	var field = formfieldObject.fieldname;
 					     	var keyId = "key-" + formfieldObject.formfieldid;
 					     	var buttonKey = 'foreign_key-' +  formfieldObject.formfieldid;
-					     	var hiddenInput = 'formfield_fkey_val' + formfieldObject.formfieldid;
-					     	var dropdown = 'formfield_f_key' + formfieldObject.formfieldid;
+					     	var hiddenInput = formfieldObject.fieldname;
+
+					     	var dropdown = formfieldObject.fieldname + "-" + formfieldObject.formfieldid;
 					     	
 					     	getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenInput, dropdown, form);
 					     	break;
@@ -493,8 +502,9 @@ function generateForm(data){
 					     	var field = formfieldObject.fieldname;
 					     	var keyId = "key-" + formfieldObject.formfieldid;
 					     	var buttonKey = 'foreign_key-' +  formfieldObject.formfieldid;
-					     	var hiddenInput = 'formfield_fkey_val' + formfieldObject.formfieldid;
-					     	var dropdown = 'formfield_f_key' + formfieldObject.formfieldid;
+					     	var hiddenInput = formfieldObject.fieldname;
+
+					     	var dropdown = formfieldObject.fieldname + "-" + formfieldObject.formfieldid;
 					     	
 					     	getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenInput, dropdown, form);
 					     	break;

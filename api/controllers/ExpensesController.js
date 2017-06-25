@@ -11,7 +11,7 @@ module.exports = {
 			/* Add populateAll to get all the foreign keys for the form model */
 			Expenses.find().populateAll().exec(function foundForms(err,data){
 				if(err) return next(err);
-	
+
 				res.view({
 					expenses: data,
 					title: 'Expenses'
@@ -22,6 +22,5 @@ module.exports = {
 			return;
 		}
 	},
-	      		//NEED TO WORK ON THE FILE UPLOAD FOR EXPENSES
 };
 

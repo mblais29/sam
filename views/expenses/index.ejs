@@ -58,12 +58,13 @@
 					<tr data-expanded="false" id="expense-records" data-id="<%= expense.id %>" data-model="expenses">
 						<td><%= expense.name %></td>
 						<td><%= expense.id %></td>
-						<td><%= expense.category %></td>
-						<td><%= expense.client %></td>
+						<td><%= expense.employee %></td>
+						<td><%= expense.category[0].description %></td>
+						<td><%= expense.client[0].client %></td>
 						<td><%= expense.comment %></td>
 						<td><%= expense.date %></td>
 						<td><%= expense.amount %></td>
-						<td><%= expense.currency %></td>
+						<td><%= expense.currency[0].description %></td>
 
 						<td>
 							<form action="/expenses/destroy?id=<%= expense.id %>" method="POST">

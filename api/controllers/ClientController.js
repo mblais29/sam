@@ -8,7 +8,7 @@
 module.exports = {
 	create: function(req,res,next){
 		var obj = {
-			name: req.param('client_name'),
+			client: req.param('client_name'),
 			address: req.param('client_address'),
 			phone: req.param('client_phone'),
 			contact: req.param('contact'),

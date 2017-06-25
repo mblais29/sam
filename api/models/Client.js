@@ -13,7 +13,7 @@ module.exports = {
 		primaryKey: true,
     	autoIncrement: true
 	},
-	name: {
+	client: {
 		type: 'string',
 		required: true
 	},

@@ -80,8 +80,8 @@ module.exports = {
 	},
 	
 	'insert': function(req, res, next){
-
 		var record = req.allParams();
+
 		var binaryField = "";
 		var fileNames = {};
 
@@ -110,7 +110,7 @@ module.exports = {
 		 
 		 /* Removes any underscores in the field name when inserting new record */
 		 var finalRecord = ObjectServices.removeUnderscore(lowercaseRecord);
-		 
+
 		 sails.models[table].create(finalRecord).exec(function (err, records) {
 			if(err){
 				AlertService.error(req, JSON.stringify(err));
