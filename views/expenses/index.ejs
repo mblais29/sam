@@ -50,6 +50,7 @@
 						<th data-type="html" data-breakpoints="all" data-title="Date" data-filterable="false">Date</th>
 						<th data-type="html" data-breakpoints="all" data-title="Amount" data-filterable="false">Amount</th>
 						<th data-type="html" data-breakpoints="all" data-title="Currency" data-filterable="false">Currency</th>
+						<th data-type="html" data-breakpoints="all" data-title="Receipts" data-filterable="false">Receipts</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -63,8 +64,15 @@
 						<td><%= expense.client[0].client %></td>
 						<td><%= expense.comment %></td>
 						<td><%= expense.date %></td>
-						<td><%= expense.amount %></td>
+						<td>$<%= expense.amount %></td>
 						<td><%= expense.currency[0].description %></td>
+						<td><% for (var prop in expense.documents) { %>
+								<form id="expense-receipts-form" action="/formfields/getDocs?path=<%= expense.documents[prop] %>&filename=<%= prop %>" method="POST">
+									<input type="submit" class="btn btn-sm btn-success" value="<%= prop %>" />
+									<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+								</form>
+							<% } %>
+						</td>
 
 						<td>
 							<form action="/expenses/destroy?id=<%= expense.id %>" method="POST">

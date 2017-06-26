@@ -75,10 +75,7 @@
 						<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
 						<th>Name</th>
 						<th>Form ID</th>
-						<th data-type="html" data-breakpoints="all" data-title="Open Form" data-filterable="false"></th>
-						<% if(session.User.admin) { %>
-							<th data-type="html" data-breakpoints="all" data-title="View Records" data-filterable="false"></th>
-						<% } %>
+						<th data-filterable="false"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -87,9 +84,6 @@
 						<td><%= form.formname %></td>
 						<td><%= form.formid %></td>
 						<td><button id="openform<%= form.formid %>" class="btn btn-sm btn-success" onclick="insertSelectedFormData(<%= form.formid %>)" value="<%= form.formid %>">Open</button></td>
-						<% if(session.User.admin) { %>
-							<td><button id="viewformrecords<%= form.formid %>" class="btn btn-sm btn-info" onclick="openFormRecords('<%= form.collectionname %>','<%= form.formid %>')">Records</button></td>
-						<% } %>
 					</tr>
 				  <% }) %>
 				</tbody>

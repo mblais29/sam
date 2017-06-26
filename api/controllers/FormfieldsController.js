@@ -149,5 +149,11 @@ module.exports = {
 		 AlertService.success(req, 'Record saved successfully!');
 		 res.redirect('/forms/myForms');
 	},
+	
+	'getDocs': function(req, res, next){
+		var file = req.param('path');
+		var fileName = req.param('filename');
+		res.download(file, fileName);
+	}
 };
 

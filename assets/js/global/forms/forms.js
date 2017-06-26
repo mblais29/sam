@@ -165,61 +165,6 @@ function insertSelectedFormData(formid){
     });
 }
 
-function openFormRecords(collection,formid){
-	$('#myform-viewrecords').show();
-	$.ajax({
-		url:'/forms/formRecords?collection=' + collection + '&formid=' + formid,
-		dataType : 'json',
-      	success : function(result) {
-      		//Create the table
-      		$('#myform-panel-records').append('<table id="table-formrecords" class="table table-striped" data-paging="true" data-sorting="true" data-filtering="true"></table>');
- 
-      		var table = $('#table-formrecords');
-      		
-      		//Create empty column array for table header
-      		var jsonColumns = [];
-
-            $.each(result, function(idx, obj) {
-                $.each(obj, function(key, value) {
-                	//If the column does not exist add it to the jsonColumns array, will not push docid fields
-                	if(!arrayCheck(jsonColumns, key) && key != 'docid'){
-                		jsonColumns.push({name: key, title: key});
-                	}
-
-                	//If the value is a date value convert it using moment plugin
-                	if(moment(value, 'YYYY-MM-DD', true).isValid() === true){
-						var date = moment(value).format('ll');
-						obj[key] = date;
-					}else if(moment(value, 'YYYY-MM-DD H:mm:s', true).isValid() === true){
-						var datetime = moment(value).format('llll');
-						obj[key] = datetime;
-					}
-
-                });
-            });
-
-			//Initialize the table with records
-			if(jsonColumns.length){
-				$('#table-formrecords').footable({
-					"columns": jsonColumns,
-					"rows": result
-				});
-			}else{
-				$('#table-formrecords').css('text-align','center');
-				$('#table-formrecords').append('<h1><i>No Results</i></h1>');
-			}
-            
-         },
-	      done: function(data){
-	      	
-	      },
-	      error: function(err) {
-	         console.log(err);
-	      }
-    });
-
-}
-
 function arrayCheck(array, val){
 	for(var i=0;i < array.length; i++) {
     	if (array[i].title === val) {
@@ -304,6 +249,7 @@ function generatePreviewForm(data){
 					        $('#formfieldid' + formfieldObject.formfieldid).append('<div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy" data-link-field="' + inputName + formfieldObject.formfieldid + '" data-link-format="yyyy-mm-dd" style="width:100%"><input class="form-control" size="16" type="text" value="" readonly><span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div>');
 					        $('#formfieldid' + formfieldObject.formfieldid).append('<input type="hidden" id="' + inputName + formfieldObject.formfieldid + '" name="' + inputName + '" value="" />');
 					        $('.form_date').datetimepicker({
+					        	format: "yyyy-mm-dd",
 						        weekStart: 1,
 						        todayBtn:  1,
 								autoclose: 1,
@@ -430,6 +376,7 @@ function generateForm(data){
 					        $('#formfieldid' + formfieldObject.formfieldid).append('<div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy" data-link-field="' + inputName + formfieldObject.formfieldid + '" data-link-format="yyyy-mm-dd" style="width:100%"><input class="form-control" size="16" type="text" value="" readonly><span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span></div>');
 					        $('#formfieldid' + formfieldObject.formfieldid).append('<input type="hidden" id="' + inputName + formfieldObject.formfieldid + '" name="' + inputName + '" value="" />');
 					        $('.form_date').datetimepicker({
+					        	format: "yyyy-mm-dd",
 						        weekStart: 1,
 						        todayBtn:  1,
 								autoclose: 1,
