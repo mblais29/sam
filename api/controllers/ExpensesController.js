@@ -21,5 +21,9 @@ module.exports = {
 			return;
 		}
 	},
+	
+	'insertReceipt': function(req, res, next){
+		var expenseId = req.param('id');
+	}
 };
 

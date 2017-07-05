@@ -36,6 +36,26 @@
 			  </div>
 			  <br>
 			<% } %>
+			<div id="add-receipt" class="panel panel-default">
+			  <div class="panel-heading" id="myform-title">Upload</div>
+			  <div class="panel-body">
+			  	<div class="form-group"> 
+				    <div class="col-sm-12">
+				    	<form class="form-horizontal" id="addReceipt" action="/expenses/insertReceipt" method="POST" enctype="multipart/form-data">
+				    		<input type="file" id="receipt-upload" class="filestyle" />
+				    		<input type="hidden" name="expenseId" id="expenseId" value="" />
+				    		<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+			  		  	</form>
+			  		  	<div class="form-group">
+						    <div class="col-sm-offset-2 col-sm-10" id="addReceiptCloseDiv">
+						      <button type="button" class="btn btn-default pull-right" onclick="submitMyForm()">Submit</button>
+						      <button type="button" id="addReceiptClose" class="btn btn-default pull-right">Close</button>
+						    </div>
+						</div>
+				    </div>
+				  </div>
+			  </div>
+			</div>
 			<h3 id="table-title">Expenses</h3>
 			<table id="table-expenses" class="table table-striped" data-sorting="true" data-filtering="true">
 				<thead>
@@ -43,6 +63,7 @@
 						<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
 						<th>Name</th>
 						<th>Expense ID</th>
+						<th>Add Receipts</th>
 						<th data-type="html" data-breakpoints="all" data-title="Employee">Employee</th>
 						<th data-type="html" data-breakpoints="all" data-title="Category">Category</th>
 						<th data-type="html" data-breakpoints="all" data-title="Client">Client</th>
@@ -59,6 +80,7 @@
 					<tr data-expanded="false" id="expense-records" data-id="<%= expense.id %>" data-model="expenses">
 						<td><%= expense.name %></td>
 						<td><%= expense.id %></td>
+						<td><button onclick="addReceipt(<%= expense.id %>)" class="btn btn-sm btn-info receipt-file">Add</button></td>
 						<td><%= expense.employee %></td>
 						<td><%= expense.category[0].description %></td>
 						<td><%= expense.client[0].client %></td>

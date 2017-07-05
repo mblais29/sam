@@ -50,6 +50,17 @@ if($('body').is('#formIndex')){
 		$("#seceditgrouphidden").val(secId);
     });
     
+    $('#addReceiptClose').on('click', function(){
+		$('#add-receipt').slideUp();
+		$("#receipt-upload").filestyle('clear');
+	});
+	
+    $("#receipt-upload").filestyle({
+		size: 'sm',
+		buttonName : 'btn-info',
+		buttonText : 'Add',
+		placeholder: "No file"
+	});
 };
 
 if($('body').is('#myForm')){
@@ -208,6 +219,19 @@ function getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenIn
       		
       	}
   	});
+}
+
+function addReceipt(id){
+	$('#expenseId').val(id);
+	console.log($('#expenseId').val());
+	$('#add-receipt').show();
+	/*$.ajax({
+		url:'/expenses/insertReceipt?id=' + id,
+		dataType : 'json',
+      	success : function(result) {
+      		
+      	}
+ 	});*/
 }
 
 function generatePreviewForm(data){
