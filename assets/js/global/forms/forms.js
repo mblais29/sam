@@ -61,6 +61,7 @@ if($('body').is('#formIndex')){
 		buttonText : 'Add',
 		placeholder: "No file"
 	});
+	
 };
 
 if($('body').is('#myForm')){
@@ -216,8 +217,6 @@ function getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenIn
 			    	var newStr = str.match(regex);
 			    	var id = newStr[0].replace(/[\[\]']+/g, '');
 					$("#" + hiddenInput).val(id);
-					console.log("#" + hiddenInput);
-					console.log($("#" + hiddenInput).val());
 
 			    });
       		
@@ -227,15 +226,23 @@ function getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenIn
 
 function addReceipt(id){
 	$('#expenseId').val(id);
-	console.log($('#expenseId').val());
 	$('#add-receipt').show();
-	/*$.ajax({
-		url:'/expenses/insertReceipt?id=' + id,
-		dataType : 'json',
-      	success : function(result) {
-      		
-      	}
- 	});*/
+}
+
+function removeReceipt(id, receiptName){
+	if (confirm('Are you sure you want to remove the file?')) {
+		$.ajax('/expenses/removeReceipt?id=' + id + '&receiptName=' + receiptName,{
+	      success: function(data) {
+	      	
+	      },
+	      done: function(data){
+	      	//location.reload();
+	      },
+	      error: function(err) {
+	         console.log(err);
+	      }
+	    });
+   }
 }
 
 function generatePreviewForm(data){

@@ -72,6 +72,58 @@ module.exports = {
 			});
 
 		 }
+	},
+	
+	'removeReceipt': function(req, res, next){
+		var fs = require('fs');
+		var expenseId = req.param('id');
+		var receiptName = req.param('receiptName');
+
+		Expenses.findOne({id: expenseId}).exec(function (err, result){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/expenses');
+			  };
+			
+			var currentDocs = result.documents;
+
+			for(var key in currentDocs){
+				if(key === receiptName){
+					var path = currentDocs[key].substring(0, currentDocs[key].lastIndexOf("\\") + 1);
+					var deletedDirectory = currentDocs[key].substring(0, currentDocs[key].lastIndexOf("\\") + 1) + "deleted\\";
+					var newPath = deletedDirectory + key;
+					
+					//Creates a deleted folder directory if it does not exist
+					if (!fs.existsSync(deletedDirectory)){
+					    fs.mkdirSync(deletedDirectory);
+					}
+					
+					//Renames encrypted file name to original file name and moves to deleted directory
+					fs.rename(currentDocs[key], newPath, function(err) {
+						if(err){
+					    	AlertService.error(req, JSON.stringify(err));
+					    	res.redirect('/expenses');
+					    }
+					    
+					});
+					//Deletes record from documents object
+					delete currentDocs[key];
+				}
+			}
+			var newDocObj = {};
+			newDocObj['documents'] = currentDocs;
+			//Updates the database with the current documents
+			Expenses.update(expenseId, newDocObj, function docsUpdated(err){
+				if(err){
+					AlertService.error(req, JSON.stringify(err));
+					res.redirect('/expenses');
+					};
+			  });
+
+			AlertService.success(req, 'Document removed successfully!');
+			res.redirect('/expenses');
+		});
+		
 	}
 };
 

@@ -90,7 +90,7 @@
 						<td><%= expense.currency[0].description %></td>
 						<td><% for (var prop in expense.documents) { %>
 								<form id="expense-receipts-form" action="/formfields/getDocs?path=<%= expense.documents[prop] %>&filename=<%= prop %>" method="POST">
-									<input type="submit" class="btn btn-sm btn-success" value="<%= prop %>" />
+									<input type="submit" id="download-receipt" class="btn btn-sm btn-success" value="<%= prop %>" /><i class="fa fa-times fa-lg remove-receipt-button" onclick="removeReceipt(<%= expense.id %>,'<%= prop %>')"aria-hidden="true"></i>
 									<input type="hidden" name="_csrf" value="<%= _csrf %>" />
 								</form>
 							<% } %>
