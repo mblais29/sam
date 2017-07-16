@@ -42,13 +42,13 @@
 			  	<div class="form-group"> 
 				    <div class="col-sm-12">
 				    	<form class="form-horizontal" id="addReceipt" action="/expenses/insertReceipt" method="POST" enctype="multipart/form-data">
-				    		<input type="file" id="receipt-upload" class="filestyle" />
+				    		<input type="file" name="receipt-upload" id="receipt-upload" class="filestyle" multiple />
 				    		<input type="hidden" name="expenseId" id="expenseId" value="" />
 				    		<input type="hidden" name="_csrf" value="<%= _csrf %>" />
 			  		  	</form>
 			  		  	<div class="form-group">
 						    <div class="col-sm-offset-2 col-sm-10" id="addReceiptCloseDiv">
-						      <button type="button" class="btn btn-default pull-right" onclick="submitMyForm()">Submit</button>
+						      <button type="button" class="btn btn-default pull-right" onclick="submitExpenseForm()">Submit</button>
 						      <button type="button" id="addReceiptClose" class="btn btn-default pull-right">Close</button>
 						    </div>
 						</div>

@@ -97,6 +97,10 @@ function submitMyForm(){
 	$('#formSelected').submit();
 };
 
+function submitExpenseForm(){
+	$('#addReceipt').submit();
+}
+
 function getFormfieldValue(formid){
 	$('#form').val(formid);
 	$('#formfieldadd').show();
