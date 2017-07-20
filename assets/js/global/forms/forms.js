@@ -229,20 +229,12 @@ function addReceipt(id){
 	$('#add-receipt').show();
 }
 
-function removeReceipt(id, receiptName){
-	if (confirm('Are you sure you want to remove the file?')) {
-		$.ajax('/expenses/removeReceipt?id=' + id + '&receiptName=' + receiptName,{
-	      success: function(data) {
-	      	
-	      },
-	      done: function(data){
-	      	//location.reload();
-	      },
-	      error: function(err) {
-	         console.log(err);
-	      }
-	    });
-   }
+function confirmDeletedDocument(e){
+	if (confirm('Are you sure you want to remove the file?') === true) {
+		$('#expense-receipts-form-remove').submit();
+    }else{
+    	e.preventDefault();
+    }
 }
 
 function generatePreviewForm(data){

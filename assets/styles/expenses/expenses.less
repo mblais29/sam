@@ -26,16 +26,30 @@ div#addReceiptCloseDiv{
 
 input#download-receipt{
   margin-right: 20px;
+  width: 100%;
+  display: block;
 }
 
-i.remove-receipt-button {
-    margin-top: -8px;
-    margin-left: -20px;
+form#expense-receipts-form {
+  margin-bottom: 10px;
+  margin-right: 20px;
+  margin-top: 10px;
+  position:relative;
+}
+
+i.delete-receipt {
+    margin-top: -40px;
     z-index: 1000;
+    top: 30px;
+    right: -20px;
     position: absolute;
 }
 
-i.remove-receipt-button:hover {
+i.delete-receipt:hover {
   color: #ccc;
+}
+
+div#download-close-btn {
+  display:inline-block;
 }
 

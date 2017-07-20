@@ -26,26 +26,26 @@ module.exports = {
 		var expenseId = req.param('expenseId');
 		var newObj = {};
 		var newDocObj = {};
+		var filesUploaded = {};
 		
 		if(typeof req._fileparser.upstreams[0] !== 'undefined'){
 		 	var uploadFile = req._fileparser.upstreams[0];
 
-			var filesUploaded = {};
 		 	uploadFile.upload({
 			  dirname: sails.config.conf.docUrl
 			}, function(err, uploadedFiles) {
 			  if (err) { return res.serverError(err); }
+			  console.log(uploadedFiles.length);
 			  for(var i = 0; i < uploadedFiles.length; i++){
 			  	filesUploaded[uploadedFiles[i].filename] = uploadedFiles[i].fd;
 			  }
-			  
 			  Expenses.findOne({id: expenseId}).exec(function (err, result){
 				  
 				  if(err){
 					AlertService.error(req, JSON.stringify(err));
 					res.redirect('/expenses');
 				  };
-				  
+
 				  var currentDocs = result.documents;
 				  
 				  for(var key in filesUploaded){
@@ -109,7 +109,7 @@ module.exports = {
 					//Deletes record from documents object
 					delete currentDocs[key];
 				}
-			}
+			};
 			var newDocObj = {};
 			newDocObj['documents'] = currentDocs;
 			//Updates the database with the current documents
@@ -118,10 +118,9 @@ module.exports = {
 					AlertService.error(req, JSON.stringify(err));
 					res.redirect('/expenses');
 					};
+				AlertService.success(req, 'Document removed successfully!');
+				res.redirect('/expenses');
 			  });
-
-			AlertService.success(req, 'Document removed successfully!');
-			res.redirect('/expenses');
 		});
 		
 	}

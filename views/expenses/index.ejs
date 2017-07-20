@@ -42,9 +42,9 @@
 			  	<div class="form-group"> 
 				    <div class="col-sm-12">
 				    	<form class="form-horizontal" id="addReceipt" action="/expenses/insertReceipt" method="POST" enctype="multipart/form-data">
-				    		<input type="file" name="receipt-upload" id="receipt-upload" class="filestyle" multiple />
-				    		<input type="hidden" name="expenseId" id="expenseId" value="" />
 				    		<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				    		<input type="hidden" name="expenseId" id="expenseId" value="" />
+				    		<input type="file" name="receipt-upload" id="receipt-upload" class="filestyle" multiple />
 			  		  	</form>
 			  		  	<div class="form-group">
 						    <div class="col-sm-offset-2 col-sm-10" id="addReceiptCloseDiv">
@@ -89,10 +89,16 @@
 						<td>$<%= expense.amount %></td>
 						<td><%= expense.currency[0].description %></td>
 						<td><% for (var prop in expense.documents) { %>
-								<form id="expense-receipts-form" action="/formfields/getDocs?path=<%= expense.documents[prop] %>&filename=<%= prop %>" method="POST">
-									<input type="submit" id="download-receipt" class="btn btn-sm btn-success" value="<%= prop %>" /><i class="fa fa-times fa-lg remove-receipt-button" onclick="removeReceipt(<%= expense.id %>,'<%= prop %>')"aria-hidden="true"></i>
-									<input type="hidden" name="_csrf" value="<%= _csrf %>" />
-								</form>
+								<div id="download-close-btn">
+									<form id="expense-receipts-form" action="/formfields/getDocs?path=<%= expense.documents[prop] %>&filename=<%= prop %>" method="POST">
+										<input type="submit" id="download-receipt" class="btn btn-sm btn-success" value="<%= prop %>" />
+										<i class="fa fa-times fa-lg delete-receipt" aria-hidden="true" onclick="confirmDeletedDocument()"></i>
+										<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+									</form>
+									<form id="expense-receipts-form-remove" action="/expenses/removeReceipt?id=<%= expense.id %>&receiptName=<%= prop %>" method="POST" >
+										<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+									</form>	
+								</div>
 							<% } %>
 						</td>
 
