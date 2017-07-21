@@ -44,6 +44,7 @@ module.exports = {
 			res.redirect('/client');
 		});
 	},
+	
 	'getRecords': function(req, res, next){
 		Client.find().exec(function (err, response) {
 			if(err) return next(err);
