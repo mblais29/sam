@@ -7,12 +7,14 @@
 
 module.exports = {
 	index: function(req, res, next){
+		var moment = require('moment');
 		if(req.session.authenticated){
 			/* Add populateAll to get all the foreign keys for the form model */
 			Expenses.find().populateAll().exec(function foundForms(err,data){
 				if(err) return next(err);
 				res.view({
 					expenses: data,
+					moment: moment,
 					title: 'Expenses'
 				});
 			});

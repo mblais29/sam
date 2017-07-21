@@ -6,26 +6,42 @@
  */
 
 module.exports = {
+	index: function(req, res, next){
+		if(req.session.authenticated){
+			/* Add populateAll to get all the foreign keys for the client model */
+			Client.find().populateAll().exec(function foundClientss(err,data){
+				if(err) return next(err);
+				res.view({
+					clients: data,
+					title: 'Clients'
+				});
+			});
+		}else{
+			res.redirect('/session/new');
+			return;
+		}
+	},
+	
 	create: function(req,res,next){
+		var phone = req.param('phone');
+		var phoneNumber = phone[0] + "-" + phone[1] + "-" + phone[2];
+
 		var obj = {
-			client: req.param('client_name'),
-			address: req.param('client_address'),
-			phone: req.param('client_phone'),
-			contact: req.param('contact'),
-			email: req.param('email')
+			client: req.param('clientName'),
+			address: req.param('clientAddress'),
+			phone: phoneNumber,
+			contact: req.param('clientContact'),
+			email: req.param('clientEmail')
 		};
 		
 		Client.create(obj, function clientscreate(err,client){
 			if(err){
-				//AlertService.error(req, JSON.stringify(err));
-				//res.redirect('/security');
-				res.json(err);
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/client');
 			};
 
-			//AlertService.success(req, 'You have created the ' + req.param('category') + ' Expense Type!');
-
-			//res.redirect('/security');
-			res.json(client);
+			AlertService.success(req, 'Client ' + req.param('clientName') + ' created successfully!');
+			res.redirect('/client');
 		});
 	},
 	'getRecords': function(req, res, next){

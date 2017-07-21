@@ -52,7 +52,6 @@ var jsFilesToInject = [
   'js/dependencies/leaflet/jquery-ui.min.js',
   'js/dependencies/bootstrap/bootstrap-datetimepicker.min.js',
   'js/dependencies/bootstrap/bootstrap-datetimepicker.uk.js',
-  'js/dependencies/moment.js',
 
   // All of the rest of your client-side js files
   // will be injected here in no particular order.

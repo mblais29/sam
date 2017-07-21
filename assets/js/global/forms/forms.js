@@ -238,7 +238,8 @@ function confirmDeletedDocument(e){
 }
 
 function generatePreviewForm(data){
-	$('#formSelected').append('<div class="form-group" id="collection"></div>');
+	$('#formPreview').append('<div class="form-group" id="collectionPreview"></div>');
+	$('#collectionPreview').append('<input type="hidden" name="collection" value="' + data[0].tablename + '" />');
 	for (var i = 0; i < data.length; i++){
 		var obj = data[i];
 	    for (var key in obj){
@@ -248,7 +249,7 @@ function generatePreviewForm(data){
 	    			/* If name has a space replace with '_' */
 	    			var inputName = formfieldObject.fieldname.replace(/\s/g, '_');
 
-	    			$('#formSelected').append('<div class="form-group" id="' + 'formfieldid' + formfieldObject.formfieldid + '"></div>');
+	    			$('#formPreview').append('<div class="form-group" id="' + 'formfieldid' + formfieldObject.formfieldid + '"></div>');
 	    			var inputType = "";
 	    			switch (formfieldObject.formfieldtype) {
 					    case 'character varying':

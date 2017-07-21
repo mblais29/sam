@@ -31,6 +31,11 @@ module.exports.policies = {
   	create: ['flashAlert']
   },
   
+  client: {
+  	index: ['flashAlert'],
+  	create: ['flashAlert']
+  },
+  
   forms: {
   	index: ['flashAlert'],
   	create: ['flashAlert'],

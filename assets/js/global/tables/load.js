@@ -25,6 +25,9 @@ function createButtonAddEvent(id){
   					alert(err);
   				});
 		break;
+		};
+		case 'clientAdd': {
+			
 		}
 	}
 }

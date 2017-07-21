@@ -85,7 +85,7 @@
 						<td><%= expense.category[0].description %></td>
 						<td><%= expense.client[0].client %></td>
 						<td><%= expense.comment %></td>
-						<td><%= expense.date %></td>
+						<td><%= moment(expense.date).format('LL') %></td>
 						<td>$<%= expense.amount %></td>
 						<td><%= expense.currency[0].description %></td>
 						<td><% for (var prop in expense.documents) { %>
