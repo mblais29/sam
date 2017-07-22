@@ -4,7 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 	</head>
-	<body id="formIndex">
+	<body id="expenses">
 		<div class="container-fluid users">
 			<% if (messages && messages['error'].length > 0) { %>
 			  <div class="alert alert-danger securityMessage">
@@ -49,7 +49,7 @@
 			  		  	<div class="form-group">
 						    <div class="col-sm-offset-2 col-sm-10" id="addReceiptCloseDiv">
 						      <button type="button" class="btn btn-default pull-right" onclick="submitExpenseForm()">Submit</button>
-						      <button type="button" id="addReceiptClose" class="btn btn-default pull-right">Close</button>
+						      <button type="button" id="addReceiptClose" class="btn btn-default pull-right btn-close">Close</button>
 						    </div>
 						</div>
 				    </div>

@@ -49,18 +49,6 @@ if($('body').is('#formIndex')){
     	var secId = newStr[0].replace(/[\[\]']+/g, '');
 		$("#seceditgrouphidden").val(secId);
     });
-    
-    $('#addReceiptClose').on('click', function(){
-		$('#add-receipt').slideUp();
-		$("#receipt-upload").filestyle('clear');
-	});
-	
-    $("#receipt-upload").filestyle({
-		size: 'sm',
-		buttonName : 'btn-info',
-		buttonText : 'Add',
-		placeholder: "No file"
-	});
 	
 };
 
@@ -97,10 +85,6 @@ function forceLower(strInput){
 function submitMyForm(){
 	$('#formSelected').submit();
 };
-
-function submitExpenseForm(){
-	$('#addReceipt').submit();
-}
 
 function getFormfieldValue(formid){
 	$('#form').val(formid);
@@ -222,19 +206,6 @@ function getForeignKeyRecords(table, origName, field, keyId, buttonKey, hiddenIn
       		
       	}
   	});
-}
-
-function addReceipt(id){
-	$('#expenseId').val(id);
-	$('#add-receipt').show();
-}
-
-function confirmDeletedDocument(e){
-	if (confirm('Are you sure you want to remove the file?') === true) {
-		$('#expense-receipts-form-remove').submit();
-    }else{
-    	e.preventDefault();
-    }
 }
 
 function generatePreviewForm(data){

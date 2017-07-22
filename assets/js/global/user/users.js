@@ -2,8 +2,8 @@
 	LOADING USER UPLOAD PROFILE PAGE 
 *****************************/
 /* When screen loads check document size and adjust button accordingly */
-$(document).ready(function () {
-  $('#loading').css('display', 'none');
+if($('body').is('#usersIndex')){
+
   $( '#addUserSecGroup-panel' ).draggable();
   var win = $(this); //this = window
   if (win.width() <= 640) { 
@@ -44,7 +44,7 @@ $(document).ready(function () {
 		removeUserSecGroup(JSONvalue);
   });
   
-});
+};
 
 /* When screen size changes adjust button accordingly */
 $(window).on('resize', function(){
