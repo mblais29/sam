@@ -7,7 +7,7 @@
 
 module.exports = {
 	index: function(req, res, next){
-		if(req.session.authenticated){
+		if(req.session.authenticated && req.session.User.admin){
 			/* Add populateAll to get all the foreign keys for the client model */
 			Client.find().populateAll().exec(function foundClientss(err,data){
 				if(err) return next(err);
@@ -16,6 +16,9 @@ module.exports = {
 					title: 'Clients'
 				});
 			});
+		}else if(req.session.User.admin === false){
+			res.redirect('/map');
+			return;
 		}else{
 			res.redirect('/session/new');
 			return;

@@ -8,7 +8,7 @@
 module.exports = {
 	index: function(req, res, next){
 		var moment = require('moment');
-		if(req.session.authenticated){
+		if(req.session.authenticated && req.session.User.admin){
 			/* Add populateAll to get all the foreign keys for the form model */
 			Expenses.find().populateAll().exec(function foundForms(err,data){
 				if(err) return next(err);
@@ -18,6 +18,9 @@ module.exports = {
 					title: 'Expenses'
 				});
 			});
+		}else if(req.session.User.admin === false){
+			res.redirect('/map');
+			return;
 		}else{
 			res.redirect('/session/new');
 			return;

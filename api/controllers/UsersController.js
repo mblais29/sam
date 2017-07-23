@@ -7,7 +7,7 @@
 
 module.exports = {
 	index: function(req, res, next){
-		if(req.session.authenticated){
+		if(req.session.authenticated && req.session.User.admin){
 			Users.find().populateAll().exec(function foundUsers(err,users){
 				if(err) return next(err);
 	
@@ -16,6 +16,9 @@ module.exports = {
 					title: 'Users'
 				});
 			});
+			return;
+		}else if(req.session.User.admin === false){
+			res.redirect('/map');
 			return;
 		}else{
 			res.redirect('/session/new');
