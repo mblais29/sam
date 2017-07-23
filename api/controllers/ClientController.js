@@ -48,7 +48,6 @@ module.exports = {
 		});
 	},
 	
-	//Update the Security Group
 	update: function(req, res, next){
 		var phone = req.param('phone');
 		var phoneNumber = phone[0] + "-" + phone[1] + "-" + phone[2];
@@ -61,7 +60,7 @@ module.exports = {
 			email: req.param('client-email')
 		};
 		
-		Client.update(req.param('client-id'), obj, function securityGroupUpdated(err){
+		Client.update(req.param('client-id'), obj, function cientUpdated(err){
 			if(err){
 				AlertService.error(req, JSON.stringify(err));
 				res.redirect('/client');

@@ -31,6 +31,11 @@ module.exports.policies = {
   	create: ['flashAlert']
   },
   
+  currency: {
+  	index: ['flashAlert'],
+  	create: ['flashAlert']
+  },
+  
   client: {
   	index: ['flashAlert'],
   	create: ['flashAlert']

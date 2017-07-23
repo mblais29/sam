@@ -26,9 +26,6 @@ function createButtonAddEvent(id){
   				});
 		break;
 		};
-		case 'clientAdd': {
-			
-		}
 	}
 }
 

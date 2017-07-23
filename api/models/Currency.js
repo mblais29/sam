@@ -16,6 +16,10 @@ module.exports = {
 	description: {
 		type: 'string',
 		required: true
+	},
+	symbol: {
+		type: 'string',
+		required: true
 	}
   }
 };

@@ -86,7 +86,7 @@
 						<td><%= expense.client[0].client %></td>
 						<td><%= expense.comment %></td>
 						<td><%= moment(expense.date).format('LL') %></td>
-						<td>$<%= expense.amount %></td>
+						<td><%= expense.currency[0].symbol %><%= expense.amount %></td>
 						<td><%= expense.currency[0].description %></td>
 						<td><% for (var prop in expense.documents) { %>
 								<div id="download-close-btn">

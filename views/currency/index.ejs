@@ -1,0 +1,139 @@
+<html>
+	<head>
+		<title>My Forms</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	</head>
+	<body id="currency">
+		<div class="container-fluid">
+			<% if (messages && messages['error'].length > 0) { %>
+			  <div class="alert alert-danger securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['error'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<% if (messages && messages['warning'].length > 0) { %>
+			  <div class="alert alert-warning securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['warning'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<% if (messages && messages['success'].length > 0) { %>
+			  <div class="alert alert-success securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['success'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			
+			<h3 id="table-title">Currencies</h3>
+			<div id="currency-add" class="panel panel-default">
+			  <div class="panel-heading">Create Currency</div>
+			  <div class="panel-body">
+			  	<form class="form-horizontal" id="currencyCreate" action="currency/create">
+				  <div class="form-group">
+				    <label class="control-label col-sm-2" for="currencyType">Currency:</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="currencyType" name="currencyType" onkeyup="forceUpperCaseAdd()" placeholder="Enter currency...">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-2" for="currencySym">Symbol:</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="currencySym" name="currencySym" placeholder="Enter currency symbol...">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-2" for="currencyDesc">Description:</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="currencyDesc" name="currencyDesc" placeholder="Enter description...">
+				    </div>
+				  </div>
+				  <div class="form-group"> 
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <button type="submit" class="btn btn-default pull-right">Submit</button>
+				      <button type="button" id="currencyClose" class="btn btn-default pull-right btn-close" onclick="closeCurrencyAddPanel()">Close</button>
+			  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				    </div>
+				  </div>
+				</form>
+			  </div>
+			</div>
+			
+			<div id="currency-edit" class="panel panel-default">
+			  <div class="panel-heading">Edit Currency</div>
+			  <div class="panel-body">
+			  	<form class="form-horizontal" id="currencyedit" action="currency/update">
+				  <div class="form-group">
+				    <label class="control-label col-sm-2" for="currencyTypeEdit">Currency:</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="currencyTypeEdit" name="currencyTypeEdit" onkeyup="forceUpperCaseEdit()" readonly>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-2" for="currencySymEdit">Symbol:</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="currencySymEdit" name="currencySymEdit" placeholder="Enter currency symbol...">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-2" for="currencyDescEdit">Description:</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="currencyDescEdit" name="currencyDescEdit" placeholder="Enter description...">
+				    </div>
+				  </div>
+				  <div class="form-group"> 
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <button type="submit" class="btn btn-default pull-right">Submit</button>
+				      <button type="button" id="currencyClose" class="btn btn-default pull-right btn-close" onclick="closeCurrencyEditPanel()">Close</button>
+			  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				    </div>
+				  </div>
+				</form>
+			  </div>
+			</div>
+			
+			<table id="table-currency" class="table table-striped" data-sorting="true" data-filtering="true">
+				<thead>
+					<tr>
+						<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
+						<th>Description</th>
+						<th data-type="html" data-breakpoints="all" data-title="Currency">Currency</th>
+						<th data-type="html" data-breakpoints="all" data-title="Symbol">Symbol</th>
+						<th data-type="html" data-breakpoints="all" data-title="Edit Currency" data-filterable="false"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Delete Currency" data-filterable="false"></th>
+						<th data-filterable="false" data-sortable="false"><button id="clientAdd" onclick="createButtonAddEvent(this.id)" class="btn btn-sm btn-primary">Add</button></th>	
+					</tr>
+				</thead>
+				<tbody>
+				  <% _.each(currencies, function(currency){ %>
+					<tr data-expanded="false" id="currency-records" data-id="<%= currency.currency %>" data-model="currency">
+						<td><%= currency.description %></td>
+						<td><%= currency.currency %></td>
+						<td><%= currency.symbol %></td>
+						<td><button id="currencyEdit<%= currency.currency %>" class="btn btn-sm btn-warning" onclick="getCurrencyValue('<%= currency.currency %>')" value="<%= currency.currency %>">Edit</button></td>
+						<td>
+							<form action="/currency/destroy?currency=<%= currency.currency %>" method="POST">
+								<input type="hidden" name="_method" value="delete" />
+								<input type="submit" class="btn btn-sm btn-danger" value="Delete" />
+								<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+							</form>
+						</td>
+					</tr>
+				  <% }) %>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html> 
