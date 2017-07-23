@@ -45,6 +45,62 @@ module.exports = {
 		});
 	},
 	
+	//Update the Security Group
+	update: function(req, res, next){
+		var phone = req.param('phone');
+		var phoneNumber = phone[0] + "-" + phone[1] + "-" + phone[2];
+
+		var obj = {
+			client: req.param('client-name'),
+			address: req.param('client-address'),
+			phone: phoneNumber,
+			contact: req.param('client-contact'),
+			email: req.param('client-email')
+		};
+		
+		Client.update(req.param('client-id'), obj, function securityGroupUpdated(err){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/client');
+				return;
+			}
+			AlertService.success(req, 'Client ' + req.param('client-name') + ' updated successfully!');
+			return res.redirect('/client');
+		}); 
+	},
+	
+	//Delete a Security Group
+	destroy: function(req, res, next){
+		Client.findOne(req.param('clientid'), function foundClient(err,client){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/client');
+			}
+			if(!client) {
+				AlertService.warning(req, 'Client doesn\'t exist...');
+				res.redirect('/client');
+			}
+			Client.destroy(req.param('clientid'), function clientDestroyed(err){
+				if(err){
+					AlertService.error(req, JSON.stringify(err));
+					res.redirect('/client');
+				}
+				
+			});
+
+			AlertService.success(req, 'You have deleted ' + client.client + '!');
+			res.redirect('/client');
+		});
+	},
+	
+	'retrieveClientRecord': function(req, res, next){
+		Client.findOne({id: req.param('clientId')}).exec(function (err, response) {
+			if(err) return next(err);
+			
+			return res.ok(response);
+		});
+	},
+	
 	'getRecords': function(req, res, next){
 		Client.find().exec(function (err, response) {
 			if(err) return next(err);

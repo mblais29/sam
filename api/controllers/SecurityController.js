@@ -77,10 +77,13 @@ module.exports = {
 				res.redirect('/security');
 			}
 			Security.destroy(req.param('secid'), function secGroupDestroyed(err){
-				if(err) return next(err);
+				if(err){
+					AlertService.error(req, JSON.stringify(err));
+					res.redirect('/security');
+				}
 			});
 
-			AlertService.warning(req, 'You have deleted the ' + secGroup.secname + ' Security Group!');
+			AlertService.success(req, 'You have deleted the ' + secGroup.secname + ' Security Group!');
 			res.redirect('/security');
 		});
 	},
