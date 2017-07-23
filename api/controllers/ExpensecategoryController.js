@@ -25,6 +25,14 @@ module.exports = {
 			res.json(category);
 		});
 	},
+	
+	'retrieveRecords': function(req, res, next){
+		Expensecategory.find().exec(function (err, response) {
+			if(err) return next(err);
+			return res.ok(response);
+		});
+	},
+	
 	'getRecords': function(req, res, next){
 		Expensecategory.find().exec(function (err, response) {
 			if(err) return next(err);

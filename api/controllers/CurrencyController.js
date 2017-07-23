@@ -91,6 +91,13 @@ module.exports = {
 		});
 	},
 	
+	'retrieveRecords': function(req, res, next){
+		Currency.find().exec(function (err, response) {
+			if(err) return next(err);
+			return res.ok(response);
+		});
+	},
+	
 	'getRecords': function(req, res, next){
 		Currency.find().exec(function (err, response) {
 			if(err) return next(err);

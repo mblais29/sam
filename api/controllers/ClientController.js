@@ -103,6 +103,13 @@ module.exports = {
 		});
 	},
 	
+	'retrieveRecords': function(req, res, next){
+		Client.find().exec(function (err, response) {
+			if(err) return next(err);
+			return res.ok(response);
+		});
+	},
+	
 	'getRecords': function(req, res, next){
 		Client.find().exec(function (err, response) {
 			if(err) return next(err);

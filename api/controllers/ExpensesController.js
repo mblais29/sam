@@ -27,6 +27,36 @@ module.exports = {
 		}
 	},
 	
+	update: function(req, res, next){
+		console.log(req.allParams());
+		var record = req.allParams();
+		
+		/* Deletes the _csrf and collection records from the array */
+		 delete record._csrf;
+		 delete record['expense-id'];
+		 
+		 console.log(record);
+		
+		Expenses.update(req.param('expense-id'), record, function expenseUpdated(err, expense){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/expenses');
+				return;
+			};
+			//NEED TO USE SAVE() TO UPDATE ANY ASSOCIATIONS!!!!!
+			AlertService.success(req, req.param('expense-employee') + ' expense ' + req.param('expense-name') + ' updated successfully!');
+			return res.redirect('/expenses');
+		});
+	},
+	
+	'retrieveExpenseRecord': function(req, res, next){
+		Expenses.find().where({id: req.param('expenseId')}).populateAll().exec(function (err, response) {
+			if(err) return next(err);
+			
+			return res.ok(response);
+		});
+	},
+	
 	'insertReceipt': function(req, res, next){
 		var expenseId = req.param('expenseId');
 		var newObj = {};

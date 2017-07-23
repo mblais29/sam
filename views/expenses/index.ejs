@@ -36,6 +36,64 @@
 			  </div>
 			  <br>
 			<% } %>
+			
+			<div id="expense-edit" class="panel panel-default">
+			  <div class="panel-heading">Edit Expense Details</div>
+			  <div class="panel-body">
+			  	<form class="form-horizontal" id="expenseEdit" action="/expenses/update">
+			  	  <div class="form-group">
+				    <label class="control-label col-sm-3" for="expense-id">Expense ID:</label>
+				    <div class="col-sm-9">
+				      <input type="text" class="form-control" id="expense-id" name="expense-id" readonly>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="expense-employee">Employee:</label>
+				    <div class="col-sm-9">
+				      <input type="text" class="form-control" id="expense-employee" name="expense-employee" >
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="expense-name">Name:</label>
+				    <div class="col-sm-9">
+				      <input type="text" class="form-control" id="expense-name" name="expense-name" >
+				    </div>
+				  </div>
+				  <div class="form-group" id="expense-cat">
+				    
+				  </div>
+				  <div class="form-group" id="expense-cli">
+				    
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="expense-comment">Comment:</label>
+				    <div class="col-sm-9">
+				      <textarea class="form-control" id="expense-comment" name="expense-comment" ></textarea>
+				    </div>
+				  </div>
+				  <div class="form-group" id="expense-date">
+				    
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="expense-amount">Amount:</label>
+				    <div class="col-sm-9">
+				      <input type="text" class="form-control" id="expense-amount" name="expense-amount" >
+				    </div>
+				  </div>
+				  <div class="form-group" id="expense-currency">
+				   
+				  </div>
+				  <div class="form-group"> 
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <button type="submit" class="btn btn-default pull-right">Submit</button>
+				      <button type="button" id="expenseEditClose" class="btn btn-default pull-right btn-close">Close</button>
+			  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				    </div>
+				  </div>
+				</form>
+			  </div>
+			</div>
+			
 			<div id="add-receipt" class="panel panel-default">
 			  <div class="panel-heading" id="myform-title">Upload</div>
 			  <div class="panel-body">
@@ -72,6 +130,8 @@
 						<th data-type="html" data-breakpoints="all" data-title="Amount" data-filterable="false">Amount</th>
 						<th data-type="html" data-breakpoints="all" data-title="Currency" data-filterable="false">Currency</th>
 						<th data-type="html" data-breakpoints="all" data-title="Receipts" data-filterable="false">Receipts</th>
+						<th data-type="html" data-breakpoints="all" data-title="Edit Expense" data-filterable="false"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Delete Expense" data-filterable="false"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -101,7 +161,7 @@
 								</div>
 							<% } %>
 						</td>
-
+						<td><button id="expenseEdit<%= expense.id %>" class="btn btn-sm btn-warning" onclick="getExpenseValue('<%= expense.id %>')" value="<%= expense.id %>">Edit</button></td>
 						<td>
 							<form action="/expenses/destroy?id=<%= expense.id %>" method="POST">
 								<input type="hidden" name="_method" value="delete" />
