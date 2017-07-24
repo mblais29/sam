@@ -28,25 +28,31 @@ module.exports = {
 	},
 	
 	update: function(req, res, next){
-		console.log(req.allParams());
 		var record = req.allParams();
 		
 		/* Deletes the _csrf and collection records from the array */
 		 delete record._csrf;
 		 delete record['expense-id'];
 		 
-		 console.log(record);
-		
-		Expenses.update(req.param('expense-id'), record, function expenseUpdated(err, expense){
+		 var obj = {};
+		 obj['employee'] = record['expense-employee'];
+		 obj['name'] = record['expense-name'];
+		 obj['category'] = record['expenseCatHidden'];
+		 obj['client'] = record['expenseCliHidden'];
+		 obj['comment'] = record['expense-comment'];
+		 obj['date'] = record['expenseDate'];
+		 obj['amount'] = record['expense-amount'];
+		 obj['currency'] = record['expenseCurrHidden'];
+
+		 Expenses.update(req.param('expense-id'), obj, function expenseUpdated(err, expense){
 			if(err){
 				AlertService.error(req, JSON.stringify(err));
 				res.redirect('/expenses');
 				return;
 			};
-			//NEED TO USE SAVE() TO UPDATE ANY ASSOCIATIONS!!!!!
-			AlertService.success(req, req.param('expense-employee') + ' expense ' + req.param('expense-name') + ' updated successfully!');
+	      	AlertService.success(req, req.param('expense-employee') + ' expense ' + req.param('expense-name') + ' updated successfully!');
 			return res.redirect('/expenses');
-		});
+		  });
 	},
 	
 	'retrieveExpenseRecord': function(req, res, next){
