@@ -31,6 +31,11 @@ module.exports.policies = {
   	create: ['flashAlert']
   },
   
+  expensecategory: {
+  	index: ['flashAlert'],
+  	create: ['flashAlert']
+  },
+  
   currency: {
   	index: ['flashAlert'],
   	create: ['flashAlert']

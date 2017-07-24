@@ -9,7 +9,7 @@ module.exports = {
 	index: function(req, res, next){
 		if(req.session.authenticated && req.session.User.admin){
 			/* Add populateAll to get all the foreign keys for the client model */
-			Client.find().populateAll().exec(function foundClientss(err,data){
+			Client.find().populateAll().exec(function foundClients(err,data){
 				if(err) return next(err);
 				res.view({
 					clients: data,

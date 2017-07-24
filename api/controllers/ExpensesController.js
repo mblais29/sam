@@ -55,6 +55,56 @@ module.exports = {
 		  });
 	},
 	
+	destroy: function(req, res, next){
+		var fs = require('fs');
+		
+		Expenses.findOne(req.param('id'), function foundExpense(err,expense){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/expenses');
+			}
+			if(!expense) {
+				AlertService.warning(req, 'Expense doesn\'t exist...');
+				res.redirect('/expenses');
+			}
+			
+			var currentDocs = expense.documents;
+			
+			for(var key in currentDocs){
+				var path = currentDocs[key].substring(0, currentDocs[key].lastIndexOf("\\") + 1);
+				var deletedDirectory = currentDocs[key].substring(0, currentDocs[key].lastIndexOf("\\") + 1) + "deleted\\";
+				var newPath = deletedDirectory + key;
+				
+				//Creates a deleted folder directory if it does not exist
+				if (!fs.existsSync(deletedDirectory)){
+				    fs.mkdirSync(deletedDirectory);
+				}
+				
+				//Renames encrypted file name to original file name and moves to deleted directory
+				fs.rename(currentDocs[key], newPath, function(err) {
+					if(err){
+				    	AlertService.error(req, JSON.stringify(err));
+				    	res.redirect('/expenses');
+				    }
+				    
+				});
+				//Deletes record from documents object
+				delete currentDocs[key];
+			};
+			
+			Expenses.destroy(req.param('id'), function expenseDestroyed(err){
+				if(err){
+					AlertService.error(req, JSON.stringify(err));
+					res.redirect('/expenses');
+				}
+				
+			});
+
+			AlertService.success(req, 'You have deleted ' + expense.name + ' expense record!');
+			res.redirect('/expenses');
+		});
+	},
+	
 	'retrieveExpenseRecord': function(req, res, next){
 		Expenses.find().where({id: req.param('expenseId')}).populateAll().exec(function (err, response) {
 			if(err) return next(err);
