@@ -12,6 +12,10 @@ if($('body').is('#securityIndex')){
 
 /* FUNCTIONS */
 
+function submitAddSecGroup(){
+	$('form#editUserSecGroup').submit();
+}
+
 function closeSecAddPanel(){
 	$('#sec-add').slideUp();
 	$('#secCreate input').val("");

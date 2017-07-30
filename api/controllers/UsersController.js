@@ -95,6 +95,18 @@ module.exports = {
 			return;
 		}
 	},
+	//Stream user profile image
+	profileImg: function (req, res) {
+		Users.findOne(req.param('email'), function foundUser(err,user){
+			var storedProfileImg = user.profileimage;
+
+		    var SkipperDisk = require('skipper-disk');
+		    var fileAdapter = SkipperDisk(/* optional opts */);
+		    fileAdapter.read(storedProfileImg).on('error', function (err) {
+		      return res.serverError(err);
+		    }).pipe(res);
+		});
+    },
 	//Edit User
 	edit: function(req, res, next){
 		if(req.session.authenticated){

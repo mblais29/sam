@@ -4,7 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 	</head>
-	<body>
+	<body id="editUsersPage">
 		<div class="edit-users">
 			<% if (messages && messages['error'].length > 0) { %>
 			  <div class="alert alert-danger securityMessage">
@@ -66,7 +66,7 @@
 				  </div>
 			   </form>
 			</div>
-			<form action="/users/update?email=<%= user.email %>" method="POST" class="form-signin">
+			<form action="/users/update?email=<%= user.email %>" method="POST" class="form-signin" id="editUserSecGroup">
 				<h2>Editing User...</h2>
 				<label class="control-label col-sm-2" for="firstname">First Name:</label>
 					<input value="<%= user.firstname %>" name="firstname" type="text" class="form-control" /><br/>
@@ -84,16 +84,6 @@
 					</div><br/>
 				<% }) %>
 				
-				<!-- Show option to add security groups if Admin User -->
-				<% if(session.authenticated && session.User.admin) { %>
-					<a href="#" id="addusersecgroups" name="addsecgroups" class="btn btn-sm btn-info" />Add Security Group</a></br></br>
-				<% } %>
-				
-				<!-- Displays the Upload Profile Image Button only if the current user is authenticated and they are uploading an image to their own profile -->
-				<% if(session.authenticated && session.User.id == user.id) { %>
-					<a href="/upload-file" id="uploadProfileImg" name="uploadProfileImg" class="btn btn-sm btn-info" />Upload Profile Image</a>
-				<% } %>
-				
 				<!-- Displays the Admin Checkbox only if the logged in user is an Admin user -->
 				<% if(session.authenticated && session.User.admin) { %>
 					<% if(user.admin) { %>
@@ -108,10 +98,18 @@
 						</div>
 					<% } %>
 				<% } %>	
-				
-				<input type="submit" value="Submit" class="btn btn-lg btn-primary btn-block" />
 				<input id="test" type="hidden" name="_csrf" value="<%= _csrf %>" />
 			</form>
+			<!-- Show option to add security groups if Admin User -->
+			<% if(session.authenticated && session.User.admin) { %>
+				<button id="addusersecgroups" class="btn btn-sm btn-info" >Add Security Group</button></br></br>
+			<% } %>
+			
+			<!-- Displays the Upload Profile Image Button only if the current user is authenticated and they are uploading an image to their own profile -->
+			<% if(session.authenticated && session.User.id == user.id) { %>
+				<a href="/upload-file" id="uploadProfileImg" name="uploadProfileImg" class="btn btn-sm btn-info" />Upload Profile Image</a>
+			<% } %>
+			<input type="submit" value="Submit" class="btn btn-lg btn-primary btn-block" onclick="submitAddSecGroup()"/>
 		</div>
 	</body>
 </html>

@@ -37,6 +37,10 @@ module.exports.routes = {
   },
   
   '/email' : 'EmailController.sendEmail',
+  
+  '/upload-file':{
+    view: 'upload/uploadprofileimg',
+  },
 
   /***************************************************************************
   *                                                                          *

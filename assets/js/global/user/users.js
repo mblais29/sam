@@ -14,16 +14,19 @@ if($('body').is('#usersIndex')){
   	$('#user-profile-button').css("width", "50%");
   	$('#user-profile-button').css("margin", "0 auto");
   }
-  
-  $('#addusersecgroups').on('click',function(){
-  	addSecurityDropdown();
-  });
-  
-  $('#userSecAddClose').on('click', function(){
-	$('#addUserSecGroup-panel').slideUp();
-  });
-  
-  $("#addusersecgroup").on('click', 'li a', function(){
+ 
+};
+
+if($('body').is('#editUsersPage')){
+	$('#addusersecgroups').on('click',function(){
+	  	addSecurityDropdown();
+	  });
+	  
+	$('#userSecAddClose').on('click', function(){
+		$('#addUserSecGroup-panel').slideUp();
+	  });
+	  
+	$("#addusersecgroup").on('click', 'li a', function(){
 		$("#btn-addusersecgroup").text($(this).text());
 		$("#btn-addusersecgroup").val($(this).text());
 		
@@ -44,7 +47,7 @@ if($('body').is('#usersIndex')){
 		removeUserSecGroup(JSONvalue);
   });
   
-};
+}
 
 /* When screen size changes adjust button accordingly */
 $(window).on('resize', function(){
@@ -87,6 +90,7 @@ function displayFileInput() {
 setTimeout("displayFileInput()", 1000); // after 1 second 
 
 function addSecurityDropdown(){
+	$('#addUserSecGroup-panel').show();
 	$.get('/security/getSecgroupEnum')
 		.done(function(data) {
 			if ( $('#addSecGroupDropdown').children().length === 0 ) {
@@ -94,7 +98,6 @@ function addSecurityDropdown(){
 			    	$('#addSecGroupDropdown').append('<li><a href="#">' + '[' + data[i].secid + '] ' + data[i].secname + '</a></li>');
 				}
 			};
-			$('#addUserSecGroup-panel').show();
 		}).error(function(err){
 			alert(err);
 		});
