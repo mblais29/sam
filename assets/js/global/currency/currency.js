@@ -19,6 +19,7 @@ function getCurrencyValue(id){
 	$.ajax('/currency/retrieveCurrencyRecord?currency=' + id,{
       success: function(data) {
       	$('#currencyTypeEdit').val(data.currency);
+      	$('#currencySymEdit').val(data.symbol);
       	$('#currencyDescEdit').val(data.description);
       },
       done: function(data){
