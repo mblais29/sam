@@ -9,17 +9,19 @@ module.exports = {
 	
 	//List of Security Groups page
 	index: function(req, res, next){
-		if(req.session.authenticated && req.session.User.admin){
-			Security.find(function foundSecurity(err,security){
-				if(err) return next(err);
-				res.view({
-					security: security,
-					title: 'Security Groups'
+		if(req.session.authenticated){
+			if(req.session.User.admin){
+				Security.find(function foundSecurity(err,security){
+					if(err) return next(err);
+					res.view({
+						security: security,
+						title: 'Security Groups'
+					});
 				});
-			});
-		}else if(req.session.User.admin === false){
-			res.redirect('/map');
-			return;
+			}else{
+				res.redirect('/map');
+				return;
+			}
 		}else{
 			res.redirect('/session/new');
 			return;

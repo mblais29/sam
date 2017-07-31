@@ -9,19 +9,21 @@ module.exports = {
 	
 	//List of Users page
 	index: function(req, res, next){
-		if(req.session.authenticated && req.session.User.admin){
-			/* Add populateAll to get all the foreign keys for the form model */
-			Forms.find().populateAll().exec(function foundForms(err,data){
-				if(err) return next(err);
-	
-				res.view({
-					forms: data,
-					title: 'Forms'
+		if(req.session.authenticated){
+			if(req.session.User.admin){
+				/* Add populateAll to get all the foreign keys for the form model */
+				Forms.find().populateAll().exec(function foundForms(err,data){
+					if(err) return next(err);
+		
+					res.view({
+						forms: data,
+						title: 'Forms'
+					});
 				});
-			});
-		}else if(req.session.User.admin === false){
-			res.redirect('/map');
-			return;
+			}else{
+				res.redirect('/map');
+				return;
+			}
 		}else{
 			res.redirect('/session/new');
 			return;

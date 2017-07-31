@@ -7,18 +7,20 @@
 
 module.exports = {
 	index: function(req, res, next){
-		if(req.session.authenticated && req.session.User.admin){
-			/* Add populateAll to get all the foreign keys for the client model */
-			Expensecategory.find().populateAll().exec(function foundExpenseCat(err,data){
-				if(err) return next(err);
-				res.view({
-					expensecat: data,
-					title: 'Expense Categories'
+		if(req.session.authenticated){
+			if(req.session.User.admin){
+				/* Add populateAll to get all the foreign keys for the client model */
+				Expensecategory.find().populateAll().exec(function foundExpenseCat(err,data){
+					if(err) return next(err);
+					res.view({
+						expensecat: data,
+						title: 'Expense Categories'
+					});
 				});
-			});
-		}else if(req.session.User.admin === false){
-			res.redirect('/map');
-			return;
+			}else{
+				res.redirect('/map');
+				return;
+			}
 		}else{
 			res.redirect('/session/new');
 			return;
