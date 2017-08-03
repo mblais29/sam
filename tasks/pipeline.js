@@ -20,11 +20,12 @@ var cssFilesToInject = [
     'styles/bootstrap/bootstrap-theme.css',
 	'styles/bootstrap/bootstrap.min.css',
 	'styles/font-awesome/css/font-awesome.min.css',
-	'js/dependencies/leaflet-master-1.1/leaflet.css',
+	'js/dependencies/leaflet-master-1.0.3/leaflet.css',
 	'styles/jquery-ui.min.css',
 	'styles/jquery-ui.structure.min.css',
 	'styles/jquery-ui.theme.css',
 	'styles/bootstrap/bootstrap-datetimepicker.min.css',
+	'js/dependencies/leaflet/Leaflet.draw-master/leaflet.draw.css',
     'styles/**/*.css'
 ];
 
@@ -40,8 +41,7 @@ var jsFilesToInject = [
   'js/dependencies/jquery.min.js',
   'js/dependencies/jquery.validate.min.js',
   'js/dependencies/bootstrap/bootstrap.min.js',
-  'js/dependencies/leaflet/leaflet-src.js',
-  'js/dependencies/leaflet-master-1.1/Leaflet.js',
+  'js/dependencies/leaflet-master-1.0.3/leaflet-src.js',
   'js/dependencies/footable/footable.min.js',
   'js/dependencies/footable/footable.min.js',
   'js/dependencies/bootstrap/bootstrap-filestyle.min.js',
@@ -49,7 +49,7 @@ var jsFilesToInject = [
   'js/dependencies/bootstrap/bootstrap-datetimepicker.min.js',
   'js/dependencies/bootstrap/bootstrap-datetimepicker.uk.js',
   'js/dependencies/leaflet/esri-leaflet-master/src/EsriLeaflet.js',
-  
+  'js/dependencies/leaflet/Leaflet.draw-master/leaflet.draw.js',
 
   // All of the rest of your client-side js files
   // will be injected here in no particular order.
