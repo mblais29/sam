@@ -1,0 +1,63 @@
+<html>
+	<head>
+		<title>Security Page</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	</head>
+	<body id="propertiesIndex">
+		<div class="container-fluid users">
+			<% if (messages && messages['error'].length > 0) { %>
+			  <div class="alert alert-danger securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['error'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<% if (messages && messages['warning'].length > 0) { %>
+			  <div class="alert alert-warning securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['warning'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %>
+			<% if (messages && messages['success'].length > 0) { %>
+			  <div class="alert alert-success securityMessage">
+			  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+			  <% messages['success'].forEach(function(message) { %>
+			    <%= message %>
+			    <br>
+			  <% }); %>
+			  </div>
+			  <br>
+			<% } %> 
+			<h3 id="table-title">Properties</h3>
+			
+			<table id="table-property" class="table table-striped" data-sorting="true" data-filtering="true">
+				<thead>
+					<tr>
+						<th>Client</th>
+						<th>Property ID</th>
+						<th data-type="html" data-breakpoints="all" data-title="Address" data-filterable="true"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Description" data-filterable="true"></th>
+					</tr>
+				</thead>
+				<tbody>
+				  <% _.each(properties, function(property){ %>
+					<tr data-expanded="false" id="property-records" data-id="<%= property.id %>" data-model="property">
+						<td><%= property.client[0].client %></td>
+						<td><%= property.id %></td>
+						<td><%= property.address %></td>
+						<td><%= property.description %></td>
+					</tr>
+				   <% }) %>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html> 

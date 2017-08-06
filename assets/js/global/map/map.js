@@ -34,8 +34,8 @@ if($('body').is('#mapBody')){
 	BASEMAP AND LAYER CONTROL FOR LEGEND
 	****************************************/
 	map.addLayer(esriStreet);
-	L.control.layers(baseMaps).addTo(map);
-	
+	var layerControl = L.control.layers(baseMaps);
+	layerControl.addTo(map);
 	/****************************************
 	ADD LEAFLET-DRAW
 	****************************************/
@@ -57,7 +57,7 @@ if($('body').is('#mapBody')){
                     color: '#FF0000'
                 }
             },
-            circle: true, // Turns off this drawing tool
+            circle: true, // Turns off (false) this drawing tool
             rectangle: {
                 shapeOptions: {
                     clickable: false
@@ -77,13 +77,65 @@ if($('body').is('#mapBody')){
     map.on('draw:created', function (e) {
 		var type = e.layerType,
 			layer = e.layer;
-	
-		if (type === 'marker') {
-			// Do marker specific actions
-		}
-	
+		var geojson = layer.toGeoJSON();
+		var geojsonGeometry = JSON.stringify(geojson.geometry);
+		
+		// Truncate value based on number of decimals
+        var _round = function(num, len) {
+            return Math.round(num*(Math.pow(10, len)))/(Math.pow(10, len));
+        };
+        
+        // Helper method to format LatLng object (x.xxxxxx, y.yyyyyy)
+        var strLatLng = function(latlng) {
+            return "("+_round(latlng.lat, 6)+", "+_round(latlng.lng, 6)+")";
+        };
+        
+        var getPopupContent = function(layer) {
+            // Marker - add lat/long
+            if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+                return strLatLng(layer.getLatLng());
+            // Circle - lat/long, radius
+            } else if (layer instanceof L.Circle) {
+                var center = layer.getLatLng(),
+                    radius = layer.getRadius();
+                return "Center: "+strLatLng(center)+"<br />"
+                      +"Radius: "+_round(radius, 2)+" m";
+            // Rectangle/Polygon - area
+            } else if (layer instanceof L.Polygon) {
+                var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
+                    area = L.GeometryUtil.geodesicArea(latlngs);
+                return "Area: "+L.GeometryUtil.readableArea(area, true);
+            // Polyline - distance
+            } else if (layer instanceof L.Polyline) {
+                var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
+                    distance = 0;
+                if (latlngs.length < 2) {
+                    return "Distance: N/A";
+                } else {
+                    for (var i = 0; i < latlngs.length-1; i++) {
+                        distance += latlngs[i].distanceTo(latlngs[i+1]);
+                    }
+                    return "Distance: "+_round(distance, 2)+" m";
+                }
+            }
+            return null;
+        };
+
+		var content = getPopupContent(layer);
+        if (content !== null) {
+            layer.bindPopup(content);
+        }
+
 		// Do whatever else you need to. (save to db, add to map etc)
 		editableLayers.addLayer(layer);
+	});
+	
+	map.on('draw:editmove', function (e) {
+		var layer = e.layer;
+     	var geojson = layer.toGeoJSON();
+     	var geojsonGeometry = JSON.stringify(geojson.geometry);
+        layer.bindPopup('Added popup on edit move!!');
+
 	});
    
 };

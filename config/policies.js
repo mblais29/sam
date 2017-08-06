@@ -59,6 +59,11 @@ module.exports.policies = {
  	update: ['flashAlert']
   },
   
+  properties: {
+	index: ['flashAlert'],
+	create: ['flashAlert']
+  },
+  
   security: {
 	index: ['flashAlert'],
 	create: ['flashAlert']
