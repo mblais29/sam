@@ -47,5 +47,20 @@ module.exports = {
 			res.json(property);
 		});
 	},
+	
+	'getRecords': function(req,res,next){
+		Properties.find().populateAll().exec(function foundClients(err,data){
+			if(err) return next(err);
+			return res.ok(data);
+		});
+	},
+	
+	'saveProperty': function(req,res,next){
+		var obj = {
+			property_id: req.param('propertyId'),
+			address: req.param('geom')
+			
+		};
+	}
 };
 
