@@ -22,11 +22,11 @@ module.exports = {
 	'saveProperty': function(req,res,next){
 		var pg = require('pg');
 		var pgconnection = new pg.Client({
-			user: 'sam',
-		  	host: '127.0.0.1',
-		  	database: 'sam',
-		  	password: '123',
-		  	port: 5432,
+			user: sails.config.connections.postgresServer.user,
+		  	host: sails.config.connections.postgresServer.host,
+		  	database: sails.config.connections.postgresServer.database,
+		  	password: sails.config.connections.postgresServer.password,
+		  	port: sails.config.connections.postgresServer.port,
 		});
 
 		var geometry = req.param('geom');
