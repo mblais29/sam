@@ -53,14 +53,6 @@ module.exports = {
 			if(err) return next(err);
 			return res.ok(data);
 		});
-	},
-	
-	'saveProperty': function(req,res,next){
-		var obj = {
-			property_id: req.param('propertyId'),
-			address: req.param('geom')
-			
-		};
 	}
 };
 

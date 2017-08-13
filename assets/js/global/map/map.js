@@ -3,6 +3,7 @@
 ****************************************/
 var navBarMargin = 52;
 var propertyList = [];
+var propertyGeojsonGeometry;
 
 if($('body').is('#mapBody')){
 	/****************************************
@@ -79,8 +80,8 @@ if($('body').is('#mapBody')){
 		var type = e.layerType,
 			layer = e.layer;
 		var geojson = layer.toGeoJSON();
-		var geojsonGeometry = JSON.stringify(geojson.geometry);
-
+		propertyGeojsonGeometry = JSON.stringify(geojson.geometry);
+		
 		var content = getPopupContent(layer);
         if (content !== null) {
         	console.log(content);
@@ -89,19 +90,17 @@ if($('body').is('#mapBody')){
 		
 		var content = '<div class="form-group"><div class="ui-widget"><input type="text" class="form-control" id="search-properties" placeholder="Enter property name..."></div></div>';
 
-        layer.bindPopup('<div id="propPopup">' + content + '</br><button type="button" class="btn btn-success">Save</button>' + '</div>');
+        layer.bindPopup('<div id="propPopup">' + content + '</br><button type="button" class="btn btn-success" onclick="saveProperty()">Save</button></div>');
 
 		editableLayers.addLayer(layer);
 		layerControl.addOverlay(editableLayers, 'Drawn Asset');
+		
 	});
 	
 	map.on('draw:edited', function (e) {
 		var layer = e.layers;
      	var geojson = layer.toGeoJSON();
-     	var geojsonGeometry = JSON.stringify(geojson.features[0].geometry);
-        
-        console.log(geojson);
-        console.log(geojsonGeometry);
+     	propertyGeojsonGeometry = JSON.stringify(geojson.features[0].geometry);
 	});
 	
 	map.on('popupopen', function (e) {
@@ -191,5 +190,30 @@ function initializeAutoComplete(){
     $( "#search-properties" ).autocomplete({
 	  source: propertyList
 	});
+};
+
+function saveProperty(){
+	var record = $('#search-properties').val();
+	
+	var regex = /\[(.*?)\]/g;
+	var newStr = record.match(regex);
+	var id = "";
+	if(newStr != null){
+		id = newStr[0].replace(/[\[\]']+/g, '');
+	}
+	//console.log(id);
+	//console.log(propertyGeojsonGeometry);
+	
+	$.ajax('/map/saveProperty?id=' + id + '&geom=' + JSON.stringify(propertyGeojsonGeometry),{
+      success: function(data) {
+      	location.reload();
+      },
+      done: function(data){
+      	
+      },
+      error: function(err) {
+         console.log(err);
+      }
+    });
 }
 

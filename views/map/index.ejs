@@ -4,6 +4,41 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	</head>
 	<body id="mapBody">
+		<% if (messages && messages['error'].length > 0) { %>
+		  <div class="alert alert-danger mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['error'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['error'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		    
+		  <% }); %>
+		  </div>
+		<% } %>
+		<% if (messages && messages['warning'].length > 0) { %>
+		  <div class="alert alert-warning mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['warning'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['warning'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		  <% }); %>
+		  </div>
+		<% } %>
+		<% if (messages && messages['success'].length > 0) { %>
+		  <div class="alert alert-success mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['success'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['success'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		  <% }); %>
+		  </div>
+		<% } %>
+		
 		<div id="map"></div>
 		
 	</body>

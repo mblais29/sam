@@ -59,6 +59,10 @@ module.exports.policies = {
  	update: ['flashAlert']
   },
   
+  map: {
+  	index: ['flashAlert']
+  },
+  
   properties: {
 	index: ['flashAlert'],
 	create: ['flashAlert']
