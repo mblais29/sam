@@ -3,7 +3,7 @@
 ****************************************/
 var navBarMargin = 52;
 var propertyList = [];
-var propertyGeojsonGeometry;
+var mapProperties = L.featureGroup();
 
 if($('body').is('#mapBody')){
 	/****************************************
@@ -217,3 +217,36 @@ function saveProperty(){
     });
 }
 
+function getProperties(){
+	$.ajax('/properties/getPropertyLocations',{
+      success: function(data) {
+      	var properties = data.rows;
+		for(var i = 0; i < properties.length; i++){
+			var propertyGeojson = JSON.parse(properties[i].geojson);
+			var property = L.geoJSON(propertyGeojson, {
+			    /*pointToLayer: function (feature, latlng) {
+			        return L.circleMarker(latlng, geojsonMarkerOptions);
+			    }*/
+			   	onEachFeature: function (feature, layer) {
+			   		console.log(feature);
+			   		console.log(layer);
+			   	}
+			});
+			mapProperties.addLayer(property);
+		}
+		createProperty();
+      },
+      done: function(data){
+
+      },
+      error: function(err) {
+         console.log(err);
+      }
+    });
+}
+
+function createProperty(){
+	layerControl.addOverlay(mapProperties, 'Properties');
+	map.fitBounds(mapProperties.getBounds());
+	map.addLayer(mapProperties);
+}

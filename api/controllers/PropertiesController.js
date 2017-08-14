@@ -53,6 +53,30 @@ module.exports = {
 			if(err) return next(err);
 			return res.ok(data);
 		});
+	},
+	
+	'getPropertyLocations': function(req,res,next){
+
+		var pg = require('pg');
+		var pgconnection = new pg.Client({
+			user: sails.config.connections.postgresServer.user,
+		  	host: sails.config.connections.postgresServer.host,
+		  	database: sails.config.connections.postgresServer.database,
+		  	password: sails.config.connections.postgresServer.password,
+		  	port: sails.config.connections.postgresServer.port,
+		});
+		
+		var queryString = 'SELECT property_id, ST_AsGeoJSON(geom) as geojson FROM public.property_objects';
+		
+		pgconnection.connect(function(err, property, done){
+			property.query(queryString, function(err, result){
+				if(err){
+					console.log(err);
+				};
+				property.end();
+				return res.ok(result);
+			});
+		});
 	}
 };
 
