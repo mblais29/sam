@@ -90,8 +90,8 @@ if($('body').is('#mapBody')){
 	    container.style.backgroundColor = 'white';
 	    container.style.padding = '2px';
 	    var insideDiv = "";
-	    insideDiv += '<a href="#" title="Zoom to All Properties" onclick="getPropertyLocations()" ><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="color:black"></i></a>';
-	    insideDiv += '<a href="#" title="Reset View" onclick="resetMapView()"><i class="fa fa-expand fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
+	    insideDiv += '<a href="#" title="Zoom to All Properties" onclick="getPropertyLocations(); return false" ><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="color:black"></i></a>';
+	    insideDiv += '<a href="#" title="Reset View" onclick="resetMapView(); return false"><i class="fa fa-expand fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
 	    
 	    container.innerHTML = insideDiv;
 
