@@ -1,9 +1,12 @@
 /****************************************
 	GLOBAL VARIABLES
 ****************************************/
+var mapOnLoadCenter = new L.LatLng(56.1304, -106.3468);
+var mapOnLoadZoom = 4;
 var navBarMargin = 52;
 var propertyList = [];
 var mapProperties = L.featureGroup();
+
 
 if($('body').is('#mapBody')){
 	/****************************************
@@ -18,7 +21,7 @@ if($('body').is('#mapBody')){
 	/****************************************
 	ADDING GOOGLE MAP LAYERS
 	****************************************/
-	var map = L.map('map', {center: new L.LatLng(54.0000, -125.0000), zoom: 6});
+	var map = L.map('map', {center: mapOnLoadCenter, zoom: mapOnLoadZoom});
 		
 		var esriStreet = new L.esri.basemapLayer('Streets');
 		var esriTopo = new L.esri.basemapLayer('Topographic');
@@ -76,6 +79,29 @@ if($('body').is('#mapBody')){
     var drawControl = new L.Control.Draw(options);
     map.addControl(drawControl);
     
+	var propertyControl = L.Control.extend({
+	 
+	  options: {
+	    position: 'bottomright' 
+	  },
+	 
+	  onAdd: function (map) {
+	    var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+	    container.style.backgroundColor = 'white';
+	    container.style.padding = '2px';
+	    var insideDiv = "";
+	    insideDiv += '<a href="#" title="Zoom to All Properties" onclick="getPropertyLocations()" ><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="color:black"></i></a>';
+	    insideDiv += '<a href="#" title="Reset View" onclick="resetMapView()"><i class="fa fa-expand fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
+	    
+	    container.innerHTML = insideDiv;
+
+	    return container;
+	  }
+	 
+	});
+	
+	map.addControl(new propertyControl());
+
     map.on('draw:created', function (e) {
 		var type = e.layerType,
 			layer = e.layer;
@@ -108,6 +134,7 @@ if($('body').is('#mapBody')){
 	});
    
    getProperties();
+   
 };
 
 /****************************************
@@ -118,6 +145,15 @@ if($('body').is('#mapBody')){
 function resize(){
 	$('#map').css("height", ($(window).height() - navBarMargin));
 	$('#map').css("width", ($(window).width()));    
+}
+
+function resetMapView(){
+	if(map.hasLayer(mapProperties)){
+		layerControl.removeLayer(mapProperties);
+		map.removeLayer(mapProperties);
+		mapProperties = L.featureGroup();
+	}
+	map.setView(mapOnLoadCenter, mapOnLoadZoom);
 }
 
 function removePanel(){
@@ -217,7 +253,7 @@ function saveProperty(){
     });
 }
 
-function getProperties(){
+function getPropertyLocations(){
 	$.ajax('/properties/getPropertyLocations',{
       success: function(data) {
       	var properties = data.rows;
@@ -228,11 +264,13 @@ function getProperties(){
 			        return L.circleMarker(latlng, geojsonMarkerOptions);
 			    }*/
 			   	onEachFeature: function (feature, layer) {
-			   		console.log(feature);
-			   		console.log(layer);
+			   		//console.log(feature);
+			   		//console.log(layer);
 			   	}
 			});
-			mapProperties.addLayer(property);
+			if(!map.hasLayer(mapProperties)){
+				mapProperties.addLayer(property);
+			}
 		}
 		createProperty();
       },
@@ -246,7 +284,10 @@ function getProperties(){
 }
 
 function createProperty(){
-	layerControl.addOverlay(mapProperties, 'Properties');
+	if(!map.hasLayer(mapProperties)){
+		layerControl.addOverlay(mapProperties, 'Properties');
+		map.addLayer(mapProperties);
+	}
 	map.fitBounds(mapProperties.getBounds());
-	map.addLayer(mapProperties);
+	
 }
