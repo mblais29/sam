@@ -6,6 +6,7 @@ var mapOnLoadZoom = 4;
 var navBarMargin = 52;
 var propertyList = [];
 var mapProperties = L.featureGroup();
+var propertyMarkers = L.featureGroup();
 
 
 if($('body').is('#mapBody')){
@@ -50,25 +51,25 @@ if($('body').is('#mapBody')){
 	 var options = {
         position: 'topleft',
         draw: {
-            polyline: {
+            polyline: false, /*{
                 shapeOptions: {
                     color: '#f357a1',
                     weight: 10
                 }
-            },
+            },*/
             polygon: {
                 allowIntersection: true, // Restricts shapes to simple polygons
                 shapeOptions: {
                     color: '#FF0000'
                 }
             },
-            circle: true, // Turns off (false) this drawing tool
-            rectangle: {
+            circle: false, // Turns off (false) this drawing tool
+            rectangle: false, /*{
                 shapeOptions: {
                     clickable: false
                 }
-            },
-            marker: true
+            },*/
+            marker: false
         },
         edit: {
             featureGroup: editableLayers, //REQUIRED!!
@@ -129,6 +130,10 @@ if($('body').is('#mapBody')){
      	propertyGeojsonGeometry = JSON.stringify(geojson.features[0].geometry);
 	});
 	
+	map.on('draw:deleted', function (e) {
+		layerControl.removeLayer(editableLayers);
+	});
+	
 	map.on('popupopen', function (e) {
 	    initializeAutoComplete();
 	});
@@ -148,10 +153,13 @@ function resize(){
 }
 
 function resetMapView(){
-	if(map.hasLayer(mapProperties)){
+	if(map.hasLayer(mapProperties) || map.hasLayer(propertyMarkers)){
 		layerControl.removeLayer(mapProperties);
+		layerControl.removeLayer(propertyMarkers);
 		map.removeLayer(mapProperties);
+		map.removeLayer(propertyMarkers);
 		mapProperties = L.featureGroup();
+		propertyMarkers = L.featureGroup();
 	}
 	map.setView(mapOnLoadCenter, mapOnLoadZoom);
 }
@@ -259,13 +267,21 @@ function getPropertyLocations(){
       	var properties = data.rows;
 		for(var i = 0; i < properties.length; i++){
 			var propertyGeojson = JSON.parse(properties[i].geojson);
+			var propertyId = properties[i].property_id;
+			
 			var property = L.geoJSON(propertyGeojson, {
 			    /*pointToLayer: function (feature, latlng) {
 			        return L.circleMarker(latlng, geojsonMarkerOptions);
 			    }*/
 			   	onEachFeature: function (feature, layer) {
-			   		//console.log(feature);
-			   		//console.log(layer);
+			   		if(feature.type === 'Polygon' || feature.type === 'MultiPolygon'){
+			   			var centroid = layer.getBounds().getCenter();
+			   			var marker = L.marker(centroid);
+			   			if(!map.hasLayer(propertyMarkers)){
+			   				propertyMarkers.addLayer(marker);
+			   			}
+			   			createPropertyPopup(propertyId, layer);
+			   		}
 			   	}
 			});
 			if(!map.hasLayer(mapProperties)){
@@ -284,10 +300,31 @@ function getPropertyLocations(){
 }
 
 function createProperty(){
-	if(!map.hasLayer(mapProperties)){
+	if(!map.hasLayer(mapProperties) || map.hasLayer(propertyMarkers)){
 		layerControl.addOverlay(mapProperties, 'Properties');
-		map.addLayer(mapProperties);
+		layerControl.addOverlay(propertyMarkers, 'Property Markers');
+		map.addLayer(propertyMarkers);
 	}
 	map.fitBounds(mapProperties.getBounds());
 	
+}
+
+function createPropertyPopup(property_id, layer){
+	$.ajax('/map/getPropertyRecords?property_id=' + property_id,{
+      success: function(data) {
+
+      	var popupInfo = "";
+      		popupInfo += '<b>Client: </b>' + data[0].client[0].client + '</br>';
+      		popupInfo += '<b>Address: </b>' + data[0].address + '</br>';
+      		popupInfo += '<b>Description: </b>' + data[0].description + '</br>';
+
+      	layer.bindPopup('<div class="propertyPopupDiv">' + popupInfo + '</div>');
+      },
+      done: function(data){
+
+      },
+      error: function(err) {
+         console.log(err);
+      }
+    });
 }
