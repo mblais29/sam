@@ -43,21 +43,6 @@ if($('body').is('#mapBody')){
 	map.addLayer(esriStreet);
 	var layerControl = L.control.layers(baseMaps);
 	layerControl.addTo(map);
-	
-	/****************************************
-	ADD ESRI GEOCODING SERVICE API
-	****************************************/
-	
-    var searchControl = L.esri.Geocoding.geosearch().addTo(map);
-
-    var results = L.layerGroup().addTo(map);
-
-    searchControl.on("results", function(data) {
-        results.clearLayers();
-        for (var i = data.results.length - 1; i >= 0; i--) {
-            results.addLayer(L.marker(data.results[i].latlng));
-        }
-    });
     
 	/****************************************
 	ADD LEAFLET-DRAW
@@ -155,7 +140,22 @@ if($('body').is('#mapBody')){
 	map.on('popupopen', function (e) {
 	    initializeAutoComplete();
 	});
-   
+    
+    /****************************************
+	ADD ESRI GEOCODING SERVICE API
+	****************************************/
+	
+    var searchControl = L.esri.Geocoding.geosearch().addTo(map);
+
+    var results = L.layerGroup().addTo(map);
+
+    searchControl.on("results", function(data) {
+        results.clearLayers();
+        for (var i = data.results.length - 1; i >= 0; i--) {
+            results.addLayer(L.marker(data.results[i].latlng));
+        }
+    });
+    
    getProperties();
    
 };
