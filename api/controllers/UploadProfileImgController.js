@@ -30,7 +30,7 @@ module.exports = {
 						res.json(err);
 					}
 				});  
-			  return res.redirect('/user/show?email=' + userId);
+			  return res.redirect('/users/show?email=' + userId);
 		  
 			});
 	}

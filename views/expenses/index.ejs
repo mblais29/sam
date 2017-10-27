@@ -119,12 +119,12 @@
 				<thead>
 					<tr>
 						<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
+						<th>Client</th>
 						<th>Name</th>
 						<th>Expense ID</th>
-						<th>Add Receipts</th>
+						<th data-sortable="false">Add Receipts</th>
 						<th data-type="html" data-breakpoints="all" data-title="Employee">Employee</th>
 						<th data-type="html" data-breakpoints="all" data-title="Category">Category</th>
-						<th data-type="html" data-breakpoints="all" data-title="Client">Client</th>
 						<th data-type="html" data-breakpoints="all" data-title="Comment" data-filterable="false">Comment</th>
 						<th data-type="html" data-breakpoints="all" data-title="Date" data-filterable="false">Date</th>
 						<th data-type="html" data-breakpoints="all" data-title="Amount" data-filterable="false">Amount</th>
@@ -138,12 +138,12 @@
 				  <% _.each(expenses, function(expense){ %>
 
 					<tr data-expanded="false" id="expense-records" data-id="<%= expense.id %>" data-model="expenses">
+						<td><%= expense.client[0].client %></td>
 						<td><%= expense.name %></td>
 						<td><%= expense.id %></td>
 						<td><button onclick="addReceipt(<%= expense.id %>)" class="btn btn-sm btn-info receipt-file">Add</button></td>
 						<td><%= expense.employee %></td>
 						<td><%= expense.category[0].description %></td>
-						<td><%= expense.client[0].client %></td>
 						<td><%= expense.comment %></td>
 						<td><%= moment(expense.date).format('LL') %></td>
 						<td><%= expense.currency[0].symbol %><%= expense.amount %></td>
