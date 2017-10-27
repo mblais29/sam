@@ -13,7 +13,7 @@ module.exports = {
 				Properties.find().populateAll().exec(function foundClients(err,data){
 					if(err) return next(err);
 					res.view({
-						properties: data,
+						property: data,
 						title: 'Properties'
 					});
 				});
