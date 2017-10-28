@@ -73,7 +73,6 @@ module.exports = {
 		}); 
 	},
 	
-	//Delete a Security Group
 	destroy: function(req, res, next){
 		Client.findOne(req.param('clientid'), function foundClient(err,client){
 			if(err){

@@ -13,7 +13,7 @@ module.exports = {
 				Properties.find().populateAll().exec(function foundClients(err,data){
 					if(err) return next(err);
 					res.view({
-						property: data,
+						properties: data,
 						title: 'Properties'
 					});
 				});
@@ -30,7 +30,7 @@ module.exports = {
 	create: function(req,res,next){
 
 		var obj = {
-			client: req.param('property-client'),
+			client: req.param('propertyCliHidden'),
 			address: req.param('property-address'),
 			description: req.param('property-desc'),
 			
@@ -38,13 +38,36 @@ module.exports = {
 		
 		Properties.create(obj, function propertycreate(err,property){
 			if(err){
-				//AlertService.error(req, JSON.stringify(err));
-				//res.redirect('/map');
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/properties');
 			};
 
-			//AlertService.success(req, 'Property created successfully!');
-			//res.redirect('/map');
-			res.json(property);
+			AlertService.success(req, 'Property created successfully!');
+			res.redirect('/properties');
+		});
+	},
+	
+	destroy: function(req, res, next){
+		Properties.find().where({id: req.param('propertyid')}).populateAll().exec(function foundProperty(err,property){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/properties');
+			}
+			if(!property) {
+				AlertService.warning(req, 'Property doesn\'t exist...');
+				res.redirect('/properties');
+			}
+
+			Properties.destroy(req.param('propertyid'), function propertyDestroyed(err){
+				if(err){
+					AlertService.error(req, JSON.stringify(err));
+					res.redirect('/properties');
+				}
+				
+			});
+
+			AlertService.success(req, 'You have deleted the ' + property[0].client[0].client + ' property record, with ' + property[0].client[0].contact + ' as a contact!');
+			res.redirect('/properties');
 		});
 	},
 	
@@ -77,6 +100,8 @@ module.exports = {
 				return res.ok(result);
 			});
 		});
-	}
+	},
+	
+	
 };
 

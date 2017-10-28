@@ -53,13 +53,13 @@
 				  <div class="form-group">
 				    <label class="control-label col-sm-2" for="propertyDesc">Description:</label>
 				    <div class="col-sm-10">
-				      <input type="text" class="form-control" id="propertyDesc" name="property-desc" placeholder="Enter description...">
+				      <textarea class="form-control" rows="5" id="propertyDesc" name="property-desc"></textarea>
 				    </div>
 				  </div>
 				  <div class="form-group"> 
 				    <div class="col-sm-offset-2 col-sm-10">
 				      <button type="submit" class="btn btn-default pull-right">Submit</button>
-				      <button type="button" id="currencyClose" class="btn btn-default pull-right btn-close" onclick="closeCurrencyAddPanel()">Close</button>
+				      <button type="button" id="propertyClose" class="btn btn-default pull-right btn-close" onclick="closePropertyAddPanel()">Close</button>
 			  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
 				    </div>
 				  </div>
@@ -73,6 +73,8 @@
 						<th>Property ID</th>
 						<th data-type="html" data-breakpoints="all" data-title="Address" data-filterable="true"></th>
 						<th data-type="html" data-breakpoints="all" data-title="Description" data-filterable="true"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Edit Property" data-filterable="false"></th>
+						<th data-type="html" data-breakpoints="all" data-title="Delete Property" data-filterable="false"></th>
 						<th data-filterable="false" data-sortable="false"><button id="propertyAdd" onclick="createButtonAddEvent(this.id)" class="btn btn-sm btn-primary">Add</button></th>
 					</tr>
 				</thead>
@@ -83,6 +85,14 @@
 						<td><%= property.id %></td>
 						<td><%= property.address %></td>
 						<td><%= property.description %></td>
+						<td><button id="propertyEdit<%= property.id %>" class="btn btn-sm btn-warning" onclick="getPropertyValue('<%= property.id %>')" value="<%= property.id %>">Edit</button></td>
+						<td>
+							<form action="/properties/destroy?propertyid=<%= property.id %>" method="POST">
+								<input type="hidden" name="_method" value="delete" />
+								<input type="submit" class="btn btn-sm btn-danger" value="Delete" />
+								<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+							</form>
+						</td>
 					</tr>
 				   <% }) %>
 				</tbody>
