@@ -62,7 +62,7 @@ module.exports = {
 			email: req.param('client-email')
 		};
 		
-		Client.update(req.param('client-id'), obj, function cientUpdated(err){
+		Client.update(req.param('client-id'), obj, function clientUpdated(err){
 			if(err){
 				AlertService.error(req, JSON.stringify(err));
 				res.redirect('/client');

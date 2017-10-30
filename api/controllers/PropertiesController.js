@@ -47,6 +47,26 @@ module.exports = {
 		});
 	},
 	
+	update: function(req, res, next){
+
+
+		var obj = {
+			client: req.param('propertyClientHidden'),
+			address: req.param('property-address'),
+			description: req.param('desc')
+		};
+		
+		Properties.update(req.param('property-id'), obj, function propertyUpdated(err){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/properties');
+				return;
+			}
+			AlertService.success(req, 'Property updated successfully!');
+			return res.redirect('/properties');
+		}); 
+	},
+	
 	destroy: function(req, res, next){
 		Properties.find().where({id: req.param('propertyid')}).populateAll().exec(function foundProperty(err,property){
 			if(err){
@@ -68,6 +88,13 @@ module.exports = {
 
 			AlertService.success(req, 'You have deleted the ' + property[0].client[0].client + ' property record, with ' + property[0].client[0].contact + ' as a contact!');
 			res.redirect('/properties');
+		});
+	},
+	
+	'getSelectedRecord': function(req,res,next){
+		Properties.find().where({id: req.param('id')}).populateAll().exec(function foundProperty(err,data){
+			if(err) return next(err);
+			return res.ok(data);
 		});
 	},
 	

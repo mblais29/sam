@@ -66,6 +66,44 @@
 				</form>
 			  </div>
 			</div>
+			
+			<div id="property-edit" class="panel panel-default">
+			  <div class="panel-heading">Edit Property Details</div>
+			  <div class="panel-body">
+			  	<form class="form-horizontal" id="propertyEdit" action="/properties/update">
+			  	  <div class="form-group">
+				    <label class="control-label col-sm-2" for="property-id">ID:</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="property-id" name="property-id" readonly>
+				    </div>
+				  </div>
+				  <div class="form-group" id="property-client">
+				    
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-2" for="property-address">Address:</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" id="property-address" name="property-address" >
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-2" for="desc">Description:</label>
+				    <div class="col-sm-10">
+				      <textarea class="form-control" rows="5" id="desc" name="desc"></textarea>
+				    </div>
+				  </div>
+		
+				  <div class="form-group"> 
+				    <div class="col-sm-offset-2 col-sm-10">
+				      <button type="submit" class="btn btn-default pull-right">Submit</button>
+				      <button type="button" id="propertyEditClose" class="btn btn-default pull-right btn-close">Close</button>
+			  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				    </div>
+				  </div>
+				</form>
+			  </div>
+			</div>
+			
 			<table id="table-property" class="table table-striped" data-sorting="true" data-filtering="true">
 				<thead>
 					<tr>
