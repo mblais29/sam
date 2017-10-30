@@ -20,8 +20,13 @@
 module.exports = function(grunt) {
   grunt.registerTask('build', [
     'compileAssets',
-    'linkAssetsBuild',
+    'concat',
+    'uglify',
+    'cssmin',
+    'linkAssetsBuildProd',
     'clean:build',
-    'copy:build'
+    'copy:build',
+    'copy:fonts',
+    'copy:images',
   ]);
 };

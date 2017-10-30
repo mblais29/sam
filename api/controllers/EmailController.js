@@ -36,7 +36,7 @@ module.exports = {
 			    userId: user.id
 			  },
 			  {
-			    from: "Admin <admin@mblais.com>",
+			    from: "Admin <admin@sam.com>",
 			    to: user.email,
 			    subject: "Password Reset Email"
 			  },

@@ -37,7 +37,39 @@ module.exports = function(grunt) {
         src: ['**/*'],
         dest: 'www'
       }]
-    }
+    },
+    fonts: {
+      files: [
+        {
+          expand: true,
+          flatten: true,
+          src: ['.tmp/public/styles/font-awesome/fonts/*'],
+          dest: '.tmp/public/fonts'
+        },
+        {
+          expand: true,
+          flatten: true,
+          src: ['.tmp/public/styles/bootstrap/fonts/*'],
+          dest: '.tmp/public/fonts'
+        },
+      ]
+    },
+    images: {
+      files: [
+        {
+          expand: true,
+          flatten: true,
+          src: ['.tmp/public/js/dependencies/leaflet/Leaflet.draw-master/images/*'],
+          dest: '.tmp/public/min/images'
+        },
+        {
+          expand: true,
+          flatten: true,
+          src: ['.tmp/public/js/dependencies/leaflet/esri-leaflet-geocoder-v2.2.6/img/*'],
+          dest: '.tmp/public/min/img'
+        },
+      ]
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-copy');

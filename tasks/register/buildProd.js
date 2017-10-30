@@ -23,7 +23,9 @@ module.exports = function(grunt) {
     'cssmin',
     'linkAssetsBuildProd',
     'clean:build',
-    'copy:build'
+    'copy:build',
+    'copy:fonts',
+    'copy:images'
   ]);
 };
 
