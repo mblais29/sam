@@ -109,7 +109,7 @@
 			<% if(session.authenticated && session.User.id == user.id) { %>
 				<a href="/upload-file" id="uploadProfileImg" name="uploadProfileImg" class="btn btn-sm btn-info" />Upload Profile Image</a>
 			<% } %>
-			<input type="submit" value="Submit" class="btn btn-lg btn-primary btn-block" onclick="submitAddSecGroup()"/>
+			<input type="submit" id="editUserSubmit" class="btn btn-lg btn-primary" onclick="submitAddSecGroup()" value="Submit"  />
 		</div>
 	</body>
 </html>
