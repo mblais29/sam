@@ -115,44 +115,73 @@ module.exports = {
 		 
 		 /* Removes any underscores in the field name when inserting new record */
 		 var finalRecord = ObjectServices.removeUnderscore(lowercaseRecord);
-
+		 var invalidFilesTypes = [];
+		 
 		 sails.models[table].create(finalRecord).exec(function (err, records) {
 			if(err){
 				AlertService.error(req, JSON.stringify(err));
 				res.redirect('/forms/myForms');
 			};
-
+			
+			
 			//If files exist in the parameters upload the file to the docs bucket
 			 if(typeof req._fileparser.upstreams[0] !== 'undefined'){
 			 	var uploadFile = req._fileparser.upstreams[0];
 				var filesUploaded = {};
-			 	uploadFile.upload({
-				  dirname: sails.config.conf.docUrl
-				}, function(err, uploadedFiles) {
-				  if (err) { return res.serverError(err); }
-				  for(var i = 0; i < uploadedFiles.length; i++){
-				  	filesUploaded[uploadedFiles[i].filename] = uploadedFiles[i].fd;
-				  }
+				
+				var checkFiles = uploadFile._files;
 
-				  sails.models[table].findOne({id: records["id"]}).exec(
-					  function(err,foundRecords){
-					  	
-					    var getOneRecord = foundRecords;
-					    getOneRecord[binaryField] = filesUploaded;
-					    getOneRecord.save(
-					      function(err){
-					      	if(err){
-								AlertService.error(req, JSON.stringify(err));
-								res.redirect('/forms/myForms');
-							};
-					      });
+				var numberOfValidFiles = 0;
+				var numberOfInValidFiles = 0;
+				
+				var validFileType = sails.config.conf.allowedTypes;
+				
+				for(var a = 0; a < checkFiles.length; a++){
+					if(validFileType.indexOf(checkFiles[a]["stream"].headers["content-type"]) != -1){
+						numberOfValidFiles++;
+					}else{
+						var error = checkFiles[a]["stream"].filename + ": [ " + checkFiles[a]["stream"].headers["content-type"] + " ] - Invalid File Type";
+						invalidFilesTypes.push(error);
+						numberOfInValidFiles++;
+					}
+				};
+				
+				if(numberOfInValidFiles === 0){
+				 	uploadFile.upload({
+					  dirname: sails.config.conf.docUrl
+					}, function(err, uploadedFiles) {
+					  if (err) { return res.serverError(err); }
+					  for(var i = 0; i < uploadedFiles.length; i++){
+					  	filesUploaded[uploadedFiles[i].filename] = uploadedFiles[i].fd;
+					  }
+	
+					  sails.models[table].findOne({id: records["id"]}).exec(
+						  function(err,foundRecords){
+						  	
+						    var getOneRecord = foundRecords;
+						    getOneRecord[binaryField] = filesUploaded;
+						    getOneRecord.save(
+						      function(err){
+						      	if(err){
+									AlertService.error(req, JSON.stringify(err));
+									res.redirect('/forms/myForms');
+								};
+						      });
+						});
 					});
-				});
+				}
 			 }
+			
+			if(invalidFilesTypes.length > 0){
+			 	AlertService.error(req, JSON.stringify(invalidFilesTypes));
+			 	res.redirect('/forms/myForms');
+			}else{
+				AlertService.success(req, 'Record saved successfully!');
+			 	res.redirect('/forms/myForms');
+			}
 			return res.ok();
 		 });
-		 AlertService.success(req, 'Record saved successfully!');
-		 res.redirect('/forms/myForms');
+		 
 	},
 	
 	'getDocs': function(req, res, next){

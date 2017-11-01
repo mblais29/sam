@@ -94,7 +94,7 @@ if($('body').is('#mapBody')){
 	    container.style.backgroundColor = 'white';
 	    container.style.padding = '2px';
 	    var insideDiv = "";
-	    insideDiv += '<a href="#" title="Zoom to All Properties" onclick="getPropertyLocations(); return false" ><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="color:black"></i></a>';
+	    insideDiv += '<a href="#" title="Zoom to All Properties" onclick="zoomToAllProperties(); return false" ><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="color:black"></i></a>';
 	    insideDiv += '<a href="#" title="Reset View" onclick="resetMapView(); return false"><i class="fa fa-expand fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
 	    
 	    container.innerHTML = insideDiv;
@@ -157,6 +157,7 @@ if($('body').is('#mapBody')){
     });
     
    getProperties();
+   getPropertyLocations();
    
 };
 
@@ -171,14 +172,14 @@ function resize(){
 }
 
 function resetMapView(){
-	if(map.hasLayer(mapProperties) || map.hasLayer(propertyMarkers)){
+	/*if(map.hasLayer(mapProperties) || map.hasLayer(propertyMarkers)){
 		layerControl.removeLayer(mapProperties);
 		layerControl.removeLayer(propertyMarkers);
 		map.removeLayer(mapProperties);
 		map.removeLayer(propertyMarkers);
 		mapProperties = L.featureGroup();
 		propertyMarkers = L.featureGroup();
-	}
+	}*/
 	map.setView(mapOnLoadCenter, mapOnLoadZoom);
 }
 
@@ -321,10 +322,13 @@ function createProperty(){
 	if(!map.hasLayer(mapProperties) || map.hasLayer(propertyMarkers)){
 		layerControl.addOverlay(mapProperties, 'Properties');
 		layerControl.addOverlay(propertyMarkers, 'Property Markers');
-		map.addLayer(propertyMarkers);
 	}
-	map.fitBounds(mapProperties.getBounds());
 	
+}
+
+function zoomToAllProperties(){
+	map.fitBounds(mapProperties.getBounds());
+	map.addLayer(propertyMarkers);
 }
 
 function createPropertyPopup(property_id, layer){

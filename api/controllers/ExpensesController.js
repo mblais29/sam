@@ -124,48 +124,69 @@ module.exports = {
 		
 		if(typeof req._fileparser.upstreams[0] !== 'undefined'){
 		 	var uploadFile = req._fileparser.upstreams[0];
+			var checkFiles = uploadFile._files;
 
-		 	uploadFile.upload({
-			  dirname: sails.config.conf.docUrl
-			}, function(err, uploadedFiles) {
-			  if (err) { return res.serverError(err); }
-			  console.log(uploadedFiles.length);
-			  for(var i = 0; i < uploadedFiles.length; i++){
-			  	filesUploaded[uploadedFiles[i].filename] = uploadedFiles[i].fd;
-			  }
-			  Expenses.findOne({id: expenseId}).exec(function (err, result){
+			var numberOfValidFiles = 0;
+			var numberOfInValidFiles = 0;
+			var invalidFilesTypes = [];
+			
+			var validFileType = sails.config.conf.allowedTypes;
+			
+			for(var a = 0; a < checkFiles.length; a++){
+				if(validFileType.indexOf(checkFiles[a]["stream"].headers["content-type"]) != -1){
+					numberOfValidFiles++;
+				}else{
+					var error = checkFiles[a]["stream"].filename + ": [ " + checkFiles[a]["stream"].headers["content-type"] + " ] - Invalid File Type";
+					invalidFilesTypes.push(error);
+					numberOfInValidFiles++;
+				}
+			};
+			
+			if(numberOfInValidFiles === 0){
+			 	uploadFile.upload({
+				  dirname: sails.config.conf.docUrl
+				}, function(err, uploadedFiles) {
+				  if (err) { return res.serverError(err); }
 				  
-				  if(err){
-					AlertService.error(req, JSON.stringify(err));
-					res.redirect('/expenses');
-				  };
-
-				  var currentDocs = result.documents;
-				  
-				  for(var key in filesUploaded){
-				  	newObj[key] = filesUploaded[key];
+				  for(var i = 0; i < uploadedFiles.length; i++){
+				  	filesUploaded[uploadedFiles[i].filename] = uploadedFiles[i].fd;
 				  }
 				  
-				  for(var key in currentDocs){
-				  	newObj[key] = currentDocs[key];
-				  }
-				  
-				  newDocObj['documents'] = newObj;
-				  
-				  Expenses.update(expenseId, newDocObj, function docsUpdated(err){
-					if(err){
+				  Expenses.findOne({id: expenseId}).exec(function (err, result){
+					  
+					  if(err){
 						AlertService.error(req, JSON.stringify(err));
 						res.redirect('/expenses');
-						};
-					
-					AlertService.success(req, 'Document added successfully!');
-					res.redirect('/expenses');
+					  };
+	
+					  var currentDocs = result.documents;
+					  
+					  for(var key in filesUploaded){
+					  	newObj[key] = filesUploaded[key];
+					  }
+					  
+					  for(var key in currentDocs){
+					  	newObj[key] = currentDocs[key];
+					  }
+					  
+					  newDocObj['documents'] = newObj;
+					  
+					  Expenses.update(expenseId, newDocObj, function docsUpdated(err){
+						if(err){
+							AlertService.error(req, JSON.stringify(err));
+							res.redirect('/expenses');
+							};
+						
+						AlertService.success(req, 'Document added successfully!');
+						res.redirect('/expenses');
+					  });
 				  });
-			  });
-
-			});
-
-		 }
+				});
+			  }else{
+			  	AlertService.error(req, JSON.stringify(invalidFilesTypes));
+				res.redirect('/expenses');
+			  }
+			}
 	},
 	
 	'removeReceipt': function(req, res, next){
