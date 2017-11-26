@@ -11,6 +11,8 @@ module.exports = {
 		var userObj = {
 			email: req.param('email')
 		};
+		
+		
 		//Finds the user by their email
 		Users.findOneByEmail(userObj.email, function foundUser(err,user){
 			if(err) return next(err);
@@ -21,32 +23,38 @@ module.exports = {
 				return;
 
 			}
-			console.log(user);
-			console.log(req.protocol + '://' + req.host + ':' + req.port);
-			// sails.hooks.email.send(template, data, options, cb) if email is found continue
-			sails.hooks.email.send(
-			  "passwordResetEmail",
-			  {
-			  	protocol: req.protocol,
-			  	host: req.host,
-			  	port: req.port,
-			    recipientName: user.firstname + ' ' + user.lastname,
-			    senderName: user.firstname,
-			    senderEmail: user.email,
-			    userId: user.id
-			  },
-			  {
-			    from: "Admin <admin@sam.com>",
-			    to: user.email,
-			    subject: "Password Reset Email"
-			  },
-			  function(err) {console.log(err || "Email is sent");}
-			);		
+			
+			//Hash the user email for security
+			require('bcrypt').hash(user.email, 10, function encrypted(err,encryptedEmail){
+				var sendHashedEmail = "";
+		  		if(err) return next(err);
+		  		sendHashedEmail = encryptedEmail;
+		  		
+		  		sails.hooks.email.send(
+				  "passwordResetEmail",
+				  {
+				  	protocol: req.protocol,
+				  	host: req.host,
+				  	port: req.port,
+				    recipientName: user.firstname + ' ' + user.lastname,
+				    senderName: user.firstname,
+				    senderEmail: user.email,
+				    hashedEmail: sendHashedEmail,
+				    userId: user.id
+				  },
+				  {
+				    from: "Admin <admin@sam.com>",
+				    to: user.email,
+				    subject: "Password Reset Email"
+				  },
+				  function(err) {console.log(err || "Email is sent");}
+				);		
 			
 			//return res.send('Emailed password reset link to email provided...');
 			res.redirect('/session/new');
 			return;
 			
+		  });
 		});
 	}
 };

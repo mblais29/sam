@@ -138,50 +138,59 @@ module.exports = {
 	'updatepassword': function(req,res){
 		//Creates User Object based on inputed values
 		var userObj = {
-			id: req.param('reset-userId'),
+			hashedEmail: req.param('hashedemail'),
 			email: req.param('email'),
 			password: req.param('password'),
 			confirmation: req.param('confirmation')
 		};
-
-		//Finds the user by their email
-		Users.findOneByEmail(userObj.email, function foundUser(err,user){
-			if(err) return next(err);
-			//If no user is found throw an error
-			if(!user){
-				AlertService.error(req, 'The email address ' + req.param('email')+ ' not found');
-				res.redirect('/users/resetpassword');
-				return;
-			}else if(userObj.email == user.email){
-
-				require('bcrypt').compare(userObj.password, user.encryptedPassword, function(err,valid){
-					if(err){
-						console.log('Problem comparing the password with password record in the database!');
-					} else if (valid){
-						console.log('Please enter a new unique password!');
-					} else {
-						console.log('New Password does not match old password!');
-						require('bcrypt').hash(userObj.password, 10, function passwordEncrypted(err,newEncryptedPassword){
-					  		if(err) return next(err);
-							var userNewPassword = {
-								encryptedPassword: newEncryptedPassword
-							};
-	
-							//Updates the User's Password in the database with the new password
-					  		Users.update(user.id, userNewPassword, function userUpdatedPassword(err){
-					  			if(err){
-									AlertService.error(req, err);
-									return res.redirect('/session/new');
-								}
-								return res.redirect('/session/new');
-							});
-					  	});
+		
+		require('bcrypt').compare(userObj.email, userObj.hashedEmail, function(err, response) {
+		    //Compares entered email with url hashed email userObj.hashedEmail
+		    if(response){
+		    	//Finds the user by their email
+				Users.findOneByEmail(userObj.email, function foundUser(err,user){
+					if(err) return next(err);
+					//If no user is found throw an error
+					if(!user){
+						AlertService.error(req, 'The user with an email address of ' + req.param('email')+ ' not found');
+						return res.redirect('/users/resetpassword?hashedemail=' + userObj.hashedEmail);
+					}else if(userObj.email == user.email){
+						require('bcrypt').compare(userObj.password, user.encryptedPassword, function(err,valid){
+							if(err){
+								AlertService.error(req, 'Problem comparing the new password with password record in the database!');
+								return res.redirect('/users/resetpassword?hashedemail=' + userObj.hashedEmail);
+							} else if (valid){
+								AlertService.error(req, 'Please enter a new unique password!');
+								return res.redirect('/users/resetpassword?hashedemail=' + userObj.hashedEmail);
+							} else {
+								require('bcrypt').hash(userObj.password, 10, function passwordEncrypted(err,newEncryptedPassword){
+							  		if(err) return next(err);
+									var userNewPassword = {
+										encryptedPassword: newEncryptedPassword
+									};
+			
+									//Updates the User's Password in the database with the new password
+							  		Users.update(user.id, userNewPassword, function userUpdatedPassword(err){
+							  			if(err){
+											AlertService.error(req, err);
+											return res.redirect('/session/new');
+										}
+										AlertService.success(req, 'Password for user ' + user.email + ' updated successfully!');
+										return res.redirect('/session/new');
+									});
+							  	});
+							}
+						});	
+					}else{
+						console.log('User id and email do not match!');
 					}
-				});	
+				});
 			}else{
-				console.log('User id and email do not match!');
+				AlertService.error(req, 'Email entered is incorrect...');
+				return res.redirect('/users/resetpassword?hashedemail=' + userObj.hashedEmail);
 			}
 		});
+		
 	},
 	//Adds User security
 	'addUserSecGroup': function(req, res, next){
