@@ -162,7 +162,7 @@ if($('body').is('#mapBody')){
    getProperties();
    getPropertyLocations();
    
-   $('body#mapBody').append('<div id="locate-property" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h4 class="modal-title">Locate Property</h4></div><div class="modal-body"><div class="modal-body" id="search-canvas"><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..." title="Type in client name to restrict"><table id="myTable"><tr class="header"><th style="width:60%;">Client</th><th style="width:40%;">Address</th></tr></table></div></div><div class="modal-footer"><button type="button" id="propertySearchClose" data-dismiss="modal" class="btn btn-default pull-right btn-close">Close</button></div></div></div></div>');
+   $('body#mapBody').append('<div id="locate-property" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h4 class="modal-title">Locate Property</h4></div><div class="modal-body"><div id="search-canvas"><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..." title="Type in client name to restrict"><table id="myTable"><tr class="header"><th style="width:40%;">Client</th><th style="width:60%;">Address</th></tr></table></div></div><div class="modal-footer"><button type="button" id="propertySearchClose" data-dismiss="modal" class="btn btn-default pull-right btn-close">Close</button></div></div></div></div>');
 
    $('#propertySearchClose').on('click', function(){
 		$('#locate-property').modal('toggle');
