@@ -48,7 +48,14 @@ module.exports = {
 	},
 	
 	'getPropertyRecords': function(req,res,next){
-		Properties.find().where({id: req.param('property_id')}).populateAll().exec(function foundClients(err,data){
+		Properties.find().where({id: req.param('property_id')}).populateAll().exec(function foundProperty(err,data){
+			if(err) return next(err);
+			return res.ok(data);
+		});
+	},
+	
+	'getAllPropertyRecords': function(req,res,next){
+		Properties.find().populateAll().exec(function foundProperties(err,data){
 			if(err) return next(err);
 			return res.ok(data);
 		});

@@ -96,6 +96,7 @@ if($('body').is('#mapBody')){
 	    var insideDiv = "";
 	    insideDiv += '<a href="#" title="Zoom to All Properties" onclick="zoomToAllProperties(); return false" ><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="color:black"></i></a>';
 	    insideDiv += '<a href="#" title="Reset View" onclick="resetMapView(); return false"><i class="fa fa-expand fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
+	    insideDiv += '<a href="#" id="locateProperties" title="Locate Property" data-toggle="modal" data-target="#locate-property" ><i class="fa fa-arrows fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
 	    
 	    container.innerHTML = insideDiv;
 
@@ -145,7 +146,9 @@ if($('body').is('#mapBody')){
 	ADD ESRI GEOCODING SERVICE API
 	****************************************/
 	
-    var searchControl = L.esri.Geocoding.geosearch().addTo(map);
+    var searchControl = L.esri.Geocoding.geosearch({
+    	title: 'Address Search'
+    }).addTo(map);
 
     var results = L.layerGroup().addTo(map);
 
@@ -159,7 +162,18 @@ if($('body').is('#mapBody')){
    getProperties();
    getPropertyLocations();
    
-};
+   $('body#mapBody').append('<div id="locate-property" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h4 class="modal-title">Locate Property</h4></div><div class="modal-body"><div class="modal-body" id="search-canvas"><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..." title="Type in client name to restrict"><table id="myTable"><tr class="header"><th style="width:60%;">Client</th><th style="width:40%;">Address</th></tr></table></div></div><div class="modal-footer"><button type="button" id="propertySearchClose" data-dismiss="modal" class="btn btn-default pull-right btn-close">Close</button></div></div></div></div>');
+
+   $('#propertySearchClose').on('click', function(){
+		$('#locate-property').modal('toggle');
+	});
+	
+   $('#locateProperties').on('click', function(){
+	  populatePropertySearch();
+   });
+   
+	
+   };
 
 /****************************************
 	GLOBAL FUNCTIONS
@@ -349,4 +363,44 @@ function createPropertyPopup(property_id, layer){
          console.log(err);
       }
     });
+}
+
+function populatePropertySearch(){
+	$.ajax('/map/getAllPropertyRecords',{
+      success: function(data) {
+      	console.log(data);
+      	for(var i = 0; i < data.length; i++){
+      		$('#myTable').append('<tr><td><div class="form-check"><label class="form-check-label"><input class="form-check-input" type="checkbox" value="' + data[i].id + '"></label> ' + data[i].client[0].client + '</div></td><td>' + data[i].address + '</td></tr>');
+      	}
+      	
+      },
+      done: function(data){
+
+      },
+      error: function(err) {
+         console.log(err);
+      }
+    });
+};
+
+function myFunction() {
+  var input, filter, found, table, tr, td, i, j;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td");
+        for (j = 0; j < td.length; j++) {
+            if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                found = true;
+            }
+        }
+        if (found) {
+            tr[i].style.display = "";
+            found = false;
+        } else {
+            tr[i].style.display = "none";
+        }
+    }
 }
