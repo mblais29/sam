@@ -162,7 +162,7 @@ if($('body').is('#mapBody')){
    getProperties();
    getPropertyLocations();
    
-   $('body#mapBody').append('<div id="locate-property" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h4 class="modal-title">Locate Property</h4></div><div class="modal-body"><div id="search-canvas"><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..." title="Type in client name to restrict"><table id="myTable"><tr class="header"><th style="width:40%;">Client</th><th style="width:60%;">Address</th></tr></table></div></div><div class="modal-footer"><button type="button" id="propertySearchClose" data-dismiss="modal" class="btn btn-default pull-right btn-close">Close</button></div></div></div></div>');
+   $('body#mapBody').append('<div id="locate-property" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h4 class="modal-title">Locate Property</h4></div><div class="modal-body"><div id="search-canvas"><table id="table-property-records" class="table table-striped" data-sorting="true" data-filtering="true"><thead><tr><!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin ---><th>Client</th><th>Address</th></tr></thead><tbody></tbody></table></div></div><div class="modal-footer"><button type="button" id="propertySearchClose" data-dismiss="modal" class="btn btn-default pull-right btn-close">Close</button></div></div></div></div>');
 
    $('#propertySearchClose').on('click', function(){
 		$('#locate-property').modal('toggle');
@@ -369,10 +369,14 @@ function populatePropertySearch(){
 	$.ajax('/map/getAllPropertyRecords',{
       success: function(data) {
       	console.log(data);
-      	for(var i = 0; i < data.length; i++){
-      		$('#myTable').append('<tr><td><div class="form-check"><label class="form-check-label"><input class="form-check-input" type="checkbox" value="' + data[i].id + '"></label> ' + data[i].client[0].client + '</div></td><td>' + data[i].address + '</td></tr>');
+      	if(data.length){
+      		$('#table-property-records tbody').empty();
       	}
-      	
+      	for(var i = 0; i < data.length; i++){
+      		var addRow = create_table_row(data[i]);
+      		$('#table-property-records').append(addRow);
+      	}
+      	$('#table-property-records').footable().trigger('footable_initialize');
       },
       done: function(data){
 
@@ -383,24 +387,7 @@ function populatePropertySearch(){
     });
 };
 
-function myFunction() {
-  var input, filter, found, table, tr, td, i, j;
-    input = document.getElementById("myInput");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("myTable");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td");
-        for (j = 0; j < td.length; j++) {
-            if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
-                found = true;
-            }
-        }
-        if (found) {
-            tr[i].style.display = "";
-            found = false;
-        } else {
-            tr[i].style.display = "none";
-        }
-    }
+function create_table_row (data) {
+	var row = $('<tr><td><div class="form-check"><label class="form-check-label"><input class="form-check-input" type="checkbox" value="' + data.id + '"></label> ' + data.client[0].client + '</div></td><td>' + data.address + '</td></tr>');
+    return row;
 }
