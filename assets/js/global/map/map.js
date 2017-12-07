@@ -162,17 +162,18 @@ if($('body').is('#mapBody')){
    getProperties();
    getPropertyLocations();
    
-   $('body#mapBody').append('<div id="locate-property" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h4 class="modal-title">Locate Property</h4></div><div class="modal-body"><div id="search-canvas"><table id="table-property-records" class="table table-striped" data-sorting="true" data-filtering="true"><thead><tr><!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin ---><th>Client</th><th>Address</th></tr></thead><tbody></tbody></table></div></div><div class="modal-footer"><button type="button" id="propertySearchClose" data-dismiss="modal" class="btn btn-default pull-right btn-close">Close</button></div></div></div></div>');
+   $('body#mapBody').append('<div id="locate-property" class="modal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button><h4 class="modal-title">Locate Property</h4></div><div class="modal-body"><div id="search-canvas"><table id="table-property-records" class="table table-striped" data-sorting="true" data-filtering="true"><thead><tr><!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin ---><th>Client</th><th>Address</th></tr></thead><tbody></tbody></table></div></div><div class="modal-footer"><button type="button" id="propertySearchSubmit" data-dismiss="modal" class="btn btn-default pull-right ">Submit</button><button type="button" id="propertySearchClose" data-dismiss="modal" class="btn btn-default pull-right btn-close">Close</button></div></div></div></div>');
 
    $('#propertySearchClose').on('click', function(){
 		$('#locate-property').modal('toggle');
 	});
 	
-   $('#locateProperties').on('click', function(){
-	  populatePropertySearch();
-   });
-   
+   $('#propertySearchSubmit').on('click', function(){
+		getPropertyData();
+	});
 	
+   
+	populatePropertySearch();
    };
 
 /****************************************
@@ -368,7 +369,6 @@ function createPropertyPopup(property_id, layer){
 function populatePropertySearch(){
 	$.ajax('/map/getAllPropertyRecords',{
       success: function(data) {
-      	console.log(data);
       	if(data.length){
       		$('#table-property-records tbody').empty();
       	}
@@ -388,6 +388,23 @@ function populatePropertySearch(){
 };
 
 function create_table_row (data) {
-	var row = $('<tr><td><div class="form-check"><label class="form-check-label"><input class="form-check-input" type="checkbox" value="' + data.id + '"></label> ' + data.client[0].client + '</div></td><td>' + data.address + '</td></tr>');
+	var row = $('<tr><td><div class="form-check"><label class="form-check-label"><input class="property-check-input" type="checkbox" value="' + data.id + '"></label> ' + data.client[0].client + '</div></td><td>' + data.address + '</td></tr>');
     return row;
+}
+
+function getPropertyData(){
+	$(".property-check-input").each(function() {
+        var propertyId = $(this).val();
+        $.ajax('/map/getSelectedProperties?property_id=' + propertyId,{
+	      success: function(data) {
+	      	console.log(data);
+	      },
+	      done: function(data){
+	
+	      },
+	      error: function(err) {
+	         console.log(err);
+	      }
+	    });
+    });
 }

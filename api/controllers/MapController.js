@@ -60,5 +60,24 @@ module.exports = {
 			return res.ok(data);
 		});
 	},
+	
+	'getSelectedProperties': function(req,res,next){
+		var pg = require('pg');
+		var pgconnection = new pg.Client({
+			user: sails.config.connections.postgresServer.user,
+		  	host: sails.config.connections.postgresServer.host,
+		  	database: sails.config.connections.postgresServer.database,
+		  	password: sails.config.connections.postgresServer.password,
+		  	port: sails.config.connections.postgresServer.port,
+		});
+		
+		var queryString = 'SELECT * FROM public.property_objects WHERE property_id = ' + req.param('property_id');
+		
+		pgconnection.query(queryString, function(err, records){
+		    if(err) return res.json(err);
+		    return res.json(records);
+		});
+	}
+
 };
 
