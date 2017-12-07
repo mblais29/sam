@@ -71,11 +71,14 @@ module.exports = {
 		  	port: sails.config.connections.postgresServer.port,
 		});
 		
-		var queryString = 'SELECT * FROM public.property_objects WHERE property_id = ' + req.param('property_id');
+		var queryString = 'SELECT property_id, ST_AsGeoJSON(geom) as geometry FROM public.property_objects WHERE property_id = ' + req.param('property_id');
 		
-		pgconnection.query(queryString, function(err, records){
-		    if(err) return res.json(err);
-		    return res.json(records);
+		pgconnection.connect(function(err, client, done){
+			client.query(queryString, function(err, records){
+			    if(err) return res.json(err);
+			    client.end();
+			    return res.json(records);
+			});
 		});
 	}
 

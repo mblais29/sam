@@ -7,6 +7,7 @@ var navBarMargin = 52;
 var propertyList = [];
 var mapProperties = L.featureGroup();
 var propertyMarkers = L.featureGroup();
+var propertyLayer = new L.geoJson();
 
 
 if($('body').is('#mapBody')){
@@ -395,16 +396,20 @@ function create_table_row (data) {
 function getPropertyData(){
 	$(".property-check-input").each(function() {
         var propertyId = $(this).val();
-        $.ajax('/map/getSelectedProperties?property_id=' + propertyId,{
-	      success: function(data) {
-	      	console.log(data);
-	      },
-	      done: function(data){
-	
-	      },
-	      error: function(err) {
-	         console.log(err);
-	      }
-	    });
+        if($(this).prop('checked')){
+	        $.ajax('/map/getSelectedProperties?property_id=' + propertyId,{
+		      success: function(data) {
+		      	propertyLayer.addData(JSON.parse(data.rows[0]["geometry"]));
+		      },
+		      done: function(data){
+		
+		      },
+		      error: function(err) {
+		         console.log(err);
+		      }
+		    });
+	    }
     });
+    propertyLayer.addTo(map);
+    map.fitBounds(propertyLayer.getBounds());
 }
