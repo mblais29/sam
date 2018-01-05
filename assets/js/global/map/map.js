@@ -8,6 +8,7 @@ var propertyList = [];
 var mapProperties = L.featureGroup();
 var propertyMarkers = L.featureGroup();
 var propertyLayer = new L.geoJson();
+var propertyGroup = L.featureGroup();
 
 
 if($('body').is('#mapBody')){
@@ -399,7 +400,7 @@ function getPropertyData(){
         if($(this).prop('checked')){
 	        $.ajax('/map/getSelectedProperties?property_id=' + propertyId,{
 		      success: function(data) {
-		      	propertyLayer.addData(JSON.parse(data.rows[0]["geometry"]));
+		      	convertToLayer(data);
 		      },
 		      done: function(data){
 		
@@ -410,6 +411,42 @@ function getPropertyData(){
 		    });
 	    }
     });
-    propertyLayer.addTo(map);
-    map.fitBounds(propertyLayer.getBounds());
 }
+
+function convertToLayer(data){
+	var properties = data.rows;
+	var myStyle = {
+	    "color": "#ff0000",
+	    "weight": 3,
+	    "opacity": 0.65
+	};
+	var listOfLayers = [];
+	var layersInGroup = propertyGroup.getLayers();
+	
+	/* If the feature group has layers loop through the layers and place the property id inside an array */
+	if(layersInGroup.length > 0){
+		for(var k = 0; k < layersInGroup.length; k++){
+			listOfLayers.push(layersInGroup[k].options.property_id);
+		}
+	}
+	
+	for(var i = 0; i < properties.length; i++){
+		var obj = JSON.parse(properties[i]["geometry"]);
+			obj["property_id"] = properties[i]["property_id"];
+		var exists = $.inArray(properties[i]["property_id"], listOfLayers);
+		
+		/* If the property does not exist add to the propertyGroup feature group*/
+		if(exists == -1){
+			var prop = L.geoJSON(obj, {style: myStyle, property_id: properties[i]["property_id"]});
+			propertyGroup.addLayer(prop);
+		}
+	}
+	
+	if(!map.hasLayer(propertyGroup)){
+		layerControl.addOverlay(propertyGroup, 'Searched Properties');
+	}
+	propertyGroup.addTo(map);
+	map.fitBounds(propertyGroup.getBounds());
+}
+
+
