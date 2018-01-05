@@ -99,6 +99,7 @@ if($('body').is('#mapBody')){
 	    insideDiv += '<a href="#" title="Zoom to All Properties" onclick="zoomToAllProperties(); return false" ><i class="fa fa-map-marker fa-2x" aria-hidden="true" style="color:black"></i></a>';
 	    insideDiv += '<a href="#" title="Reset View" onclick="resetMapView(); return false"><i class="fa fa-expand fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
 	    insideDiv += '<a href="#" id="locateProperties" title="Locate Property" data-toggle="modal" data-target="#locate-property" ><i class="fa fa-arrows fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
+	    insideDiv += '<a href="#" onclick="removeSearchedLayers(); return false" title="Delete Located Properties" ><i class="fa fa-trash-o fa-2x" aria-hidden="true" style="color:black; padding:3px"></i></a>';
 	    
 	    container.innerHTML = insideDiv;
 
@@ -306,9 +307,6 @@ function getPropertyLocations(){
 			var propertyId = properties[i].property_id;
 			
 			var property = L.geoJSON(propertyGeojson, {
-			    /*pointToLayer: function (feature, latlng) {
-			        return L.circleMarker(latlng, geojsonMarkerOptions);
-			    }*/
 			   	onEachFeature: function (feature, layer) {
 			   		if(feature.type === 'Polygon' || feature.type === 'MultiPolygon'){
 			   			var centroid = layer.getBounds().getCenter();
@@ -443,10 +441,15 @@ function convertToLayer(data){
 	}
 	
 	if(!map.hasLayer(propertyGroup)){
-		layerControl.addOverlay(propertyGroup, 'Searched Properties');
+		layerControl.addOverlay(propertyGroup, 'Properties Found');
 	}
 	propertyGroup.addTo(map);
 	map.fitBounds(propertyGroup.getBounds());
 }
 
+function removeSearchedLayers(){
+	layerControl.removeLayer(propertyGroup);
+	map.removeLayer(propertyGroup);
+	propertyGroup = L.featureGroup();
+}
 
