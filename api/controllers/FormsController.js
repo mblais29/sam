@@ -113,7 +113,7 @@ module.exports = {
 					}
 					res.view({
 						forms: formList,
-						title: 'myForms'
+						title: 'MyForms'
 					});
 				});
 				

@@ -22,7 +22,7 @@ function loadPage() {
   $('#' + tableId).footable();
 
 }
-setTimeout("loadPage()", 1000); // after 1 second
+setTimeout(loadPage, 1000); // after 1 second
 
 /* FUNCTIONS */
 

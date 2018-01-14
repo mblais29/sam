@@ -1,16 +1,18 @@
-<html>
+<html id="logon-html">
 	<head>
 		<title>Leaflet Mobile Map</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	</head>
-	<body>
+	<body id="logon-body">
+		<span class="loader-outer"><span class="loader"><span class="loader-inner"></span></span></span>
 		<div id="wrapper-login">
+			<div id="cf">
+				<img class="forth" src="../images/oil_gas-background.jpg" />
+				<img class="third" src="../images/mining-background.jpg" />
+				<img class="second" src="../images/forestry-background.jpg" />
+				<img class="first" src="../images/real_estate-background.jpg" />
+	  		</div>
 			<form action="/session/create" method="POST" class="form-signin" id="login_form">
-				
-				<!--- <h2 class="form-signin-heading">Please Sign In.....</h2> --->
-				<div id="login-header">
-					<img id="loading-image" src="/images/mblais.png" width="100" height="100" alt="Loading..." />
-				</div>
 				<% if (messages && messages['error'].length > 0) { %>
 				  <div class="alert alert-danger securityMessage">
 				  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
@@ -41,14 +43,19 @@
 				  </div>
 				  <br>
 				<% } %> 
-				
-				<input type="text" class="form-control login-input" placeholder="Email..." name="email"> 
-				<input type="password" class="form-control login-input" placeholder="Password..." name="password">
-				<input type="submit" id="login-submit" class="btn btn-primary btn-block btn-responsive" value="Sign In">
-				<a id="login-register" class="btn btn-primary btn-sm" href="/users/new">Register</a>
-				<a href="/users/emailpassword" class="resetPassword" >Reset Password</a>
-				<input type='hidden' name='_csrf' value='<%= _csrf %>'>
-				
+				<div class="login-wrapper" >
+					<div id="login-header">
+						<img id="loading-image" src="/images/mblais.png" width="75" height="100" alt="Loading..." />
+					</div>
+					<div id="login-form-input" >
+						<input type="text" class="form-control login-input" placeholder="Email..." name="email"> 
+						<input type="password" class="form-control login-input" placeholder="Password..." name="password">
+						<input type="submit" id="login-submit" class="btn btn-primary btn-sm" value="Sign In">
+						<a id="login-register" class="btn btn-primary btn-sm" href="/users/new">Register</a>
+						<a href="/users/emailpassword" class="resetPassword" >Reset Password</a>
+						<input type='hidden' name='_csrf' value='<%= _csrf %>'>
+					</div>
+				</div>
 			</form>
 		</div>
 	</body>
