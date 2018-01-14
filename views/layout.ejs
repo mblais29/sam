@@ -65,7 +65,6 @@
 		    </div>
 		    <div class="collapse navbar-collapse" id="myNavbar">
 		      <ul id="navbar-views" class="nav navbar-nav">
-		        <li class="<% if (title === 'Show') { %>active<% } %>"><a href="/users/show?email=<%= req.session.User.email %>"><%= req.session.User.firstname %> <%= req.session.User.lastname %></a></li>
 		        <li class="<% if (title === 'Map') { %>active<% } %>"><a href="/map" id="map-link">Map</a></li>
 		        <li class="<% if (title === 'MyForms') { %>active<% } %>"><a href="/forms/myForms" id="map-link">My Forms</a></li>
 			<% if(session.User.admin) { %>
@@ -92,6 +91,7 @@
 			<% } %>
 		      </ul>
 		      <ul id="nav-logout"class="nav navbar-nav navbar-right">
+		      	<li class="<% if (title === 'Show') { %>active<% } %>"><a href="/users/show?email=<%= req.session.User.email %>"><%= req.session.User.firstname %> <%= req.session.User.lastname %></a></li>
 		        <li><a href="/session/destroy"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
 		      </ul>
 		    </div>
