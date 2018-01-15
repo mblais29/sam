@@ -137,7 +137,7 @@ body#logon-body, html#logon-html {
   width: 60px;
   height: 60px;
   position: relative;
-  border: 4px solid #8dcaff;
+  border: 4px solid @bright-colour;
   animation: loader 2s infinite ease;
 }
 
@@ -146,7 +146,7 @@ body#logon-body, html#logon-html {
   width: 68px;
   height: 68px;
   position: relative;
-  border: 4px solid #479DFF;
+  border: 4px solid @dark-colour;
   top: 40%;
   animation: loader-outer 2s infinite ease-in;
 }
@@ -155,7 +155,7 @@ body#logon-body, html#logon-html {
   vertical-align: top;
   display: inline-block;
   width: 100%;
-  background-color: #8dcaff;
+  background-color: @bright-colour;
   animation: loader-inner 2s infinite ease-in;
 }
 
@@ -250,17 +250,17 @@ div#wrapper-login {
       }
       > #login-form-input #login-submit{
         margin-top: 3%;
-        background-color: #8dcaff;
-        border-color: #8dcaff;
+        background-color: @bright-colour;
+        border-color: @bright-colour;
       }
       > #login-form-input #login-register{
         margin-top: 3%;
-        background-color: #8dcaff;
-        border-color: #8dcaff;
+        background-color: @bright-colour;
+        border-color: @bright-colour;
       }
       > #login-form-input #login-register:hover, #login-form-input #login-submit:hover {
-        background-color: #479DFF;
-        border-color: #479DFF;
+        background-color: @dark-colour;
+        border-color: @dark-colour;
       }
       > #login-form-input .resetPassword{
         text-decoration: none;

@@ -102,12 +102,12 @@
 			</form>
 			<!-- Show option to add security groups if Admin User -->
 			<% if(session.authenticated && session.User.admin) { %>
-				<button id="addusersecgroups" class="btn btn-sm btn-info" >Add Security Group</button></br></br>
+				<button id="addusersecgroups" class="btn btn-sm btn-primary" >Add Security Group</button></br></br>
 			<% } %>
 			
 			<!-- Displays the Upload Profile Image Button only if the current user is authenticated and they are uploading an image to their own profile -->
 			<% if(session.authenticated && session.User.id == user.id) { %>
-				<a href="/upload-file" id="uploadProfileImg" name="uploadProfileImg" class="btn btn-sm btn-info" />Upload Profile Image</a>
+				<a href="/upload-file" id="uploadProfileImg" name="uploadProfileImg" class="btn btn-sm btn-primary" />Upload Profile Image</a>
 			<% } %>
 			<input type="submit" id="editUserSubmit" class="btn btn-lg btn-primary" onclick="submitAddSecGroup()" value="Submit"  />
 		</div>

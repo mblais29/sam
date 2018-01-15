@@ -1,4 +1,26 @@
+@bright-colour:   #8dcaff;
+@dark-colour:   #479DFF;
+
 button.btn-close {
   margin-right: 10px;
+}
+
+button.btn-primary, a.btn-primary, input.btn-primary {
+  background: @bright-colour;
+  border-color: @bright-colour;
+}
+
+button.btn-primary:active, button.btn-primary:hover, button.btn-primary:focus, a.btn-primary:active, a.btn-primary:hover, a.btn-primary:focus, input.btn-primary:active, input.btn-primary:hover, input.btn-primary:focus {
+  background: @dark-colour;
+  border-color: @dark-colour;
+}
+
+div.panel-heading{
+  background: rgb(149,149,149) !important; /* Old browsers */
+  background: -moz-linear-gradient(top, rgba(149,149,149,1) 0%, rgba(13,13,13,1) 46%, rgba(1,1,1,1) 50%, rgba(10,10,10,1) 53%, rgba(78,78,78,1) 92%, rgba(56,56,56,1) 100%, rgba(27,27,27,1) 100%) !important; /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(149,149,149,1) 0%,rgba(13,13,13,1) 46%,rgba(1,1,1,1) 50%,rgba(10,10,10,1) 53%,rgba(78,78,78,1) 92%,rgba(56,56,56,1) 100%,rgba(27,27,27,1) 100%) !important; /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(149,149,149,1) 0%,rgba(13,13,13,1) 46%,rgba(1,1,1,1) 50%,rgba(10,10,10,1) 53%,rgba(78,78,78,1) 92%,rgba(56,56,56,1) 100%,rgba(27,27,27,1) 100%) !important; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#959595', endColorstr='#1b1b1b',GradientType=0 ) !important; /* IE6-9 */
+  color: @dark-colour !important;
 }
 
