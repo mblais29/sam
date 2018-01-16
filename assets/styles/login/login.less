@@ -96,17 +96,17 @@ body#logon-body, html#logon-html {
   -webkit-animation-name: cfFadeInOut;
   -webkit-animation-timing-function: ease-out;
   -webkit-animation-iteration-count: infinite;
-  -webkit-animation-duration: 32s;
+  -webkit-animation-duration: 30s;
 
   -moz-animation-name: cfFadeInOut;
   -moz-animation-timing-function: ease-out;
   -moz-animation-iteration-count: infinite;
-  -moz-animation-duration: 32s;
+  -moz-animation-duration: 30s;
 
   -o-animation-name: cfFadeInOut;
   -o-animation-timing-function: ease-out;
   -o-animation-iteration-count: infinite;
-  -o-animation-duration: 32s;
+  -o-animation-duration: 30s;
 
   animation-name: cfFadeInOut;
   animation-timing-function: ease-out;
@@ -126,10 +126,10 @@ body#logon-body, html#logon-html {
   animation-delay: 14s;
 }
 #cf img:nth-of-type(3) {
-  -webkit-animation-delay: 6s;
-  -moz-animation-delay: 6s;
-  -o-animation-delay: 6s;
-  animation-delay: 6s;
+  -webkit-animation-delay: 8s;
+  -moz-animation-delay: 8s;
+  -o-animation-delay: 8s;
+  animation-delay: 8s;
 }
 
 .loader {
@@ -232,7 +232,6 @@ div#wrapper-login {
   > #login_form{
     width: 60%;
     margin: 0 auto;
-    text-align: center;
     position: relative;
     -webkit-transform: translateY(30%);
     -ms-transform: translateY(30%);
@@ -245,37 +244,81 @@ div#wrapper-login {
           border-radius: 25px;
           vertical-align: middle;
           display: table-cell;
-        >#login-form-input .login-input{
-        margin: 3% 0 0 0;
-      }
-      > #login-form-input #login-submit{
-        margin-top: 3%;
-        background-color: @bright-colour;
-        border-color: @bright-colour;
-      }
-      > #login-form-input #login-register{
-        margin-top: 3%;
-        background-color: @bright-colour;
-        border-color: @bright-colour;
-      }
-      > #login-form-input #login-register:hover, #login-form-input #login-submit:hover {
-        background-color: @dark-colour;
-        border-color: @dark-colour;
-      }
-      > #login-form-input .resetPassword{
-        text-decoration: none;
-        display: block;
-        margin-top: 2%;
-        color: #ffffff;
-        font-weight: bold;
-      }
-      > #login-form-input {
-        width: 40%;
-        margin: 0 auto;
-      }
-      > #login-header{
-        text-align: center;
-      }
+      > #login-form-wrapper{
+          text-align: center;
+          width: 100%;
+          >#login-form-input .login-input{
+              margin: 3% 0 0 0;
+            }
+          > #login-form-input #login-submit{
+            margin-top: 3%;
+            background-color: @bright-colour;
+            border-color: @bright-colour;
+          }
+          > #login-form-input #login-register{
+            margin-top: 3%;
+            background-color: @bright-colour;
+            border-color: @bright-colour;
+          }
+          > #login-form-input #login-register:hover, #login-form-input #login-submit:hover {
+            background-color: @dark-colour;
+            border-color: @dark-colour;
+          }
+          > #login-form-input .resetPassword{
+            text-decoration: none;
+            display: block;
+            margin-top: 2%;
+            color: #ffffff;
+            font-weight: bold;
+          }
+          > #login-form-input {
+            width: 40%;
+            margin: 0 auto;
+          }
+          > #login-header{
+            text-align: center;
+          }
+         }
+         >.content__container__list{
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          >span.content__container__list__item{
+            padding: 3%;
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+          }
+          >span#realEstate{
+            top: 0;
+            display: block;
+            left: 0;
+            text-align: left;
+            position: absolute;
+          }
+          >span#forestry{
+            top: 0;
+            display: block;
+            right: 0;
+            text-align: right;
+            position: absolute;
+          }
+          >span#mining{
+            bottom: 0;
+            display: block;
+            right: 0;
+            text-align: right;
+            position: absolute;
+          }
+          >span#oil{
+            bottom: 0;
+            display: block;
+            left: 0;
+            text-align: left;
+            position: absolute;
+          }
+       }
     }
   }
   

@@ -44,17 +44,25 @@
 				  <br>
 				<% } %> 
 				<div class="login-wrapper" >
-					<div id="login-header">
-						<img id="loading-image" src="/images/mblais.png" width="75" height="100" alt="Loading..." />
+					<div id="login-form-wrapper">
+						<div id="login-header">
+							<img id="loading-image" src="/images/mblais.png" width="75" height="100" alt="Loading..." />
+						</div>
+						<div id="login-form-input" >
+							<input type="text" class="form-control login-input" placeholder="Email..." name="email"> 
+							<input type="password" class="form-control login-input" placeholder="Password..." name="password">
+							<input type="submit" id="login-submit" class="btn btn-primary btn-sm" value="Sign In">
+							<a id="login-register" class="btn btn-primary btn-sm" href="/users/new">Register</a>
+							<a href="/users/emailpassword" class="resetPassword" >Reset Password</a>
+							<input type='hidden' name='_csrf' value='<%= _csrf %>'>
+						</div>
 					</div>
-					<div id="login-form-input" >
-						<input type="text" class="form-control login-input" placeholder="Email..." name="email"> 
-						<input type="password" class="form-control login-input" placeholder="Password..." name="password">
-						<input type="submit" id="login-submit" class="btn btn-primary btn-sm" value="Sign In">
-						<a id="login-register" class="btn btn-primary btn-sm" href="/users/new">Register</a>
-						<a href="/users/emailpassword" class="resetPassword" >Reset Password</a>
-						<input type='hidden' name='_csrf' value='<%= _csrf %>'>
-					</div>
+					<div class="content__container__list">
+				      <span class="content__container__list__item" id="oil">Oil & Gas</span>
+				      <span class="content__container__list__item" id="mining">Mining</span>
+				      <span class="content__container__list__item" id="forestry">Forestry</span>
+				      <span class="content__container__list__item" id="realEstate">Real Estate</span>
+				    </div>
 				</div>
 			</form>
 		</div>
