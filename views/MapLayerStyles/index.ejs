@@ -1,0 +1,173 @@
+<html>
+	<head>
+		<title>Leaflet Mobile Map</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	</head>
+	<body id="mapLayerStyles">
+		<% if (messages && messages['error'].length > 0) { %>
+		  <div class="alert alert-danger mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['error'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['error'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		    
+		  <% }); %>
+		  </div>
+		<% } %>
+		<% if (messages && messages['warning'].length > 0) { %>
+		  <div class="alert alert-warning mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['warning'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['warning'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		  <% }); %>
+		  </div>
+		<% } %>
+		<% if (messages && messages['success'].length > 0) { %>
+		  <div class="alert alert-success mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['success'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['success'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		  <% }); %>
+		  </div>
+		<% } %>
+		<h3 id="table-title">Layer Styles</h3>
+		<div id="layer-style-add" class="panel panel-default">
+		  <div class="panel-heading">Create Layer Style</div>
+		  <div class="panel-body">
+		  	<form class="form-horizontal" id="layerStyleCreate" action="maplayerstyles/create">
+			  <div class="form-group">
+			    <label class="control-label col-sm-3" for="description">Description:</label>
+			    <div class="col-sm-8">
+			      <input type="text" class="form-control" id="description" name="description" placeholder="Enter description...">
+			    </div>
+			  </div>
+			  <div class="form-group" id="layer-type">
+			  	  <label class="control-label col-sm-3" for="layer-type-dropdown">Layer Type:</label>
+				  <div class="dropdown col-sm-8">
+					  <button class="btn btn-default dropdown-toggle" type="button" id="layer-type-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					    Type
+					    <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" aria-labelledby="layer-type-dropdown">
+					    <li><a href="#" onclick="updateTypedropdown('Polygon'); return false;">Polygon</a></li>
+					    <li><a href="#" onclick="updateTypedropdown('Point'); return false;">Point</a></li>
+					    <li><a href="#" onclick="updateTypedropdown('Line'); return false;">Line</a></li>
+					  </ul>
+					</div>
+					<input type="hidden" id="layerType" name="layerType" value="" />  
+			  </div>
+			  <div class="form-group">
+			    <label class="control-label col-sm-3" for="layerStyle">Style:</label>
+			    <div class="col-sm-8">
+			      <input type="text" class="form-control" id="layerStyle" name="layerStyle" placeholder="Enter json style...">
+			    </div>
+			  </div>
+			  <div class="form-group" id="prefix">
+			  	  <label class="control-label col-sm-3" for="layer-type-dropdown">Marker Prefix:</label>
+				  <div class="dropdown col-sm-8">
+					  <button class="btn btn-default dropdown-toggle" type="button" id="layer-prefix-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					    Prefix
+					    <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" aria-labelledby="layer-prefix-dropdown">
+					    <li><a href="#" onclick="updatePrefixdropdown('Font Awesome'); return false;">Font Awesome</a></li>
+					    <li><a href="#" onclick="updatePrefixdropdown('Glyphicons'); return false;">Glyphicons</a></li>
+					  </ul>
+				  </div>
+				  <input type="hidden" id="markerPrefix" name="markerPrefix" value="" />
+			  </div>
+			  <div class="form-group" id="marker-colour">
+			  	<label class="control-label col-sm-3" for="layer-colour-dropdown">Marker Colour:</label>
+				  <div class="dropdown col-sm-8">
+					  <button class="btn btn-default dropdown-toggle" type="button" id="layer-colour-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					    Marker Colour
+					    <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" aria-labelledby="layer-colour-dropdown">
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Red'); return false;">Red</a></li>
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Red'); return false;">Dark Red</a></li>
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Orange'); return false;">Orange</a></li>
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Green'); return false;">Green</a></li>
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Green'); return false;">Dark Green</a></li>
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Blue'); return false;">Blue</a></li>
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Purple'); return false;">Purple</a></li>
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Purple'); return false;">Dark Purple</a></li>
+					    <li><a href="#" onclick="updateMarkerColourdropdown('Cadet Blue'); return false;">Cadet Blue</a></li>
+					  </ul>
+				  </div>
+				  <input type="hidden" id="markerColour" name="markerColour" value="" />
+			  </div>
+			  <div class="form-group">
+			    <label class="control-label col-sm-3" for="marker-icon">Icon:</label>
+			    <div class="col-sm-8">
+			      <input type="text" class="form-control" id="marker-icon" name="marker-icon" placeholder="Enter icon...">
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label class="control-label col-sm-3" for="marker-icon-colour">Icon Colour:</label>
+			    <div class="col-sm-8">
+			      <input type="text" class="form-control" id="marker-icon-colour" name="marker-icon-colour" placeholder="Enter icon colour...">
+			    </div>
+			  </div>
+			  <div class="form-group"> 
+			    <div class="col-sm-offset-2 col-sm-10">
+			      <button type="submit" class="btn btn-default pull-right">Submit</button>
+			      <button type="button" id="layerStyleClose" class="btn btn-default pull-right btn-close" onclick="closeLayerStyleAddPanel()">Close</button>
+		  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+			    </div>
+			  </div>
+			</form>
+		  </div>
+		</div>
+		
+		<table id="table-layer-styles" class="table table-striped" data-sorting="true" data-filtering="true">
+			<thead>
+				<tr>
+					<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
+					<th>Description</th>
+					<th>Type</th>
+					<th data-type="html" data-breakpoints="all" data-title="Id">Id</th>
+					<th data-type="html" data-breakpoints="all" data-title="Style">JSON Style</th>
+					<th data-type="html" data-breakpoints="all" data-title="Prefix">Prefix</th>
+					<th data-type="html" data-breakpoints="all" data-title="Marker Colour">Marker Colour</th>
+					<th data-type="html" data-breakpoints="all" data-title="Marker Icon">Marker Icon</th>
+					<th data-type="html" data-breakpoints="all" data-title="Icon Colour">Icon Colour</th>
+					<th data-type="html" data-breakpoints="all" data-title="Edit Style" data-filterable="false"></th>
+					<th data-type="html" data-breakpoints="all" data-title="Delete Style" data-filterable="false"></th>
+					<th data-filterable="false" data-sortable="false"><button id="layerStyleAdd" onclick="getLayerStyleValues()" class="btn btn-sm btn-primary">Add</button></th>	
+				</tr>
+			</thead>
+			<tbody>
+			  <% _.each(styles, function(style){ %>
+				<tr data-expanded="false" id="currency-records" data-id="<%= currency.currency %>" data-model="currency">
+					<td><%= style.description %></td>
+					<td><%= style.type %></td>
+					<td><%= style.id %></td>
+					<td><%= style.style %></td>
+					<td><%= style.prefix %></td>
+					<td><%= style.markerColour %></td>
+					<td><%= style.markerIcon %></td>
+					<td><%= style.markerIconColor %></td>
+					
+					<td><button id="layerStyleEdit<%= style.id %>" class="btn btn-sm btn-warning" onclick="getLayerStyleValue('<%= style.id %>')" value="<%= style.id %>">Edit</button></td>
+					<td>
+						<form action="/maplayerstyles/destroy?styleId=<%= style.id %>" method="POST">
+							<input type="hidden" name="_method" value="delete" />
+							<input type="submit" class="btn btn-sm btn-danger" value="Delete" />
+							<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+						</form>
+					</td>
+				</tr>
+			  <% }) %>
+			</tbody>
+		</table>
+	</body>
+</html>

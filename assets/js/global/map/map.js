@@ -74,7 +74,7 @@ if($('body').is('#mapBody')){
                     clickable: false
                 }
             },*/
-            marker: false
+            marker: true
         },
         edit: {
             featureGroup: editableLayers, //REQUIRED!!
@@ -309,11 +309,14 @@ function getPropertyLocations(){
 			var property = L.geoJSON(propertyGeojson, {
 			   	onEachFeature: function (feature, layer) {
 			   		if(feature.type === 'Polygon' || feature.type === 'MultiPolygon'){
-			   			var centroid = layer.getBounds().getCenter();
+			   			/*var centroid = layer.getBounds().getCenter();
 			   			var marker = L.marker(centroid);
 			   			if(!map.hasLayer(propertyMarkers)){
 			   				propertyMarkers.addLayer(marker);
-			   			}
+			   			}*/
+			   			createPropertyPopup(propertyId, layer);
+			   		}
+			   		if(feature.type === 'Point'){
 			   			createPropertyPopup(propertyId, layer);
 			   		}
 			   	}
@@ -336,14 +339,14 @@ function getPropertyLocations(){
 function createProperty(){
 	if(!map.hasLayer(mapProperties) || map.hasLayer(propertyMarkers)){
 		layerControl.addOverlay(mapProperties, 'Properties');
-		layerControl.addOverlay(propertyMarkers, 'Property Markers');
+		/*layerControl.addOverlay(propertyMarkers, 'Property Markers');*/
 	}
 	
 }
 
 function zoomToAllProperties(){
 	map.fitBounds(mapProperties.getBounds());
-	map.addLayer(propertyMarkers);
+	map.addLayer(mapProperties);
 }
 
 function createPropertyPopup(property_id, layer){

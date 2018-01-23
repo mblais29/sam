@@ -59,6 +59,10 @@ module.exports.policies = {
  	update: ['flashAlert']
   },
   
+  maplayerstyles: {
+  	index: ['flashAlert']
+  },
+  
   map: {
   	index: ['flashAlert']
   },
