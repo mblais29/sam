@@ -96,41 +96,41 @@ body#logon-body, html#logon-html {
   -webkit-animation-name: cfFadeInOut;
   -webkit-animation-timing-function: ease-out;
   -webkit-animation-iteration-count: infinite;
-  -webkit-animation-duration: 30s;
+  -webkit-animation-duration: 32s;
 
   -moz-animation-name: cfFadeInOut;
   -moz-animation-timing-function: ease-out;
   -moz-animation-iteration-count: infinite;
-  -moz-animation-duration: 30s;
+  -moz-animation-duration: 32s;
 
   -o-animation-name: cfFadeInOut;
   -o-animation-timing-function: ease-out;
   -o-animation-iteration-count: infinite;
-  -o-animation-duration: 30s;
+  -o-animation-duration: 32s;
 
   animation-name: cfFadeInOut;
   animation-timing-function: ease-out;
   animation-iteration-count: infinite;
-  animation-duration: 30s;
+  animation-duration: 32s;
 }
 #cf img:nth-of-type(1) {
-  -webkit-animation-delay: 22s;
-  -moz-animation-delay: 22s;
-  -o-animation-delay: 22s;
-  animation-delay: 22s;
+  -webkit-animation-delay: 24s;
+  -moz-animation-delay: 24s;
+  -o-animation-delay: 24s;
+  animation-delay: 24s;
 }
 #cf img:nth-of-type(2) {
-  -webkit-animation-delay: 14s;
-  -moz-animation-delay: 14s;
-  -o-animation-delay: 14s;
-  animation-delay: 14s;
+  -webkit-animation-delay: 16s;
+  -moz-animation-delay: 16s;
+  -o-animation-delay: 16s;
+  animation-delay: 16s;
 }
 #cf img:nth-of-type(3) {
   -webkit-animation-delay: 8s;
   -moz-animation-delay: 8s;
   -o-animation-delay: 8s;
   animation-delay: 8s;
-}
+}​
 
 .loader {
   display: inline-block;
@@ -240,13 +240,16 @@ div#wrapper-login {
     display: table;
     > .login-wrapper {
           height: 60vh;
-          background-color: rgba(255,255,255,0.3);
+          background-color: rgba(255,255,255,0.4);
           border-radius: 25px;
           vertical-align: middle;
           display: table-cell;
       > #login-form-wrapper{
           text-align: center;
           width: 100%;
+          z-index: 100;
+          display: block;
+          position: relative;
           >#login-form-input .login-input{
               margin: 3% 0 0 0;
             }
@@ -284,37 +287,39 @@ div#wrapper-login {
           height: 100%;
           position: absolute;
           top: 0;
+          z-index: 1;
           >span.content__container__list__item{
             padding: 3%;
             font-size: 2em;
             font-weight: bold;
             color: #fff;
+            text-shadow: 2px 2px @dark-colour;
           }
           >span#realEstate{
             top: 0;
-            display: block;
             left: 0;
+            display: none;
             text-align: left;
             position: absolute;
           }
           >span#forestry{
             top: 0;
-            display: block;
             right: 0;
+            display: none;
             text-align: right;
             position: absolute;
           }
           >span#mining{
             bottom: 0;
-            display: block;
             right: 0;
+            display: none;
             text-align: right;
             position: absolute;
           }
           >span#oil{
             bottom: 0;
-            display: block;
             left: 0;
+            display: none;
             text-align: left;
             position: absolute;
           }

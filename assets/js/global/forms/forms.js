@@ -53,6 +53,7 @@ if($('body').is('#formIndex')){
 };
 
 if($('body').is('#myForm')){
+	$(".panel").draggable();
 	$('#myformClose').on('click', function(){
 		$('#myform-selected').slideUp();
 		//Removes all children elements within form

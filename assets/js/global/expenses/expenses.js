@@ -1,5 +1,5 @@
 if($('body').is('#expenses')){
-	
+	$(".panel").draggable();
 	$('#addReceiptClose').on('click', function(){
 		$('#add-receipt').slideUp();
 		$("#receipt-upload").filestyle('clear');
