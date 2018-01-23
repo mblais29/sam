@@ -27,5 +27,27 @@ module.exports = {
 			return;
 		}
 	},
+	create: function(req,res,next){
+
+		var obj = {
+			description: req.param('description'),
+			type: req.param('layerType'),
+			style: '{' + req.param('layerStyle') + '}',
+			prefix: req.param('markerPrefix'),
+			markerColour: req.param('markerColour'),
+			markerIcon: req.param('marker-icon'),
+			markerIconColor: req.param('marker-icon-colour'),
+		};
+		
+		MapLayerStyles.create(obj, function stylecreate(err,client){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/maplayerstyles');
+			};
+
+			AlertService.success(req, 'Successfully created a new layer style!');
+			res.redirect('/maplayerstyles');
+		});
+	},
 };
 

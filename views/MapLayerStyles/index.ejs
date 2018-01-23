@@ -70,52 +70,54 @@
 			      <input type="text" class="form-control" id="layerStyle" name="layerStyle" placeholder="Enter json style...">
 			    </div>
 			  </div>
-			  <div class="form-group" id="prefix">
-			  	  <label class="control-label col-sm-3" for="layer-type-dropdown">Marker Prefix:</label>
-				  <div class="dropdown col-sm-8">
-					  <button class="btn btn-default dropdown-toggle" type="button" id="layer-prefix-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-					    Prefix
-					    <span class="caret"></span>
-					  </button>
-					  <ul class="dropdown-menu" aria-labelledby="layer-prefix-dropdown">
-					    <li><a href="#" onclick="updatePrefixdropdown('Font Awesome'); return false;">Font Awesome</a></li>
-					    <li><a href="#" onclick="updatePrefixdropdown('Glyphicons'); return false;">Glyphicons</a></li>
-					  </ul>
+			  <div id="markerStyles">
+				  <div class="form-group" id="prefix">
+				  	  <label class="control-label col-sm-3" for="layer-type-dropdown">Marker Prefix:</label>
+					  <div class="dropdown col-sm-8">
+						  <button class="btn btn-default dropdown-toggle" type="button" id="layer-prefix-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						    Prefix
+						    <span class="caret"></span>
+						  </button>
+						  <ul class="dropdown-menu" aria-labelledby="layer-prefix-dropdown">
+						    <li><a href="#" onclick="updatePrefixdropdown('Font Awesome'); return false;">Font Awesome</a></li>
+						    <li><a href="#" onclick="updatePrefixdropdown('Glyphicons'); return false;">Glyphicons</a></li>
+						  </ul>
+					  </div>
+					  <input type="hidden" id="markerPrefix" name="markerPrefix" value="" />
 				  </div>
-				  <input type="hidden" id="markerPrefix" name="markerPrefix" value="" />
-			  </div>
-			  <div class="form-group" id="marker-colour">
-			  	<label class="control-label col-sm-3" for="layer-colour-dropdown">Marker Colour:</label>
-				  <div class="dropdown col-sm-8">
-					  <button class="btn btn-default dropdown-toggle" type="button" id="layer-colour-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-					    Marker Colour
-					    <span class="caret"></span>
-					  </button>
-					  <ul class="dropdown-menu" aria-labelledby="layer-colour-dropdown">
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Red'); return false;">Red</a></li>
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Red'); return false;">Dark Red</a></li>
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Orange'); return false;">Orange</a></li>
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Green'); return false;">Green</a></li>
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Green'); return false;">Dark Green</a></li>
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Blue'); return false;">Blue</a></li>
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Purple'); return false;">Purple</a></li>
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Purple'); return false;">Dark Purple</a></li>
-					    <li><a href="#" onclick="updateMarkerColourdropdown('Cadet Blue'); return false;">Cadet Blue</a></li>
-					  </ul>
+				  <div class="form-group" id="marker-colour">
+				  	<label class="control-label col-sm-3" for="layer-colour-dropdown">Marker Colour:</label>
+					  <div class="dropdown col-sm-8">
+						  <button class="btn btn-default dropdown-toggle" type="button" id="layer-colour-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						    Marker Colour
+						    <span class="caret"></span>
+						  </button>
+						  <ul class="dropdown-menu" aria-labelledby="layer-colour-dropdown">
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Red'); return false;">Red</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Red'); return false;">Dark Red</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Orange'); return false;">Orange</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Green'); return false;">Green</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Green'); return false;">Dark Green</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Blue'); return false;">Blue</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Purple'); return false;">Purple</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Purple'); return false;">Dark Purple</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Cadet Blue'); return false;">Cadet Blue</a></li>
+						  </ul>
+					  </div>
+					  <input type="hidden" id="markerColour" name="markerColour" value="" />
 				  </div>
-				  <input type="hidden" id="markerColour" name="markerColour" value="" />
-			  </div>
-			  <div class="form-group">
-			    <label class="control-label col-sm-3" for="marker-icon">Icon:</label>
-			    <div class="col-sm-8">
-			      <input type="text" class="form-control" id="marker-icon" name="marker-icon" placeholder="Enter icon...">
-			    </div>
-			  </div>
-			  <div class="form-group">
-			    <label class="control-label col-sm-3" for="marker-icon-colour">Icon Colour:</label>
-			    <div class="col-sm-8">
-			      <input type="text" class="form-control" id="marker-icon-colour" name="marker-icon-colour" placeholder="Enter icon colour...">
-			    </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="marker-icon">Icon:</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="marker-icon" name="marker-icon" placeholder="Enter icon...">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="marker-icon-colour">Icon Colour:</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="marker-icon-colour" name="marker-icon-colour" placeholder="Enter icon colour...">
+				    </div>
+				  </div>
 			  </div>
 			  <div class="form-group"> 
 			    <div class="col-sm-offset-2 col-sm-10">
@@ -147,11 +149,11 @@
 			</thead>
 			<tbody>
 			  <% _.each(styles, function(style){ %>
-				<tr data-expanded="false" id="currency-records" data-id="<%= currency.currency %>" data-model="currency">
+				<tr data-expanded="false" id="layer-styles-records" data-id="<%= style.id %>" data-model="maplayerstyles">
 					<td><%= style.description %></td>
 					<td><%= style.type %></td>
 					<td><%= style.id %></td>
-					<td><%= style.style %></td>
+					<td><%= JSON.stringify(style.style) %></td>
 					<td><%= style.prefix %></td>
 					<td><%= style.markerColour %></td>
 					<td><%= style.markerIcon %></td>

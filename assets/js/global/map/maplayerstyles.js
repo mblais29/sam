@@ -9,7 +9,7 @@ function getLayerStyleValues(id){
 
 function closeLayerStyleAddPanel(){
 	$('#layer-style-add').slideUp();
-	$('#layer-style-add').val("");
+	$('#layer-style-add input').val("");
 	var newTypeValue = 'Type <span class="caret"></span>';
 	var newPrefixValue = 'Prefix <span class="caret"></span>';
 	var newColourValue = 'Marker Colour <span class="caret"></span>';
@@ -23,6 +23,11 @@ function updateTypedropdown(type){
 	$('button#layer-type-dropdown').html(newValue);
 	var lowercasevalue = type.toLowerCase();
 	$('#layerType').val(lowercasevalue);
+	if(lowercasevalue == 'point'){
+		$('div#markerStyles').show();
+	}else{
+		$('div#markerStyles').hide();
+	}
 }
 
 function updatePrefixdropdown(prefix){
