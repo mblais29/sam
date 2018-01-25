@@ -130,6 +130,97 @@
 		  </div>
 		</div>
 		
+		<div id="layer-style-edit" class="panel panel-default">
+		  <div class="panel-heading">Edit Layer Style</div>
+		  <div class="panel-body">
+		  	<form class="form-horizontal" id="layerStyleEdit" action="maplayerstyles/update">
+			  <div class="form-group">
+			    <label class="control-label col-sm-3" for="description">Description:</label>
+			    <div class="col-sm-8">
+			      <input type="text" class="form-control" id="edit-description" name="edit-description" placeholder="Enter description...">
+			    </div>
+			  </div>
+			  <div class="form-group" id="layer-type">
+			  	  <label class="control-label col-sm-3" for="layer-type-dropdown">Layer Type:</label>
+				  <div class="dropdown col-sm-8">
+					  <button class="btn btn-default dropdown-toggle" type="button" id="layer-type-dropdown-edit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					    Type
+					    <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" aria-labelledby="layer-type-dropdown">
+					    <li><a href="#" onclick="updateEditTypedropdown('Polygon'); return false;">Polygon</a></li>
+					    <li><a href="#" onclick="updateEditTypedropdown('Point'); return false;">Point</a></li>
+					    <li><a href="#" onclick="updateEditTypedropdown('Line'); return false;">Line</a></li>
+					  </ul>
+					</div>
+					<input type="hidden" id="layerTypeEdit" name="layerTypeEdit" value="" />  
+			  </div>
+			  <div class="form-group">
+			    <label class="control-label col-sm-3" for="layerStyleEdit">Style:</label>
+			    <div class="col-sm-8">
+			      <input type="text" class="form-control" id="layerStyleEdit" name="layerStyleEdit" placeholder="Enter json style...">
+			    </div>
+			  </div>
+			  <div id="markerStyles">
+				  <div class="form-group" id="prefix">
+				  	  <label class="control-label col-sm-3" for="layer-type-dropdown">Marker Prefix:</label>
+					  <div class="dropdown col-sm-8">
+						  <button class="btn btn-default dropdown-toggle" type="button" id="layer-prefix-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						    Prefix
+						    <span class="caret"></span>
+						  </button>
+						  <ul class="dropdown-menu" aria-labelledby="layer-prefix-dropdown">
+						    <li><a href="#" onclick="updatePrefixdropdown('Font Awesome'); return false;">Font Awesome</a></li>
+						    <li><a href="#" onclick="updatePrefixdropdown('Glyphicons'); return false;">Glyphicons</a></li>
+						  </ul>
+					  </div>
+					  <input type="hidden" id="markerPrefix" name="markerPrefix" value="" />
+				  </div>
+				  <div class="form-group" id="marker-colour">
+				  	<label class="control-label col-sm-3" for="layer-colour-dropdown">Marker Colour:</label>
+					  <div class="dropdown col-sm-8">
+						  <button class="btn btn-default dropdown-toggle" type="button" id="layer-colour-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						    Marker Colour
+						    <span class="caret"></span>
+						  </button>
+						  <ul class="dropdown-menu" aria-labelledby="layer-colour-dropdown">
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Red'); return false;">Red</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Red'); return false;">Dark Red</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Orange'); return false;">Orange</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Green'); return false;">Green</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Green'); return false;">Dark Green</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Blue'); return false;">Blue</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Purple'); return false;">Purple</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Dark Purple'); return false;">Dark Purple</a></li>
+						    <li><a href="#" onclick="updateMarkerColourdropdown('Cadet Blue'); return false;">Cadet Blue</a></li>
+						  </ul>
+					  </div>
+					  <input type="hidden" id="markerColour" name="markerColour" value="" />
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="marker-icon">Icon:</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="marker-icon" name="marker-icon" placeholder="Enter icon...">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label class="control-label col-sm-3" for="marker-icon-colour">Icon Colour:</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="marker-icon-colour" name="marker-icon-colour" placeholder="Enter icon colour...">
+				    </div>
+				  </div>
+			  </div>
+			  <div class="form-group"> 
+			    <div class="col-sm-offset-2 col-sm-10">
+			      <button type="submit" class="btn btn-default pull-right">Submit</button>
+			      <button type="button" id="layerStyleClose" class="btn btn-default pull-right btn-close" onclick="closeLayerStyleAddPanel()">Close</button>
+		  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+			    </div>
+			  </div>
+			</form>
+		  </div>
+		</div>
+		
 		<table id="table-layer-styles" class="table table-striped" data-sorting="true" data-filtering="true">
 			<thead>
 				<tr>

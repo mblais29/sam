@@ -49,5 +49,36 @@ module.exports = {
 			res.redirect('/maplayerstyles');
 		});
 	},
+	
+	update: function(req, res, next){
+		var phone = req.param('phone');
+		var phoneNumber = phone[0] + "-" + phone[1] + "-" + phone[2];
+
+		var obj = {
+			client: req.param('client-name'),
+			address: req.param('client-address'),
+			phone: phoneNumber,
+			contact: req.param('client-contact'),
+			email: req.param('client-email')
+		};
+		
+		Client.update(req.param('client-id'), obj, function clientUpdated(err){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/client');
+				return;
+			}
+			AlertService.success(req, 'Client ' + req.param('client-name') + ' updated successfully!');
+			return res.redirect('/client');
+		}); 
+	},
+	
+	'retrieveStyleRecord': function(req, res, next){
+		MapLayerStyles.find().where({id: req.param('styleId')}).populateAll().exec(function (err, response) {
+			if(err) return next(err);
+			//Must return res.ok() to send the data to the ajax call
+			return res.ok(response);
+		});
+	}
 };
 

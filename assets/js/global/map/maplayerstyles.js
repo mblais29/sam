@@ -48,3 +48,44 @@ function updateMarkerColourdropdown(colour){
 	var lowercasevalue = colour.replace(/ /g, "").toLowerCase();
 	$('#markerColour').val(lowercasevalue);
 }
+
+function getLayerStyleValue(styleId){
+	$.ajax('/maplayerstyles/retrieveStyleRecord?styleId=' + styleId,{
+      success: function(data) {
+      	console.log(data);
+      	$('#layer-style-edit').show();
+        populateEditForm(data);
+      }
+ 	});
+}
+
+function populateEditForm(data){
+	$('input#edit-description').val(data[0].description);
+	$('#layer-type-dropdown-edit').val(editTypedropdown(data[0].type));
+	$('input#layerStyleEdit').val(JSON.stringify(data[0].style).replace(/{/g, "").replace(/}/g, ""));
+	
+}
+
+function editTypedropdown(type){
+	var newValue = type.charAt(0).toUpperCase() + type.slice(1) + ' <span class="caret"></span>';
+	$('button#layer-type-dropdown-edit').html(newValue);
+	var lowercasevalue = type.toLowerCase();
+	$('#layerTypeEdit').val(lowercasevalue);
+	if(lowercasevalue == 'point'){
+		$('div#markerStyles').show();
+	}else{
+		$('div#markerStyles').hide();
+	}
+}
+
+function updateEditTypedropdown(type){
+	var newValue = type + ' <span class="caret"></span>';
+	$('button#layer-type-dropdown-edit').html(newValue);
+	var lowercasevalue = type.toLowerCase();
+	$('#layerTypeEdit').val(lowercasevalue);
+	if(lowercasevalue == 'point'){
+		$('div#markerStyles').show();
+	}else{
+		$('div#markerStyles').hide();
+	}
+}
