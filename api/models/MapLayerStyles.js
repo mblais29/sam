@@ -20,24 +20,31 @@ module.exports = {
 	type: {
 		type: 'string',
 		required: true,
-    	enum: ['polygon', 'point', 'line']
+    	enum: ['polygon', 'point', 'line'],
+    	defaultsTo: 'polygon',
+    	required: true
 	},
 	style: {
-		type: 'json'
+		type: 'json',
+		defaultsTo: null
 	},
 	prefix: {
 		type: 'string',
-		enum: ['fa', 'glyphicon']
+		enum: ['fa', 'glyphicon'],
+		defaultsTo: null
 	},
 	markerColour: {
 		type: 'string',
-		enum: ['red', 'darkred', 'orange', 'green', 'darkgreen', 'blue', 'purple', 'darkpurple', 'cadetblue']
+		enum: ['red', 'darkred', 'orange', 'green', 'darkgreen', 'blue', 'purple', 'darkpurple', 'cadetblue'],
+		defaultsTo: null
 	},
 	markerIcon: {
-		type: 'string'
+		type: 'string',
+		defaultsTo: null
 	},
 	markerIconColor: {
-		type: 'string'
+		type: 'string',
+		defaultsTo: null
 	}
   }
 };

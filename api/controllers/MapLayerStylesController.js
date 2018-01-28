@@ -28,16 +28,16 @@ module.exports = {
 		}
 	},
 	create: function(req,res,next){
-
 		var obj = {
-			description: req.param('description'),
-			type: req.param('layerType'),
-			style: '{' + req.param('layerStyle') + '}',
-			prefix: req.param('markerPrefix'),
-			markerColour: req.param('markerColour'),
-			markerIcon: req.param('marker-icon'),
-			markerIconColor: req.param('marker-icon-colour'),
+				description: req.param('description'),
+				type: req.param('layerType'),
+				style: '{' + req.param('layerStyle') + '}',
+				prefix: req.param('markerPrefix'),
+				markerColour: req.param('markerColour'),
+				markerIcon: req.param('marker-icon'),
+				markerIconColor: req.param('marker-icon-colour')
 		};
+		
 		
 		MapLayerStyles.create(obj, function stylecreate(err,client){
 			if(err){
@@ -51,26 +51,61 @@ module.exports = {
 	},
 	
 	update: function(req, res, next){
-		var phone = req.param('phone');
-		var phoneNumber = phone[0] + "-" + phone[1] + "-" + phone[2];
 
 		var obj = {
-			client: req.param('client-name'),
-			address: req.param('client-address'),
-			phone: phoneNumber,
-			contact: req.param('client-contact'),
-			email: req.param('client-email')
+			description: req.param('edit-description'),
+			type: req.param('layerTypeEdit'),
+			style: '{' + req.param('layerStyleEdit') + '}'
 		};
 		
-		Client.update(req.param('client-id'), obj, function clientUpdated(err){
+		if(req.param('markerEditPrefix') != "" || req.param('markerEditPrefix') != undefined){
+			obj.prefix = req.param('markerEditPrefix');
+		}
+		
+		if(req.param('markerEditColour') != "" || req.param('markerEditColour') != undefined){
+			obj.markerColour = req.param('markerEditColour');
+		}
+		
+		if(req.param('marker-edit-icon') != "" || req.param('marker-edit-icon') != undefined){
+			obj.markerIcon = req.param('marker-edit-icon');
+		}
+		
+		if(req.param('marker-edit-icon-colour') != "" || req.param('marker-edit-icon') != undefined){
+			obj.markerIconColor = req.param('marker-edit-icon-colour');
+		}
+
+		MapLayerStyles.update(req.param('layerStyleId'), obj, function mapLayerStyleUpdated(err){
 			if(err){
 				AlertService.error(req, JSON.stringify(err));
-				res.redirect('/client');
+				res.redirect('/maplayerstyles');
 				return;
 			}
-			AlertService.success(req, 'Client ' + req.param('client-name') + ' updated successfully!');
-			return res.redirect('/client');
+			AlertService.success(req, 'Updated layer style successfully!');
+			return res.redirect('/maplayerstyles');
 		}); 
+	},
+	
+	destroy: function(req, res, next){
+		MapLayerStyles.findOne(req.param('styleId'), function foundStyle(err,style){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/maplayerstyles');
+			}
+			if(!style) {
+				AlertService.warning(req, 'Layer Style doesn\'t exist...');
+				res.redirect('/maplayerstyles');
+			}
+			MapLayerStyles.destroy(req.param('styleId'), function layerStyleDestroyed(err){
+				if(err){
+					AlertService.error(req, JSON.stringify(err));
+					res.redirect('/maplayerstyles');
+				}
+				
+			});
+
+			AlertService.success(req, 'You have deleted the ' + style.description + '  style!');
+			res.redirect('/maplayerstyles');
+		});
 	},
 	
 	'retrieveStyleRecord': function(req, res, next){
