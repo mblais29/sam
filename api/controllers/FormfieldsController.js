@@ -91,8 +91,6 @@ module.exports = {
 		var fileNames = {};
 
 		var table = req.param("collection");
-		
-		var currentModel = "'" + table + "'";
 
 		for(var prop in record) {
 	        if(record[prop] === ''){
@@ -116,14 +114,14 @@ module.exports = {
 		 /* Removes any underscores in the field name when inserting new record */
 		 var finalRecord = ObjectServices.removeUnderscore(lowercaseRecord);
 		 var invalidFilesTypes = [];
-		 
+		
 		 sails.models[table].create(finalRecord).exec(function (err, records) {
+
 			if(err){
 				AlertService.error(req, JSON.stringify(err));
 				res.redirect('/forms/myForms');
 			};
-			
-			
+
 			//If files exist in the parameters upload the file to the docs bucket
 			 if(typeof req._fileparser.upstreams[0] !== 'undefined'){
 			 	var uploadFile = req._fileparser.upstreams[0];
@@ -171,7 +169,6 @@ module.exports = {
 					});
 				}
 			 }
-			
 			if(invalidFilesTypes.length > 0){
 			 	AlertService.error(req, JSON.stringify(invalidFilesTypes));
 			 	res.redirect('/forms/myForms');
@@ -179,6 +176,7 @@ module.exports = {
 				AlertService.success(req, 'Record saved successfully!');
 			 	res.redirect('/forms/myForms');
 			}
+		
 			return res.ok();
 		 });
 		 

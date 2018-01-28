@@ -1,3 +1,10 @@
+/* Notes: 
+ *	1. Cannot have _ in the model field names
+ * 	2. You must create a model for the table you want to insert data into via myForms
+ * 
+ * 
+*/
+
 module.exports.conf = {
 	/* Store Documents & Files */
     docUrl: 'C:/Users/MitchelBlais/Documents/files/',

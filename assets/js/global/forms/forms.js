@@ -57,7 +57,7 @@ if($('body').is('#myForm')){
 	$('#myformClose').on('click', function(){
 		$('#myform-selected').slideUp();
 		//Removes all children elements within form
-		$('#formSelected').empty();
+		$('#formSelected').find('*').not('#_csrf').remove();
 		$('#myform-title').empty();
 	});
 	
