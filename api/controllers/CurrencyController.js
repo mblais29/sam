@@ -10,7 +10,7 @@ module.exports = {
 		if(req.session.authenticated){
 			if(req.session.User.admin){
 				/* Add populateAll to get all the foreign keys for the client model */
-				Currency.find().populateAll().exec(function foundClientss(err,data){
+				Currency.find().populateAll().exec(function foundClients(err,data){
 					if(err) return next(err);
 					res.view({
 						currencies: data,

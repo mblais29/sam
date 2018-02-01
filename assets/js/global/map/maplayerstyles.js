@@ -17,6 +17,7 @@ function closeLayerStyleAddPanel(){
 	$('button#layer-prefix-dropdown').html(newPrefixValue);
 	$('button#layer-colour-dropdown').html(newColourValue);
 }
+
 function closeEditLayerStyleAddPanel(){
 	$('#layer-style-edit').slideUp();
 	$('#layer-style-edit input').val("");
@@ -27,6 +28,7 @@ function closeEditLayerStyleAddPanel(){
 	$('button#layer-edit-prefix-dropdown').html(newPrefixValue);
 	$('button#layer-edit-colour-dropdown').html(newColourValue);
 }
+
 function updateTypedropdown(type){
 	var newValue = type + ' <span class="caret"></span>';
 	$('button#layer-type-dropdown').html(newValue);

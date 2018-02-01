@@ -1,0 +1,134 @@
+<html>
+	<head>
+		<title>Map Layers</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	</head>
+	<body id="mapLayers">
+		<% if (messages && messages['error'].length > 0) { %>
+		  <div class="alert alert-danger mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['error'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['error'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		    
+		  <% }); %>
+		  </div>
+		<% } %>
+		<% if (messages && messages['warning'].length > 0) { %>
+		  <div class="alert alert-warning mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['warning'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['warning'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		  <% }); %>
+		  </div>
+		<% } %>
+		<% if (messages && messages['success'].length > 0) { %>
+		  <div class="alert alert-success mapMessage">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+		  <% messages['success'].forEach(function(message) { %>
+		    <%= message %>
+		    <% if (messages['success'].length > 1) { %>
+		    	<br>
+		    <% } %>
+		  <% }); %>
+		  </div>
+		<% } %>
+		<h3 id="table-title">Layers</h3>
+		<div id="layer-create-add" class="panel panel-default">
+		  <div class="panel-heading">Create Layer</div>
+		  <div class="panel-body">
+		  	<form class="form-horizontal" id="layerCreate" action="maplayers/create">
+			  <div class="form-group">
+			    <label class="control-label col-sm-3" for="layer-create-name">Name:</label>
+			    <div class="col-sm-8">
+			      <input type="text" class="form-control" id="layer-create-name" name="layer-create-name" placeholder="Enter layer name...">
+			    </div>
+			  </div>
+			  <div class="form-group">
+			  	  <label class="control-label col-sm-3" for="layer-create-table">Table:</label>
+				  <div class="dropdown col-sm-8">
+				  		<input type="text" class="form-control" id="layer-create-table" name="layer-create-table" placeholder="Enter table...">
+				  </div>
+			  </div>
+			  <div class="form-group" id="layer-create-type">
+			  	  <label class="control-label col-sm-3" for="layer-create-type-dropdown">Layer Type:</label>
+				  <div class="dropdown col-sm-8">
+					  <button class="btn btn-default dropdown-toggle" type="button" id="layer-create-type-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					    Type
+					    <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" aria-labelledby="layer-create-type-dropdown">
+					    <li><a href="#" onclick="updateCreateTypedropdown('Polygon'); return false;">Polygon</a></li>
+					    <li><a href="#" onclick="updateCreateTypedropdown('Point'); return false;">Point</a></li>
+					    <li><a href="#" onclick="updateCreateTypedropdown('Line'); return false;">Line</a></li>
+					  </ul>
+					</div>
+					<input type="hidden" id="layerCreateType" name="layerCreateType" value="" />  
+			  </div>
+			  <div class="form-group" id="layer-create-styles">
+			  	  
+			  </div>
+			  <div class="form-group">
+			  	<label class="control-label col-sm-3" for="layer-create-attr">Attribute Popup:</label>
+			  	<div class="col-sm-8">
+			  		<textarea class="form-control" rows="3" id="layer-create-attr" name="layer-create-attr"></textarea>
+			  	</div>
+			  </div>
+			  <div class="form-group" id="layer-create-assigned-form">
+			  	  
+			  </div>
+			  <div class="form-group"> 
+			    <div class="col-sm-offset-2 col-sm-10">
+			      <button type="submit" class="btn btn-default pull-right">Submit</button>
+			      <button type="button" id="layerClose" class="btn btn-default pull-right btn-close" onclick="closeLayerCreateAddPanel()">Close</button>
+		  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+			    </div>
+			  </div>
+			</form>
+		  </div>
+		</div>
+		
+		<table id="table-layers" class="table table-striped" data-sorting="true" data-filtering="true">
+			<thead>
+				<tr>
+					<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
+					<th>Layer Name</th>
+					<th data-type="html" data-breakpoints="all" data-title="Id">Id</th>
+					<th data-type="html" data-breakpoints="all" data-title="Style">Referenced Table</th>
+					<th data-type="html" data-breakpoints="all" data-title="Prefix">Layer Type</th>
+					<th data-type="html" data-breakpoints="all" data-title="Layer Style">Layer Style</th>
+					<th data-type="html" data-breakpoints="all" data-title="Layer Attributes">Layer Attributes</th>
+					<th data-type="html" data-breakpoints="all" data-title="Assigned Form">Assigned Form</th>
+					<th data-filterable="false" data-sortable="false"><button id="layerAdd" onclick="getLayers()" class="btn btn-sm btn-primary">Add</button></th>	
+				</tr>
+			</thead>
+			<tbody>
+			  <% _.each(layers, function(layer){ %>
+				<tr data-expanded="false" id="layer-styles-records" data-id="<%= layer.id %>" data-model="maplayers">
+					<td><%= layer.name %></td>
+					<td><%= layer.id %></td>
+					<td><%= layer.layertableref %></td>
+					<td><%= layer.layertype %></td>
+					<td><%= layer.layerstyle[0].description %></td>
+					<td><%= layer.layerattributesonclick %></td>
+					<td><%= layer.layerassignedform[0].formname %></td>
+					
+					<td><button id="layerEdit<%= layer.id %>" class="btn btn-sm btn-warning" onclick="#" value="<%= layer.id %>">Edit</button></td>
+					<td>
+						<form action="/maplayers/destroy?layerId=<%= layer.id %>" method="POST">
+							<input type="hidden" name="_method" value="delete" />
+							<input type="submit" class="btn btn-sm btn-danger" value="Delete" />
+							<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+						</form>
+					</td>
+				</tr>
+			  <% }) %>
+			</tbody>
+		</table>
+	</body>
+</html>

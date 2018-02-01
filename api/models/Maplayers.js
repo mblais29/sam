@@ -17,25 +17,25 @@ module.exports = {
 		type: 'string',
 		required: true
 	},
-	layer_table_ref: {
+	layertableref: {
 		type: 'string',
 		required: true
 	},
-	layer_type: {
+	layertype: {
 		type: 'string',
 		required: true,
     	enum: ['polygon', 'point', 'line'],
     	defaultsTo: 'polygon',
     	required: true
 	},
-	layer_style: {
+	layerstyle: {
 		collection: 'MapLayerStyles',
         via: 'id'
 	},
-	layer_attributes_onclick: {
+	layerattributesonclick: {
 		type: 'string'
 	},
-	layer_assigned_form: {
+	layerassignedform: {
 		collection: 'Forms',
         via: 'formid'
 	}

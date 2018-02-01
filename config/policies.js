@@ -63,6 +63,10 @@ module.exports.policies = {
   	index: ['flashAlert']
   },
   
+  maplayers: {
+  	index: ['flashAlert']
+  },
+  
   map: {
   	index: ['flashAlert']
   },
