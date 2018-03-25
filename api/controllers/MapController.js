@@ -80,7 +80,14 @@ module.exports = {
 			    return res.json(records);
 			});
 		});
-	}
+	},
+	
+	'getAllMapLayers': function(req,res,next){
+		Maplayers.find().populateAll().exec(function foundLayers(err,data){
+			if(err) return next(err);
+			return res.json(data);
+		});
+	},
 
 };
 

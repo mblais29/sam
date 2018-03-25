@@ -1,10 +1,15 @@
 /****************************************
 	GLOBAL VARIABLES
 ****************************************/
-var mapOnLoadCenter = new L.LatLng(56.1304, -106.3468);
-var mapOnLoadZoom = 4;
+var mapOnLoadCenter = new L.LatLng(49.8880,-119.4960); //new L.LatLng(56.1304, -106.3468);
+var mapOnLoadZoom = 15; //4;
 var navBarMargin = 52;
 var propertyList = [];
+var layerControl = "";
+var currentLayers = [];
+var overlayLayers = {};
+
+var map = "";
 var mapProperties = L.featureGroup();
 var propertyMarkers = L.featureGroup();
 var propertyLayer = new L.geoJson();
@@ -24,7 +29,7 @@ if($('body').is('#mapBody')){
 	/****************************************
 	ADDING GOOGLE MAP LAYERS
 	****************************************/
-	var map = L.map('map', {center: mapOnLoadCenter, zoom: mapOnLoadZoom});
+	map = L.map('map', {center: mapOnLoadCenter, zoom: mapOnLoadZoom});
 		
 		var esriStreet = new L.esri.basemapLayer('Streets');
 		var esriTopo = new L.esri.basemapLayer('Topographic');
@@ -39,12 +44,13 @@ if($('body').is('#mapBody')){
 		};
 		  
 	/****************************************
-	BASEMAP AND LAYER CONTROL FOR LEGEND
+	BASEMAP LAYERS AND LAYER CONTROL FOR LEGEND
 	****************************************/
-	
+	getAllMapLayers();
 	map.addLayer(esriStreet);
-	var layerControl = L.control.layers(baseMaps);
+	layerControl = L.control.layers(baseMaps);
 	layerControl.addTo(map);
+	
     
 	/****************************************
 	ADD LEAFLET-DRAW
@@ -144,6 +150,11 @@ if($('body').is('#mapBody')){
 	map.on('popupopen', function (e) {
 	    initializeAutoComplete();
 	});
+	
+	/* Need to figure out a way to refresh the layers on map move */
+	map.on('moveend', function(){
+  		removeLayers();
+	});
     
     /****************************************
 	ADD ESRI GEOCODING SERVICE API
@@ -174,10 +185,12 @@ if($('body').is('#mapBody')){
    $('#propertySearchSubmit').on('click', function(){
 		getPropertyData();
 	});
-	
-   
+
 	populatePropertySearch();
-   };
+	
+	
+
+};
 
 /****************************************
 	GLOBAL FUNCTIONS
@@ -455,4 +468,67 @@ function removeSearchedLayers(){
 	map.removeLayer(propertyGroup);
 	propertyGroup = L.featureGroup();
 }
+
+function getAllMapLayers(){
+	$.ajax('/map/getAllMapLayers',{
+      success: function(data) {
+		handleLayerData(data);
+      },
+      done: function(data){
+		
+      },
+      error: function(err) {
+         console.log(err);
+      }
+   });
+
+}
+
+function handleLayerData(data){
+	for(i = 0; i < data.length; i++){
+		var geojsonURL = data[i].url;
+		var layerName = data[i].name;
+		var layerid = data[i].layerid;
+		var layer = {};
+		layer["url"] = geojsonURL;
+		layer["name"] = layerName;
+		layer["id"] = layerid;
+		currentLayers.push(layer);
+	}
+	addLayers();
+}
+
+function addLayers(){
+	/* Loop through the layers in the database and add to the layercontrol */
+	for (var k in currentLayers) {
+		(function (k) {
+	      	var layerUrl = currentLayers[k]["url"];
+			var layerId = currentLayers[k]["id"];
+			var layerName = currentLayers[k]["name"];
+			var layersInControl = layerControl._layers;
+			$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+			  	overlayLayers[layerId] = new L.GeoJSON(data, {
+	  									onEachFeature: function(feature, layer){
+	  										layer.feature.properties.layer_id = layerId;
+	  									}
+									  });
+			  	layerControl.addOverlay(overlayLayers[layerId], layerName);
+			});
+	  	})(k);
+	}
+}
+
+function removeLayers(){
+	for (var k in overlayLayers) {
+		console.log(k);
+		if(map.hasLayer(overlayLayers[k])){
+			overlayLayers[k].clearLayers();
+		}else{
+			layerControl.removeLayer(overlayLayers[k]);
+		}
+		
+	}
+	addLayers();
+}
+
 

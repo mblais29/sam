@@ -13,7 +13,15 @@ module.exports = {
 		primaryKey: true,
     	autoIncrement: true
 	},
+	layerid: {
+		type: 'string',
+		required: true
+	},
 	name: {
+		type: 'string',
+		required: true
+	},
+	url: {
 		type: 'string',
 		required: true
 	},
