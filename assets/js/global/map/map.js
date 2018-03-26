@@ -519,16 +519,45 @@ function addLayers(){
 }
 
 function removeLayers(){
+	var activeLayers = [];
 	for (var k in overlayLayers) {
-		console.log(k);
-		if(map.hasLayer(overlayLayers[k])){
-			overlayLayers[k].clearLayers();
-		}else{
-			layerControl.removeLayer(overlayLayers[k]);
-		}
 		
+		if(map.hasLayer(overlayLayers[k])){
+			map.removeLayer(overlayLayers[k]);
+			activeLayers.push(k);
+		}
+		layerControl.removeLayer(overlayLayers[k]);
 	}
-	addLayers();
+	renderLayers(activeLayers);
+}
+
+function renderLayers(activeLayers){
+	/* Loop through the layers in the database and add to the layercontrol */
+	for (var k in currentLayers) {
+		(function (k) {
+	      	var layerUrl = currentLayers[k]["url"];
+			var layerId = currentLayers[k]["id"];
+			var layerName = currentLayers[k]["name"];
+			
+			$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+				/* Check to see if layer was active before refreshing the page */
+				if($.inArray( layerId, activeLayers ) > -1){
+					overlayLayers[layerId] = new L.GeoJSON(data, {
+	  									onEachFeature: function(feature, layer){
+	  										layer.feature.properties.layer_id = layerId;
+	  									}
+									  }).addTo(map);
+				}else{
+			  		overlayLayers[layerId] = new L.GeoJSON(data, {
+	  									onEachFeature: function(feature, layer){
+	  										layer.feature.properties.layer_id = layerId;
+	  									}
+									  });
+				}
+				layerControl.addOverlay(overlayLayers[layerId], layerName);
+			});
+	  	})(k);
+	}
 }
 
 
