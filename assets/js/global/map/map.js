@@ -489,10 +489,14 @@ function handleLayerData(data){
 		var geojsonURL = data[i].url;
 		var layerName = data[i].name;
 		var layerid = data[i].layerid;
+		var minZoom = data[i].minzoom;
+		var maxZoom = data[i].maxzoom;
 		var layer = {};
 		layer["url"] = geojsonURL;
 		layer["name"] = layerName;
 		layer["id"] = layerid;
+		layer["minzoom"] = minZoom;
+		layer["maxzoom"] = maxZoom;
 		currentLayers.push(layer);
 	}
 	addLayers();
@@ -505,6 +509,8 @@ function addLayers(){
 	      	var layerUrl = currentLayers[k]["url"];
 			var layerId = currentLayers[k]["id"];
 			var layerName = currentLayers[k]["name"];
+			var layerMinZoom = currentLayers[k]["minzoom"];
+			var layerMaxZoom = currentLayers[k]["maxzoom"];
 			var layersInControl = layerControl._layers;
 			$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
 			  	overlayLayers[layerId] = new L.GeoJSON(data, {
@@ -512,7 +518,10 @@ function addLayers(){
 	  										layer.feature.properties.layer_id = layerId;
 	  									}
 									  });
-			  	layerControl.addOverlay(overlayLayers[layerId], layerName);
+				if(map.getZoom() >= layerMinZoom){
+					layerControl.addOverlay(overlayLayers[layerId], layerName);
+				}					  
+			  	
 			});
 	  	})(k);
 	}
@@ -538,6 +547,8 @@ function renderLayers(activeLayers){
 	      	var layerUrl = currentLayers[k]["url"];
 			var layerId = currentLayers[k]["id"];
 			var layerName = currentLayers[k]["name"];
+			var layerMinZoom = currentLayers[k]["minzoom"];
+			var layerMaxZoom = currentLayers[k]["maxzoom"];
 			
 			$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
 				/* Check to see if layer was active before refreshing the page */
@@ -554,7 +565,9 @@ function renderLayers(activeLayers){
 	  									}
 									  });
 				}
-				layerControl.addOverlay(overlayLayers[layerId], layerName);
+				if(map.getZoom() >= layerMinZoom){
+					layerControl.addOverlay(overlayLayers[layerId], layerName);
+				}
 			});
 	  	})(k);
 	}

@@ -46,6 +46,14 @@ module.exports = {
 	layerassignedform: {
 		collection: 'Forms',
         via: 'formid'
+	},
+	minzoom:{
+		type: 'integer',
+		defaultsTo: 0
+	},
+	maxzoom: {
+		type: 'integer',
+		defaultsTo: 20
 	}
   }
 };
