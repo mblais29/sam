@@ -15,7 +15,7 @@ module.exports = {
 						layers: data,
 						title: 'MapLayers'
 					});
-					//res.json(data);
+					//res.json(data[1]["layerstyle"][0]["description"]);
 				});
 			}else{
 				res.redirect('/map');

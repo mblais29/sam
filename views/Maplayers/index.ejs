@@ -99,8 +99,8 @@
 					<!--- Must have data-type="html" on all data-breakpoints="all" or <ahref=""> table data in Footable Plugin --->
 					<th>Layer Name</th>
 					<th data-type="html" data-breakpoints="all" data-title="Id">Id</th>
-					<th data-type="html" data-breakpoints="all" data-title="Style">Referenced Table</th>
-					<th data-type="html" data-breakpoints="all" data-title="Prefix">Layer Type</th>
+					<th data-type="html" data-breakpoints="all" data-title="Referenced Table">Referenced Table</th>
+					<th data-type="html" data-breakpoints="all" data-title="Layer Type">Layer Type</th>
 					<th data-type="html" data-breakpoints="all" data-title="Layer Style">Layer Style</th>
 					<th data-type="html" data-breakpoints="all" data-title="Layer Attributes">Layer Attributes</th>
 					<th data-type="html" data-breakpoints="all" data-title="Assigned Form">Assigned Form</th>
@@ -114,9 +114,9 @@
 					<td><%= layer.id %></td>
 					<td><%= layer.layertableref %></td>
 					<td><%= layer.layertype %></td>
-					<td><%= layer.layerstyle[0].description %></td>
+					<td><% if(typeof layer.layerstyle[0] != 'undefined'){ %><%= layer.layerstyle[0].description %><%}%></td>
 					<td><%= layer.layerattributesonclick %></td>
-					<td><%= layer.layerassignedform[0].formname %></td>
+					<td><% if(typeof layer.layerassignedform[0] != 'undefined') { %><%= layer.layerassignedform[0].formname %><%}%></td>
 					
 					<td><button id="layerEdit<%= layer.id %>" class="btn btn-sm btn-warning" onclick="#" value="<%= layer.id %>">Edit</button></td>
 					<td>

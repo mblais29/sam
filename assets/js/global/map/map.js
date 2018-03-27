@@ -489,14 +489,17 @@ function handleLayerData(data){
 		var geojsonURL = data[i].url;
 		var layerName = data[i].name;
 		var layerid = data[i].layerid;
+		var layerstyle = data[i].layerstyle;
 		var minZoom = data[i].minzoom;
 		var maxZoom = data[i].maxzoom;
 		var layer = {};
 		layer["url"] = geojsonURL;
 		layer["name"] = layerName;
 		layer["id"] = layerid;
+		layer["layerstyle"] = layerstyle;
 		layer["minzoom"] = minZoom;
 		layer["maxzoom"] = maxZoom;
+		
 		currentLayers.push(layer);
 	}
 	addLayers();
@@ -509,20 +512,54 @@ function addLayers(){
 	      	var layerUrl = currentLayers[k]["url"];
 			var layerId = currentLayers[k]["id"];
 			var layerName = currentLayers[k]["name"];
+			var layerStyle = currentLayers[k]["layerstyle"];
 			var layerMinZoom = currentLayers[k]["minzoom"];
 			var layerMaxZoom = currentLayers[k]["maxzoom"];
 			var layersInControl = layerControl._layers;
-			$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
-			  	overlayLayers[layerId] = new L.GeoJSON(data, {
-	  									onEachFeature: function(feature, layer){
-	  										layer.feature.properties.layer_id = layerId;
-	  									}
-									  });
-				if(map.getZoom() >= layerMinZoom){
-					layerControl.addOverlay(overlayLayers[layerId], layerName);
-				}					  
-			  	
-			});
+			
+			var currentLayerMarker = "";
+			var currentLayerStyle = "";
+			
+			if(layerStyle[0] !== undefined){
+				switch (layerStyle[0].type) {
+				    case 'point':
+				        currentLayerMarker = L.AwesomeMarkers.icon({
+							icon: layerStyle[0]["markerIcon"],
+							prefix: layerStyle[0]["prefix"],
+							markerColor: layerStyle[0]["markerColour"],
+							iconColor: layerStyle[0]["markerIconColor"]
+					    });
+					    $.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+							  	overlayLayers[layerId] = new L.GeoJSON(data, {
+								  							pointToLayer: function(geoJsonPoint, latlng) {
+															    return L.marker(latlng, {icon: currentLayerMarker});
+															},
+						  									onEachFeature: function(feature, layer){
+						  										layer.feature.properties.layer_id = layerId;
+						  									}
+														  });
+								if(map.getZoom() >= layerMinZoom){
+									layerControl.addOverlay(overlayLayers[layerId], layerName);
+								}					  
+							});
+				        break;
+				    case 'polygon':
+				        
+				        break;
+				}
+			}else{
+				$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+				  	overlayLayers[layerId] = new L.GeoJSON(data, {
+		  									onEachFeature: function(feature, layer){
+		  										layer.feature.properties.layer_id = layerId;
+		  									}
+										  });
+					if(map.getZoom() >= layerMinZoom){
+						layerControl.addOverlay(overlayLayers[layerId], layerName);
+					}					  
+				  	
+				});
+			}
 	  	})(k);
 	}
 }
@@ -542,33 +579,95 @@ function removeLayers(){
 
 function renderLayers(activeLayers){
 	/* Loop through the layers in the database and add to the layercontrol */
+	var currentLayerMarker = "";
+	var currentLayerStyle = "";
 	for (var k in currentLayers) {
 		(function (k) {
 	      	var layerUrl = currentLayers[k]["url"];
 			var layerId = currentLayers[k]["id"];
 			var layerName = currentLayers[k]["name"];
+			var layerStyle = currentLayers[k]["layerstyle"];
 			var layerMinZoom = currentLayers[k]["minzoom"];
 			var layerMaxZoom = currentLayers[k]["maxzoom"];
 			
-			$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
-				/* Check to see if layer was active before refreshing the page */
-				if($.inArray( layerId, activeLayers ) > -1){
-					overlayLayers[layerId] = new L.GeoJSON(data, {
-	  									onEachFeature: function(feature, layer){
-	  										layer.feature.properties.layer_id = layerId;
-	  									}
-									  }).addTo(map);
-				}else{
-			  		overlayLayers[layerId] = new L.GeoJSON(data, {
-	  									onEachFeature: function(feature, layer){
-	  										layer.feature.properties.layer_id = layerId;
-	  									}
-									  });
+			if(layerStyle[0]!== undefined ){
+				switch (layerStyle[0].type) {
+					case 'point':
+							currentLayerMarker = L.AwesomeMarkers.icon({
+								icon: layerStyle[0]["markerIcon"],
+								prefix: layerStyle[0]["prefix"],
+								markerColor: layerStyle[0]["markerColour"],
+								iconColor: layerStyle[0]["markerIconColor"]
+							});
+						$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+							/* Check to see if layer was active before refreshing the page */
+							if($.inArray( layerId, activeLayers ) > -1){
+								overlayLayers[layerId] = new L.GeoJSON(data, {
+													pointToLayer: function(geoJsonPoint, latlng) {
+													    return L.marker(latlng, {icon: currentLayerMarker});
+													},
+													onEachFeature: function(feature, layer){
+														layer.feature.properties.layer_id = layerId;
+													}
+												  }).addTo(map);
+							}else{
+								overlayLayers[layerId] = new L.GeoJSON(data, {
+													pointToLayer: function(geoJsonPoint, latlng) {
+													    return L.marker(latlng, {icon: currentLayerMarker});
+													},
+													onEachFeature: function(feature, layer){
+														layer.feature.properties.layer_id = layerId;
+													}
+												  });
+							}
+							if(map.getZoom() >= layerMinZoom){
+								layerControl.addOverlay(overlayLayers[layerId], layerName);
+							}
+						});
+						break;
+					case 'polygon':
+						$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+							/* Check to see if layer was active before refreshing the page */
+							if($.inArray( layerId, activeLayers ) > -1){
+								overlayLayers[layerId] = new L.GeoJSON(data, {
+													onEachFeature: function(feature, layer){
+														layer.feature.properties.layer_id = layerId;
+													}
+												  }).addTo(map);
+							}else{
+								overlayLayers[layerId] = new L.GeoJSON(data, {
+													onEachFeature: function(feature, layer){
+														layer.feature.properties.layer_id = layerId;
+													}
+												  });
+							}
+							if(map.getZoom() >= layerMinZoom){
+								layerControl.addOverlay(overlayLayers[layerId], layerName);
+							}
+						});
+						break;
 				}
-				if(map.getZoom() >= layerMinZoom){
-					layerControl.addOverlay(overlayLayers[layerId], layerName);
-				}
-			});
+			}else{
+				$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+					/* Check to see if layer was active before refreshing the page */
+					if($.inArray( layerId, activeLayers ) > -1){
+						overlayLayers[layerId] = new L.GeoJSON(data, {
+											onEachFeature: function(feature, layer){
+												layer.feature.properties.layer_id = layerId;
+											}
+										  }).addTo(map);
+					}else{
+						overlayLayers[layerId] = new L.GeoJSON(data, {
+											onEachFeature: function(feature, layer){
+												layer.feature.properties.layer_id = layerId;
+											}
+										  });
+					}
+					if(map.getZoom() >= layerMinZoom){
+						layerControl.addOverlay(overlayLayers[layerId], layerName);
+					}
+				});
+			}
 	  	})(k);
 	}
 }
