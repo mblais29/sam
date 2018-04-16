@@ -520,6 +520,7 @@ function addLayers(){
 			var currentLayerMarker = "";
 			var currentLayerStyle = "";
 			
+			
 			if(layerStyle[0] !== undefined){
 				switch (layerStyle[0].type) {
 				    case 'point':
@@ -544,7 +545,18 @@ function addLayers(){
 							});
 				        break;
 				    case 'polygon':
-				        
+				    	currentLayerStyle = layerStyle[0]["style"];
+				        $.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+							  	overlayLayers[layerId] = new L.GeoJSON(data, {
+								  							style: currentLayerStyle,
+						  									onEachFeature: function(feature, layer){
+						  										layer.feature.properties.layer_id = layerId;
+						  									}
+														  });
+								if(map.getZoom() >= layerMinZoom){
+									layerControl.addOverlay(overlayLayers[layerId], layerName);
+								}					  
+							});
 				        break;
 				}
 			}else{
@@ -626,16 +638,19 @@ function renderLayers(activeLayers){
 						});
 						break;
 					case 'polygon':
+						currentLayerStyle = layerStyle[0]["style"];
 						$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
 							/* Check to see if layer was active before refreshing the page */
 							if($.inArray( layerId, activeLayers ) > -1){
 								overlayLayers[layerId] = new L.GeoJSON(data, {
+													style: currentLayerStyle,
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
 													}
 												  }).addTo(map);
 							}else{
 								overlayLayers[layerId] = new L.GeoJSON(data, {
+													style: currentLayerStyle,
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
 													}

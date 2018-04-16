@@ -1,5 +1,8 @@
 if($('body').is('#mapLayers')){
 	$(".panel").draggable();
+	$('#maplayerEditClose').on('click', function(){
+		closeLayerEditPanel();
+	});
 
 }
 
@@ -8,6 +11,11 @@ function getLayers(id){
 	$("button#layerAdd").attr("disabled", "disabled");
 	getLayerStyles();
 	getLayerForms();
+}
+
+function editLayers(id){
+	$('#layer-create-edit').show();
+	$("button#layerAdd").attr("disabled", "disabled");
 }
 
 function closeLayerCreateAddPanel(){
@@ -21,11 +29,29 @@ function closeLayerCreateAddPanel(){
 	$('button#layer-create-type-dropdown').html(newTypeValue);
 }
 
+function closeLayerEditPanel(){
+	$('#layer-create-edit').slideUp();
+	$('#layer-create-edit input').val("");
+	$('#llayer-create-edit textarea').val("");
+	$('#layer-edit-styles').empty();
+	$('#layer-edit-assigned-form').empty();
+	$("button#layerAdd").attr("disabled", false);
+	var newTypeValue = 'Type <span class="caret"></span>';
+	$('button#layer-edit-type-dropdown').html(newTypeValue);
+}
+
 function updateCreateTypedropdown(type){
 	var newValue = type + ' <span class="caret"></span>';
 	$('button#layer-create-type-dropdown').html(newValue);
 	var lowercasevalue = type.toLowerCase();
 	$('#layerCreateType').val(lowercasevalue);
+}
+
+function updateEditTypedropdown(type){
+	var newValue = type + ' <span class="caret"></span>';
+	$('button#layer-edit-type-dropdown').html(newValue);
+	var lowercasevalue = type.toLowerCase();
+	$('#layerEditType').val(lowercasevalue);
 }
 
 function getLayerStyles(){

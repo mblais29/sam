@@ -30,6 +30,7 @@ module.exports = {
 	create: function(req,res,next){
 		var obj = {
 				name: req.param('layer-create-name'),
+				layerid: req.param('layer-create-id'),
 				layertableref: req.param('layer-create-table'),
 				layertype: req.param('layerCreateType'),
 				layerstyle: req.param('layerCreateStyle'),

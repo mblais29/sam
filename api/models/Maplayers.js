@@ -8,13 +8,9 @@
 module.exports = {
 
   attributes: {
-	id: {
-		type: 'integer',
-		primaryKey: true,
-    	autoIncrement: true
-	},
 	layerid: {
 		type: 'string',
+		primaryKey: true,
 		required: true
 	},
 	name: {
