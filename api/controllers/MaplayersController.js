@@ -50,7 +50,7 @@ module.exports = {
 		});
 	},
 	
-	'retrieveLayers': function(req, res, next){
+	'retrieveLayerStyles': function(req, res, next){
 		MapLayerStyles.find().exec(function (err, response) {
 			if(err) return next(err);
 			return res.ok(response);
@@ -62,6 +62,14 @@ module.exports = {
 			if(err) return next(err);
 			return res.ok(response);
 		});
-	}
+	},
+	
+	'retrieveSelectedLayer': function(req, res, next){
+		Maplayers.find().where({layerid: req.param('id')}).populateAll().exec(function (err, response) {
+			if(err) return next(err);
+			
+			return res.ok(response);
+		});
+	},
 };
 

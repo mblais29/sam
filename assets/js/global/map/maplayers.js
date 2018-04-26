@@ -15,7 +15,71 @@ function getLayers(id){
 
 function editLayers(id){
 	$('#layer-create-edit').show();
+	getLayerInfo(id);
 	$("button#layerAdd").attr("disabled", "disabled");
+}
+
+function getLayerInfo(id){
+	$.ajax('/maplayers/retrieveSelectedLayer?id=' + id,{
+      success: function(data) {
+      	console.log(data);
+      	addLayerInfoToEditPanel(data);
+      	var layerStyleId = data[0].layerstyle[0].id;
+      	getLayerStylesEditPanel(layerStyleId);
+      },
+      done: function(data){
+      	
+      },
+      error: function(err) {
+         console.log(err);
+      }
+    });
+}
+
+function addLayerInfoToEditPanel(data){
+	$('#layer-edit-id').val(data[0].layerid);
+	$('#layer-edit-name').val(data[0].name);
+	$('#layer-edit-table').val(data[0].layertableref);
+	$('#layer-edit-table').val(data[0].layertableref);
+	$('#layer-edit-url').val(data[0].url);
+	
+	var layerType = data[0].layertype;
+	var layerTypeText = layerType.charAt(0).toUpperCase() + layerType.slice(1) + ' <span class="caret"></span>';
+	$('button#layer-edit-type-dropdown').html(layerTypeText);
+	$('#layerEditType').val(layerType);
+	
+	$('#layer-edit-attr').val(data[0].layerattributesonclick);
+	$('#layer-edit-minzoom').val(data[0].minzoom);
+	$('#layer-edit-maxzoom').val(data[0].maxzoom);
+}
+
+function getLayerStylesEditPanel(styleId){
+	$.ajax('/maplayers/retrieveLayerStyles',{
+      success: function(data) {
+      	addToEditLayerStyleDropdown(data, styleId);
+      },
+      done: function(data){
+      	
+      },
+      error: function(err) {
+         console.log(err);
+      }
+    });
+}
+
+function addToEditLayerStyleDropdown(data, styleId){
+	$('#layer-edit-styles').append('<label class="control-label col-sm-3" for="layer-edit-style">Style:</label>');
+	$('#layer-edit-styles').append('<div class="dropdown col-sm-8"><button class="btn btn-default dropdown-toggle" type="button" id="layer-edit-style-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Style <span class="caret"></span></button><ul id="layerEditStyleDropdown" class="dropdown-menu" aria-labelledby="layer-edit-style-dropdown"></ul></div><input type="hidden" id="layerEditStyle" name="layerEditStyle" value="" />');
+	
+	var listOfStyles = "";
+	for(var i = 0; i < data.length; i++){
+		listOfStyles += '<li><a href="#" onclick="updateEditStyledropdown(' + data[i].id + ', \'' + data[i].description + '\'); return false;">' + data[i].description + '</a></li>';
+		if(data[i].id === styleId){
+			updateEditStyledropdown(data[i].id, data[i].description);
+		}
+	}
+	
+	$('ul#layerEditStyleDropdown').append(listOfStyles);
 }
 
 function closeLayerCreateAddPanel(){
@@ -47,7 +111,7 @@ function updateCreateTypedropdown(type){
 	$('#layerCreateType').val(lowercasevalue);
 }
 
-function updateEditTypedropdown(type){
+function updateLayerEditTypedropdown(type){
 	var newValue = type + ' <span class="caret"></span>';
 	$('button#layer-edit-type-dropdown').html(newValue);
 	var lowercasevalue = type.toLowerCase();
@@ -55,7 +119,7 @@ function updateEditTypedropdown(type){
 }
 
 function getLayerStyles(){
-	$.ajax('/maplayers/retrieveLayers',{
+	$.ajax('/maplayers/retrieveLayerStyles',{
       success: function(data) {
       	addToLayerStyleDropdown(data);
       },
@@ -84,6 +148,12 @@ function updateCreateStyledropdown(id, desc){
 	var newValue = desc + ' <span class="caret"></span>';
 	$('button#layer-create-style-dropdown').html(newValue);
 	$('#layerCreateStyle').val(id);
+}
+
+function updateEditStyledropdown(id, desc){
+	var newValue = desc + ' <span class="caret"></span>';
+	$('button#layer-edit-style-dropdown').html(newValue);
+	$('#layerEditStyle').val(id);
 }
 
 function getLayerForms(){
