@@ -22,10 +22,16 @@ function editLayers(id){
 function getLayerInfo(id){
 	$.ajax('/maplayers/retrieveSelectedLayer?id=' + id,{
       success: function(data) {
-      	console.log(data);
       	addLayerInfoToEditPanel(data);
       	var layerStyleId = data[0].layerstyle[0].id;
+      	
+      	var layerForm = data[0].layerassignedform[0];
+      	var layerFormId = "";
+      	if(layerForm != undefined){
+      		layerFormId = data[0].layerassignedform[0].formid;
+      	}
       	getLayerStylesEditPanel(layerStyleId);
+      	getFormsEditPanel(layerFormId);
       },
       done: function(data){
       	
@@ -82,6 +88,41 @@ function addToEditLayerStyleDropdown(data, styleId){
 	$('ul#layerEditStyleDropdown').append(listOfStyles);
 }
 
+function getFormsEditPanel(layerFormId){
+	$.ajax('/maplayers/retrieveForms',{
+      success: function(data) {
+      	addToEditLayerFormDropdown(data, layerFormId);
+      },
+      done: function(data){
+      	
+      },
+      error: function(err) {
+         console.log(err);
+      }
+    });
+}
+
+function addToEditLayerFormDropdown(data, layerFormId){
+	$('#layer-edit-assigned-form').append('<label class="control-label col-sm-3" for="layer-edit-Form">Assigned Form:</label>');
+	$('#layer-edit-assigned-form').append('<div class="dropdown col-sm-8"><button class="btn btn-default dropdown-toggle" type="button" id="layer-edit-form" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Assign Form <span class="caret"></span></button><ul id="layerEditFormDropdown" class="dropdown-menu" aria-labelledby="layer-edit-form-dropdown"></ul></div><input type="hidden" id="layerEditForm" name="layerEditForm" value="" />');
+	
+	var listOfForms = "";
+	for(var i = 0; i < data.length; i++){
+		listOfForms += '<li><a href="#" onclick="updateEditFormdropdown(' + data[i].formid + ', \'' + data[i].formname + '\'); return false;">' + data[i].formname + '</a></li>';
+		if(data[i].formid === layerFormId){
+			updateEditFormdropdown(data[i].formid, data[i].formname);
+		}
+	}
+	
+	$('ul#layerEditFormDropdown').append(listOfForms);
+}
+
+function updateEditFormdropdown(id, name){
+	var newValue = name + ' <span class="caret"></span>';
+	$('button#layer-edit-form').html(newValue);
+	$('#layerEditForm').val(id);
+}
+
 function closeLayerCreateAddPanel(){
 	$('#layer-create-add').slideUp();
 	$('#layer-create-add input').val("");
@@ -96,7 +137,7 @@ function closeLayerCreateAddPanel(){
 function closeLayerEditPanel(){
 	$('#layer-create-edit').slideUp();
 	$('#layer-create-edit input').val("");
-	$('#llayer-create-edit textarea').val("");
+	$('#layer-create-edit textarea').val("");
 	$('#layer-edit-styles').empty();
 	$('#layer-edit-assigned-form').empty();
 	$("button#layerAdd").attr("disabled", false);

@@ -32,10 +32,13 @@ module.exports = {
 				name: req.param('layer-create-name'),
 				layerid: req.param('layer-create-id'),
 				layertableref: req.param('layer-create-table'),
+				url: req.param('layer-create-url'),
 				layertype: req.param('layerCreateType'),
 				layerstyle: req.param('layerCreateStyle'),
 				layerattributesonclick: req.param('layer-create-attr'),
-				layerassignedform: req.param('layerCreateForm')
+				layerassignedform: req.param('layerCreateForm'),
+				minzoom: req.param('layer-create-minzoom'),
+				maxzoom: req.param('layer-create-maxzoom')
 		};
 		
 		
@@ -48,6 +51,31 @@ module.exports = {
 			AlertService.success(req, 'Successfully created a new layer!');
 			res.redirect('/maplayers');
 		});
+	},
+	
+	update: function(req, res, next){
+		var record = req.allParams();
+		 
+		 var obj = {};
+		 obj['name'] = record['layer-edit-name'];
+		 obj['layertableref'] = record['layer-edit-table'];
+		 obj['url'] = record['layer-edit-url'];
+		 obj['layertype'] = record['layerEditType'];
+		 obj['layerstyle'] = record['layerEditStyle'];
+		 obj['layerattributesonclick'] = record['layer-edit-attr'];
+		 obj['layerassignedform'] = record['layerEditForm'];
+		 obj['minzoom'] = record['layer-edit-minzoom'];
+		 obj['maxzoom'] = record['layer-edit-maxzoom'];
+
+		 Maplayers.update(req.param('layer-edit-id'), obj, function mapLayerUpdated(err, maplayer){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/maplayers');
+				return;
+			};
+	      	AlertService.success(req, req.param('layer-edit-name') + ' Map Layer updated successfully!');
+			return res.redirect('/maplayers');
+		  });
 	},
 	
 	'retrieveLayerStyles': function(req, res, next){
