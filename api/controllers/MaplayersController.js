@@ -78,6 +78,25 @@ module.exports = {
 		  });
 	},
 	
+	destroy: function(req, res, next){
+		Maplayers.findOne(req.param('layerId'), function foundMaplayer(err,layer){
+			if(err){
+				AlertService.error(req, JSON.stringify(err));
+				res.redirect('/maplayers');
+			}
+
+			Maplayers.destroy(req.param('layerId'), function maplayerDestroyed(err){
+				if(err){
+					AlertService.error(req, JSON.stringify(err));
+					res.redirect('/maplayers');
+				}
+			});
+
+			AlertService.success(req, 'You have deleted the ' + layer.name + ' layer successfully!');
+			res.redirect('/maplayers');
+		});
+	},
+	
 	'retrieveLayerStyles': function(req, res, next){
 		MapLayerStyles.find().exec(function (err, response) {
 			if(err) return next(err);

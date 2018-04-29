@@ -207,6 +207,7 @@
 					<th data-type="html" data-breakpoints="all" data-title="Layer Attributes">Layer Attributes</th>
 					<th data-type="html" data-breakpoints="all" data-title="Assigned Form">Assigned Form</th>
 					<th data-filterable="false" data-sortable="false"><button id="layerAdd" onclick="getLayers()" class="btn btn-sm btn-primary">Add</button></th>	
+					<th data-type="html" data-breakpoints="all" data-title="Delete Layer" data-filterable="false"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -222,7 +223,7 @@
 					
 					<td><button id="layerEdit_<%= layer.layerid %>" class="btn btn-sm btn-warning" onclick="editLayers('<%= layer.layerid %>')" value="<%= layer.layerid %>">Edit</button></td>
 					<td>
-						<form action="/maplayers/destroy?layerId=<%= layer.id %>" method="POST">
+						<form action="/maplayers/destroy?layerId=<%= layer.layerid %>" method="POST">
 							<input type="hidden" name="_method" value="delete" />
 							<input type="submit" class="btn btn-sm btn-danger" value="Delete" />
 							<input type="hidden" name="_csrf" value="<%= _csrf %>" />
