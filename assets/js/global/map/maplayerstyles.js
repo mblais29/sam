@@ -1,32 +1,26 @@
 if($('body').is('#mapLayerStyles')){
 	$(".panel").draggable();
-
+	
+	$('#layerStyleClose').on('click', function(){
+		var customBtnobj = {};
+		customBtnobj["layer-type-dropdown"] = "Type";
+		customBtnobj["layer-prefix-dropdown"] = "Prefix";
+		customBtnobj["layer-colour-dropdown"] = "Marker Colour";
+		closePanel('layer-style-add', '', 'add-btn', customBtnobj);
+		$('#markerStyles').css('display', 'none');
+	});
+	
+	$('#layerEditStyleClose').on('click', function(){
+		var customBtnobj = {};
+		customBtnobj["layer-type-dropdown-edit"] = "Type";
+		customBtnobj["layer-edit-prefix-dropdown"] = "Prefix";
+		customBtnobj["layer-edit-colour-dropdown"] = "Marker Colour";
+		closePanel('layer-style-edit', '', 'add-btn', customBtnobj);
+	});
 }
 
 function getLayerStyleValues(id){
 	$('#layer-style-add').show();
-}
-
-function closeLayerStyleAddPanel(){
-	$('#layer-style-add').slideUp();
-	$('#layer-style-add input').val("");
-	var newTypeValue = 'Type <span class="caret"></span>';
-	var newPrefixValue = 'Prefix <span class="caret"></span>';
-	var newColourValue = 'Marker Colour <span class="caret"></span>';
-	$('button#layer-type-dropdown').html(newTypeValue);
-	$('button#layer-prefix-dropdown').html(newPrefixValue);
-	$('button#layer-colour-dropdown').html(newColourValue);
-}
-
-function closeEditLayerStyleAddPanel(){
-	$('#layer-style-edit').slideUp();
-	$('#layer-style-edit input').val("");
-	var newTypeValue = 'Type <span class="caret"></span>';
-	var newPrefixValue = 'Prefix <span class="caret"></span>';
-	var newColourValue = 'Marker Colour <span class="caret"></span>';
-	$('button#layer-type-dropdown-edit').html(newTypeValue);
-	$('button#layer-edit-prefix-dropdown').html(newPrefixValue);
-	$('button#layer-edit-colour-dropdown').html(newColourValue);
 }
 
 function updateTypedropdown(type){
@@ -72,7 +66,6 @@ function updateMarkerColourdropdown(colour, btnId, hiddenInput){
 function getLayerStyleValue(styleId){
 	$.ajax('/maplayerstyles/retrieveStyleRecord?styleId=' + styleId,{
       success: function(data) {
-      	console.log(data);
       	$('#layer-style-edit').show();
         populateEditForm(data);
       }

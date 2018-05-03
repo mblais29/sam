@@ -36,3 +36,20 @@ $.urlParam = function(name){
        return results[1] || 0;
     }
 };
+
+function closePanel(panelId, customBtn, addBtn, customBtnObj){
+	$('#' + panelId).slideUp();
+	$('#' + panelId + 'input').val("");
+	$('#' + panelId + 'textarea').val("");
+	if(customBtn){
+		$('div.' + customBtn).empty();
+	}
+	
+	$("button." + addBtn).attr("disabled", false);
+	
+	for(var k in customBtnObj){
+		var newTypeValue = customBtnObj[k] + ' <span class="caret"></span>';
+		$('button#' + k).html(newTypeValue);
+	}
+
+}

@@ -82,7 +82,7 @@
 					</div>
 					<input type="hidden" id="layerCreateType" name="layerCreateType" value="" />  
 			  </div>
-			  <div class="form-group" id="layer-create-styles">
+			  <div class="form-group custom-btn" id="layer-create-styles">
 			  	  
 			  </div>
 			  <div class="form-group">
@@ -91,7 +91,7 @@
 			  		<textarea class="form-control" rows="3" id="layer-create-attr" name="layer-create-attr"></textarea>
 			  	</div>
 			  </div>
-			  <div class="form-group" id="layer-create-assigned-form">
+			  <div class="form-group custom-btn" id="layer-create-assigned-form">
 			  	  
 			  </div>
 			  <div class="form-group">
@@ -109,7 +109,7 @@
 			  <div class="form-group"> 
 			    <div class="col-sm-offset-2 col-sm-10">
 			      <button type="submit" class="btn btn-default pull-right">Submit</button>
-			      <button type="button" id="layerClose" class="btn btn-default pull-right btn-close" onclick="closeLayerCreateAddPanel()">Close</button>
+			      <button type="button" id="layerClose" class="btn btn-default pull-right btn-close" >Close</button>
 		  		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
 			    </div>
 			  </div>
@@ -160,7 +160,7 @@
 					</div>
 					<input type="hidden" id="layerEditType" name="layerEditType" value="" />  
 			  </div>
-			  <div class="form-group" id="layer-edit-styles">
+			  <div class="form-group custom-btn" id="layer-edit-styles">
 		  	  
 		  	  </div>
 		  	  <div class="form-group">
@@ -169,7 +169,7 @@
 			  		<textarea class="form-control" rows="3" id="layer-edit-attr" name="layer-edit-attr"></textarea>
 			  	</div>
 			  </div>
-			  <div class="form-group" id="layer-edit-assigned-form">
+			  <div class="form-group custom-btn" id="layer-edit-assigned-form">
 			  	  
 			  </div>
 			  <div class="form-group">
@@ -206,7 +206,7 @@
 					<th data-type="html" data-breakpoints="all" data-title="Layer Style">Layer Style</th>
 					<th data-type="html" data-breakpoints="all" data-title="Layer Attributes">Layer Attributes</th>
 					<th data-type="html" data-breakpoints="all" data-title="Assigned Form">Assigned Form</th>
-					<th data-filterable="false" data-sortable="false"><button id="layerAdd" onclick="getLayers()" class="btn btn-sm btn-primary">Add</button></th>	
+					<th data-filterable="false" data-sortable="false"><button id="layerAdd" onclick="getLayers()" class="btn btn-sm btn-primary add-btn">Add</button></th>	
 					<th data-type="html" data-breakpoints="all" data-title="Delete Layer" data-filterable="false"></th>
 				</tr>
 			</thead>

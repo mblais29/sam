@@ -1,7 +1,15 @@
 if($('body').is('#mapLayers')){
 	$(".panel").draggable();
 	$('#maplayerEditClose').on('click', function(){
-		closeLayerEditPanel();
+		var customBtnobj = {};
+		customBtnobj["layer-edit-type-dropdown"] = "Type";
+		closePanel('layer-create-edit', 'custom-btn', 'add-btn', customBtnobj);
+	});
+	
+	$('#layerClose').on('click', function(){
+		var customBtnobj = {};
+		customBtnobj["layer-create-type-dropdown"] = "Type";
+		closePanel('layer-create-add', 'custom-btn', 'add-btn', customBtnobj);
 	});
 
 }
@@ -121,28 +129,6 @@ function updateEditFormdropdown(id, name){
 	var newValue = name + ' <span class="caret"></span>';
 	$('button#layer-edit-form').html(newValue);
 	$('#layerEditForm').val(id);
-}
-
-function closeLayerCreateAddPanel(){
-	$('#layer-create-add').slideUp();
-	$('#layer-create-add input').val("");
-	$('#layer-create-add textarea').val("");
-	$('#layer-create-styles').empty();
-	$('#layer-create-assigned-form').empty();
-	$("button#layerAdd").attr("disabled", false);
-	var newTypeValue = 'Type <span class="caret"></span>';
-	$('button#layer-create-type-dropdown').html(newTypeValue);
-}
-
-function closeLayerEditPanel(){
-	$('#layer-create-edit').slideUp();
-	$('#layer-create-edit input').val("");
-	$('#layer-create-edit textarea').val("");
-	$('#layer-edit-styles').empty();
-	$('#layer-edit-assigned-form').empty();
-	$("button#layerAdd").attr("disabled", false);
-	var newTypeValue = 'Type <span class="caret"></span>';
-	$('button#layer-edit-type-dropdown').html(newTypeValue);
 }
 
 function updateCreateTypedropdown(type){
