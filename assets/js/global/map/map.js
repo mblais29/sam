@@ -151,10 +151,10 @@ if($('body').is('#mapBody')){
 	    initializeAutoComplete();
 	});
 	
-	/* Need to figure out a way to refresh the layers on map move */
 	map.on('moveend', function(){
-  		removeLayers();
+		removeLayers();
 	});
+
     
     /****************************************
 	ADD ESRI GEOCODING SERVICE API
@@ -576,17 +576,21 @@ function addLayers(){
 	}
 }
 
-function removeLayers(){
+function removeLayers(type){
 	var activeLayers = [];
+	
 	for (var k in overlayLayers) {
-		
 		if(map.hasLayer(overlayLayers[k])){
 			map.removeLayer(overlayLayers[k]);
 			activeLayers.push(k);
 		}
 		layerControl.removeLayer(overlayLayers[k]);
 	}
+	overlayLayers = {};
+	
 	renderLayers(activeLayers);
+	
+	
 }
 
 function renderLayers(activeLayers){
@@ -601,6 +605,8 @@ function renderLayers(activeLayers){
 			var layerStyle = currentLayers[k]["layerstyle"];
 			var layerMinZoom = currentLayers[k]["minzoom"];
 			var layerMaxZoom = currentLayers[k]["maxzoom"];
+			var layersInList = layerControl._layers;
+			var layerExists = false;
 			
 			if(layerStyle[0]!== undefined ){
 				switch (layerStyle[0].type) {
@@ -633,7 +639,16 @@ function renderLayers(activeLayers){
 												  });
 							}
 							if(map.getZoom() >= layerMinZoom){
-								layerControl.addOverlay(overlayLayers[layerId], layerName);
+								layerControl.removeLayer(overlayLayers[layerId]);
+	
+								for(var i = 0; i < layersInList.length; i++){
+									if(layerControl._layers[i].name === layerName){
+										layerExists = true;
+									}
+								}
+								if(!layerExists) {
+									layerControl.addOverlay(overlayLayers[layerId], layerName);
+								}
 							}
 						});
 						break;
@@ -657,7 +672,15 @@ function renderLayers(activeLayers){
 												  });
 							}
 							if(map.getZoom() >= layerMinZoom){
-								layerControl.addOverlay(overlayLayers[layerId], layerName);
+								layerControl.removeLayer(overlayLayers[layerId]);
+								for(var i = 0; i < layersInList.length; i++){
+									if(layerControl._layers[i].name === layerName){
+										layerExists = true;
+									}
+								}
+								if(!layerExists) {
+									layerControl.addOverlay(overlayLayers[layerId], layerName);
+								}
 							}
 						});
 						break;
@@ -679,7 +702,15 @@ function renderLayers(activeLayers){
 										  });
 					}
 					if(map.getZoom() >= layerMinZoom){
-						layerControl.addOverlay(overlayLayers[layerId], layerName);
+						layerControl.removeLayer(overlayLayers[layerId]);
+						for(var i = 0; i < layersInList.length; i++){
+							if(layerControl._layers[i].name === layerName){
+								layerExists = true;
+							}
+						}
+						if(!layerExists) {
+							layerControl.addOverlay(overlayLayers[layerId], layerName);
+						}
 					}
 				});
 			}
