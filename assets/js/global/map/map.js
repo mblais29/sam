@@ -8,6 +8,7 @@ var propertyList = [];
 var layerControl = "";
 var currentLayers = [];
 var overlayLayers = {};
+var editedLayerProperties = {};
 
 var map = "";
 var mapProperties = L.featureGroup();
@@ -140,7 +141,19 @@ if($('body').is('#mapBody')){
 	map.on('draw:edited', function (e) {
 		var layer = e.layers;
      	var geojson = layer.toGeoJSON();
+
+     	if(geojson.features[0].geometry.type == "polygon"){
+     		geojson.features[0].properties = editedLayerProperties;
+     	}
+
+     	saveEditedLayer(geojson, e);
      	propertyGeojsonGeometry = JSON.stringify(geojson.features[0].geometry);
+	});
+	
+	/* Need to figure out a way to not have a point layer flash twice when saving, below works when I hit cancel */
+	map.on('draw:toolbarclosed', function(e){
+		editableLayers.clearLayers();
+		removeLayers();
 	});
 	
 	map.on('draw:deleted', function (e) {
@@ -489,6 +502,7 @@ function handleLayerData(data){
 		var geojsonURL = data[i].url;
 		var layerName = data[i].name;
 		var layerid = data[i].layerid;
+		var layertableref = data[i].layertableref;
 		var layerstyle = data[i].layerstyle;
 		var minZoom = data[i].minzoom;
 		var maxZoom = data[i].maxzoom;
@@ -496,6 +510,7 @@ function handleLayerData(data){
 		layer["url"] = geojsonURL;
 		layer["name"] = layerName;
 		layer["id"] = layerid;
+		layer["layertableref"] = layertableref;
 		layer["layerstyle"] = layerstyle;
 		layer["minzoom"] = minZoom;
 		layer["maxzoom"] = maxZoom;
@@ -512,6 +527,7 @@ function addLayers(){
 	      	var layerUrl = currentLayers[k]["url"];
 			var layerId = currentLayers[k]["id"];
 			var layerName = currentLayers[k]["name"];
+			var layerTable = currentLayers[k]["layertableref"];
 			var layerStyle = currentLayers[k]["layerstyle"];
 			var layerMinZoom = currentLayers[k]["minzoom"];
 			var layerMaxZoom = currentLayers[k]["maxzoom"];
@@ -537,6 +553,13 @@ function addLayers(){
 															},
 						  									onEachFeature: function(feature, layer){
 						  										layer.feature.properties.layer_id = layerId;
+						  										layer.feature.properties.layer_table = layerTable;
+						  										layer.type = "point";
+						  										
+						  										layer.on('contextmenu', function(e){
+						  											editableLayers.addLayer(layer);
+						  											document.querySelector(".leaflet-draw-edit-edit").click();
+						  										});
 						  									}
 														  });
 								if(map.getZoom() >= layerMinZoom){
@@ -548,11 +571,34 @@ function addLayers(){
 				    	currentLayerStyle = layerStyle[0]["style"];
 				        $.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
 							  	overlayLayers[layerId] = new L.GeoJSON(data, {
-								  							style: currentLayerStyle,
-						  									onEachFeature: function(feature, layer){
-						  										layer.feature.properties.layer_id = layerId;
-						  									}
-														  });
+		  							style: currentLayerStyle,
+  									onEachFeature: function(feature, layer){
+  										layer.feature.properties.layer_id = layerId;
+  										layer.feature.properties.layer_table = layerTable;
+  										layer.type = "polygon";
+  										
+  										layer.on('contextmenu', function(e){
+	  										var geom = feature.geometry; 
+										    var props = feature.properties;
+										    editedLayerProperties = props;
+
+										     if (geom.type === 'MultiPolygon'){
+										     	var newPolygon = "";
+										        for (var i = 0; i < geom.coordinates.length; i++){
+										            newPolygon = {
+										               'type':'Polygon', 
+										               'coordinates':geom.coordinates[i],
+										               'properties': props
+										               };
+										        }
+										        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
+
+										        editableLayers.addLayer(createGeoJson);
+										     } 
+  											document.querySelector(".leaflet-draw-edit-edit").click();
+  										});
+  									}
+								  });
 								if(map.getZoom() >= layerMinZoom){
 									layerControl.addOverlay(overlayLayers[layerId], layerName);
 								}					  
@@ -564,6 +610,13 @@ function addLayers(){
 				  	overlayLayers[layerId] = new L.GeoJSON(data, {
 		  									onEachFeature: function(feature, layer){
 		  										layer.feature.properties.layer_id = layerId;
+		  										layer.feature.properties.layer_table = layerTable;
+		  										layer.type = "polygon";
+		  										
+		  										layer.on('contextmenu', function(e){
+		  											editableLayers.addLayer(layer);
+		  											document.querySelector(".leaflet-draw-edit-edit").click();
+		  										});
 		  									}
 										  });
 					if(map.getZoom() >= layerMinZoom){
@@ -576,7 +629,7 @@ function addLayers(){
 	}
 }
 
-function removeLayers(type){
+function removeLayers(){
 	var activeLayers = [];
 	
 	for (var k in overlayLayers) {
@@ -602,6 +655,7 @@ function renderLayers(activeLayers){
 	      	var layerUrl = currentLayers[k]["url"];
 			var layerId = currentLayers[k]["id"];
 			var layerName = currentLayers[k]["name"];
+			var layerTable = currentLayers[k]["layertableref"];
 			var layerStyle = currentLayers[k]["layerstyle"];
 			var layerMinZoom = currentLayers[k]["minzoom"];
 			var layerMaxZoom = currentLayers[k]["maxzoom"];
@@ -626,6 +680,11 @@ function renderLayers(activeLayers){
 													},
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
+														layer.feature.properties.layer_table = layerTable;
+														layer.on('contextmenu', function(e){
+				  											editableLayers.addLayer(layer);
+				  											document.querySelector(".leaflet-draw-edit-edit").click();
+				  										});
 													}
 												  }).addTo(map);
 							}else{
@@ -635,6 +694,11 @@ function renderLayers(activeLayers){
 													},
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
+														layer.feature.properties.layer_table = layerTable;
+														layer.on('contextmenu', function(e){
+				  											editableLayers.addLayer(layer);
+				  											document.querySelector(".leaflet-draw-edit-edit").click();
+				  										});
 													}
 												  });
 							}
@@ -653,21 +717,64 @@ function renderLayers(activeLayers){
 						});
 						break;
 					case 'polygon':
-						currentLayerStyle = layerStyle[0]["style"];
 						$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
 							/* Check to see if layer was active before refreshing the page */
 							if($.inArray( layerId, activeLayers ) > -1){
 								overlayLayers[layerId] = new L.GeoJSON(data, {
-													style: currentLayerStyle,
+													style: layerStyle[0]["style"],
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
+														layer.feature.properties.layer_table = layerTable;
+														
+														layer.on('contextmenu', function(e){
+					  										var geom = feature.geometry; 
+														    var props = feature.properties;
+														    editedLayerProperties = props;
+				
+														     if (geom.type === 'MultiPolygon'){
+														     	var newPolygon = "";
+														        for (var i = 0; i < geom.coordinates.length; i++){
+														            newPolygon = {
+														               'type':'Polygon', 
+														               'coordinates':geom.coordinates[i],
+														               'properties': props
+														               };
+														        }
+														        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
+				
+														        editableLayers.addLayer(createGeoJson);
+														     } 
+				  											document.querySelector(".leaflet-draw-edit-edit").click();
+				  										});
 													}
 												  }).addTo(map);
 							}else{
 								overlayLayers[layerId] = new L.GeoJSON(data, {
-													style: currentLayerStyle,
+													style: layerStyle[0]["style"],
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
+														layer.feature.properties.layer_table = layerTable;
+														
+														layer.on('contextmenu', function(e){
+					  										var geom = feature.geometry; 
+														    var props = feature.properties;
+														    editedLayerProperties = props;
+				
+														     if (geom.type === 'MultiPolygon'){
+														     	var newPolygon = "";
+														        for (var i = 0; i < geom.coordinates.length; i++){
+														            newPolygon = {
+														               'type':'Polygon', 
+														               'coordinates':geom.coordinates[i],
+														               'properties': props
+														               };
+														        }
+														        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
+				
+														        editableLayers.addLayer(createGeoJson);
+														     } 
+				  											document.querySelector(".leaflet-draw-edit-edit").click();
+				  										});
 													}
 												  });
 							}
@@ -692,12 +799,19 @@ function renderLayers(activeLayers){
 						overlayLayers[layerId] = new L.GeoJSON(data, {
 											onEachFeature: function(feature, layer){
 												layer.feature.properties.layer_id = layerId;
+												layer.feature.properties.layer_table = layerTable;
 											}
 										  }).addTo(map);
 					}else{
 						overlayLayers[layerId] = new L.GeoJSON(data, {
 											onEachFeature: function(feature, layer){
 												layer.feature.properties.layer_id = layerId;
+												layer.feature.properties.layer_table = layerTable;
+												
+												layer.on('contextmenu', function(e){
+		  											editableLayers.addLayer(layer);
+		  											document.querySelector(".leaflet-draw-edit-edit").click();
+		  										});
 											}
 										  });
 					}
@@ -716,6 +830,114 @@ function renderLayers(activeLayers){
 			}
 	  	})(k);
 	}
+}
+
+function saveEditedLayer(geojson, e){
+	var newMultiPolygon = {};
+	var updatedLayerGeojsonGeometry = {};
+	var updatedLayerGeojsonId = "";
+	var updatedLayerGeojsonTable = "";
+	var updatedLayerGeojson = geojson.features[0].geometry;
+		
+	if (updatedLayerGeojson.type === 'Polygon'){
+        for (var i = 0; i < updatedLayerGeojson.coordinates.length; i++){
+            newMultiPolygon = {
+               'type':'MultiPolygon', 
+               'coordinates': [[updatedLayerGeojson.coordinates[i]]],
+               'properties': {}
+               };
+             newMultiPolygon.crs =  {
+				  "type": "name",
+				  "properties": {
+				    "name": "epsg:4326"
+				    }
+				 };
+        }
+        updatedLayerGeojsonGeometry = JSON.stringify(newMultiPolygon);
+		updatedLayerGeojsonId = geojson.features[0].properties.gid;
+		updatedLayerGeojsonTable = geojson.features[0].properties.layer_table;
+		
+		$.ajax({
+		url: window.location.origin + '/csrfToken',
+		success: function(response) {
+			  $.ajax({
+				  url: '/maplayers/saveEditedLayerRecord',
+				  type:"post",
+				  async: false,
+				  data: {
+				  	id: updatedLayerGeojsonId,
+				  	geom: updatedLayerGeojsonGeometry,
+				  	table: updatedLayerGeojsonTable
+				  },
+				   beforeSend: function(xhr, settings){
+				      xhr.setRequestHeader('X-CSRF-Token', response._csrf);
+				  },
+				  success: function(data) {
+				  	if(!data){
+				  		location.reload();
+				  	}else{
+				  		editableLayers.clearLayers();
+				  		removeLayers();
+				  	}
+				  },
+				  done: function(data){
+				  	
+				  },
+				  error: function(err) {
+				     console.log(err);
+				  }
+				});
+			}
+		});
+		return;
+	}else{
+		updatedLayerGeojson = geojson.features[0].geometry;
+		updatedLayerGeojson.crs =  {
+		  "type": "name",
+		  "properties": {
+		    "name": "epsg:4326"
+		    }
+		 };
+		 
+		updatedLayerGeojsonGeometry = JSON.stringify(updatedLayerGeojson);
+		updatedLayerGeojsonId = geojson.features[0].properties.gid;
+		updatedLayerGeojsonTable = geojson.features[0].properties.layer_table;
+		
+		$.ajax({
+		url: window.location.origin + '/csrfToken',
+		success: function(response) {
+			  $.ajax({
+				  url: '/maplayers/saveEditedLayerRecord',
+				  type:"post",
+				  data: {
+				  	id: updatedLayerGeojsonId,
+				  	geom: updatedLayerGeojsonGeometry,
+				  	table: updatedLayerGeojsonTable
+				  },
+				   beforeSend: function(xhr, settings){
+				      xhr.setRequestHeader('X-CSRF-Token', response._csrf);
+				  },
+				  success: function(data) {
+				  	if(!data){
+				  		location.reload();
+				  	}else{
+				  		editableLayers.clearLayers();
+				  		removeLayers();
+				  	}
+				  },
+				  done: function(data){
+				  	
+				  },
+				  error: function(err) {
+				     console.log(err);
+				  }
+				});
+			}
+		});
+		return;
+	} 
+	
+	
 }
 
 

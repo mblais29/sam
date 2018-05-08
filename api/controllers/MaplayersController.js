@@ -118,5 +118,40 @@ module.exports = {
 			return res.ok(response);
 		});
 	},
+	
+	'saveEditedLayerRecord': function(req, res, next){
+		
+		var pg = require('pg');
+		var pgconnection = new pg.Client({
+			user: sails.config.connections.postgresServer.user,
+		  	host: sails.config.connections.postgresServer.host,
+		  	database: sails.config.connections.postgresServer.database,
+		  	password: sails.config.connections.postgresServer.password,
+		  	port: sails.config.connections.postgresServer.port,
+		});
+		
+		var geometry = req.param('geom');
+		var recordId = req.param('id');
+		var layerTable = req.param('table');
+
+
+		var queryString = 'UPDATE public.' + layerTable + ' SET geom = ST_Force2D(ST_GeomFromGeoJSON(\'' + geometry + '\')) WHERE gid = ' + recordId + ';' ;
+		
+		//console.log(queryString);
+		pgconnection.connect(function(err, client, done){
+			client.query(queryString, function(err, result){
+				if(err){
+					AlertService.error(req, JSON.stringify(err));
+					console.log(err);
+					return res.ok(false);
+				};
+				client.end();
+				//AlertService.success(req, 'Layer record saved successfully...');
+				return res.ok(true);
+
+			});
+		});
+		
+	}
 };
 
