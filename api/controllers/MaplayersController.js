@@ -120,7 +120,6 @@ module.exports = {
 	},
 	
 	'saveEditedLayerRecord': function(req, res, next){
-		
 		var pg = require('pg');
 		var pgconnection = new pg.Client({
 			user: sails.config.connections.postgresServer.user,

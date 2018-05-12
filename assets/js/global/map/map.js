@@ -142,18 +142,12 @@ if($('body').is('#mapBody')){
 		var layer = e.layers;
      	var geojson = layer.toGeoJSON();
 
-     	if(geojson.features[0].geometry.type == "polygon"){
+     	if(geojson.features[0].geometry.type == "polygon" || geojson.features[0].geometry.type == "Polygon"){
      		geojson.features[0].properties = editedLayerProperties;
      	}
 
      	saveEditedLayer(geojson, e);
      	propertyGeojsonGeometry = JSON.stringify(geojson.features[0].geometry);
-	});
-	
-	/* Need to figure out a way to not have a point layer flash twice when saving, below works when I hit cancel */
-	map.on('draw:toolbarclosed', function(e){
-		editableLayers.clearLayers();
-		removeLayers();
 	});
 	
 	map.on('draw:deleted', function (e) {
@@ -165,6 +159,7 @@ if($('body').is('#mapBody')){
 	});
 	
 	map.on('moveend', function(){
+		editableLayers.clearLayers();
 		removeLayers();
 	});
 
@@ -833,6 +828,7 @@ function renderLayers(activeLayers){
 }
 
 function saveEditedLayer(geojson, e){
+	console.log(geojson);
 	var newMultiPolygon = {};
 	var updatedLayerGeojsonGeometry = {};
 	var updatedLayerGeojsonId = "";
@@ -936,7 +932,6 @@ function saveEditedLayer(geojson, e){
 		});
 		return;
 	} 
-	
 	
 }
 
