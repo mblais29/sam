@@ -119,6 +119,14 @@ module.exports = {
 		});
 	},
 	
+	'getMapLayers': function(req, res, next){
+		Maplayers.find().populateAll().exec(function (err, response) {
+			if(err) return next(err);
+			
+			return res.ok(response);
+		});
+	},
+	
 	'saveEditedLayerRecord': function(req, res, next){
 		var pg = require('pg');
 		var pgconnection = new pg.Client({

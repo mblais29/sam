@@ -28,6 +28,7 @@ var cssFilesToInject = [
 	'js/dependencies/leaflet/Leaflet.draw-master/leaflet.draw.css',
 	'js/dependencies/leaflet/esri-leaflet-geocoder-v2.2.6/esri-leaflet-geocoder.css',
 	'js/dependencies/leaflet-awesome-markers/leaflet.awesome-markers.css',
+	'styles/bootstrap/bootstrap.min.css',
     'styles/**/*.css'
 ];
 
@@ -54,6 +55,7 @@ var jsFilesToInject = [
   'js/dependencies/bootstrap/bootstrap-datetimepicker.uk.js',
   'js/dependencies/leaflet/Leaflet.draw-master/leaflet.draw.js',
   'js/dependencies/leaflet-awesome-markers/leaflet.awesome-markers.min.js',
+  'js/dependencies/bootstrap/bootstrap-select.min.js',
   
 
   // All of the rest of your client-side js files

@@ -8,6 +8,7 @@ var layerControl = "";
 var currentLayers = [];
 var overlayLayers = {};
 var editedLayerProperties = {};
+var editedLayer = false;
 
 var map = "";
 
@@ -111,25 +112,35 @@ if($('body').is('#mapBody')){
 	map.addControl(new mapToolControls());
 
     map.on('draw:created', function (e) {
+    	editedLayer = false;
 		var type = e.layerType,
 			layer = e.layer;
 		var geojson = layer.toGeoJSON();
-
+		var form = '<select class="selectLayerpicker" data-live-search="true"></select><button type="button" class="btn btn-info" id="layerEnterInfo">Enter Info</button>';
+		
+		layer.bindPopup(form).on('popupopen', function (popup) {
+			addLayersToPopup();
+	    });
+	   
 		editableLayers.addLayer(layer);
 		layerControl.addOverlay(editableLayers, 'Drawn Asset');
 		
 	});
 	
 	map.on('draw:edited', function (e) {
+		
 		var layer = e.layers;
      	var geojson = layer.toGeoJSON();
 
-     	if(geojson.features[0].geometry.type == "polygon" || geojson.features[0].geometry.type == "Polygon"){
-     		geojson.features[0].properties = editedLayerProperties;
-     		editableLayers.clearLayers();
-     	}
+		console.log(geojson);
 		
-     	saveEditedLayer(geojson, e);
+		if(editedLayer) {
+			if(geojson.features[0].geometry.type == "polygon" || geojson.features[0].geometry.type == "Polygon"){
+		 		geojson.features[0].properties = editedLayerProperties;
+		 		editableLayers.clearLayers();
+		 	}
+			saveEditedLayer(geojson, e);
+		}
 	});
 	
 	map.on('draw:deleted', function (e) {
@@ -137,7 +148,7 @@ if($('body').is('#mapBody')){
 	});
 	
 	map.on('moveend', function(){
-		editableLayers.clearLayers();
+		//editableLayers.clearLayers();
 		removeLayers();
 	});
 
@@ -242,6 +253,7 @@ function handleLayerData(data){
 		var layerName = data[i].name;
 		var layerid = data[i].layerid;
 		var layertableref = data[i].layertableref;
+		var layerForm = data[i].layerassignedform;
 		var layerstyle = data[i].layerstyle;
 		var minZoom = data[i].minzoom;
 		var maxZoom = data[i].maxzoom;
@@ -250,6 +262,7 @@ function handleLayerData(data){
 		layer["name"] = layerName;
 		layer["id"] = layerid;
 		layer["layertableref"] = layertableref;
+		layer["layerassignedform"] = layerForm;
 		layer["layerstyle"] = layerstyle;
 		layer["minzoom"] = minZoom;
 		layer["maxzoom"] = maxZoom;
@@ -257,6 +270,21 @@ function handleLayerData(data){
 		currentLayers.push(layer);
 	}
 	addLayers();
+}
+
+function addLayersToPopup(){
+	for (var k in currentLayers) {
+		var layerTable = currentLayers[k]["layertableref"];
+		var layerName = currentLayers[k]["name"];
+		var layerForm = "";
+		/* Only assign layers that have forms assigned */
+		if(currentLayers[k]["layerassignedform"].length > 0){
+			layerForm = currentLayers[k]["layerassignedform"][0]["formid"];
+			var createOption = '<option data-tokens="' + layerForm + '">' + layerName + '</option>';
+			$('.selectLayerpicker').append(createOption);
+		}
+	}
+	$('.selectLayerpicker').selectpicker();
 }
 
 function addLayers(){
@@ -296,6 +324,7 @@ function addLayers(){
 						  										layer.type = "point";
 						  										
 						  										layer.on('contextmenu', function(e){
+						  											editedLayer = true;
 						  											editableLayers.addLayer(layer);
 						  											document.querySelector(".leaflet-draw-edit-edit").click();
 						  										});
@@ -320,7 +349,7 @@ function addLayers(){
 	  										var geom = feature.geometry; 
 										    var props = feature.properties;
 										    editedLayerProperties = props;
-
+											editedLayer = true;
 										     if (geom.type === 'MultiPolygon'){
 										     	var newPolygon = "";
 										        for (var i = 0; i < geom.coordinates.length; i++){
@@ -353,6 +382,7 @@ function addLayers(){
 		  										layer.type = "polygon";
 		  										
 		  										layer.on('contextmenu', function(e){
+		  											editedLayer = true;
 		  											editableLayers.addLayer(layer);
 		  											document.querySelector(".leaflet-draw-edit-edit").click();
 		  										});
