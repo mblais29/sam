@@ -9,7 +9,7 @@ var currentLayers = [];
 var overlayLayers = {};
 var editedLayerProperties = {};
 var editedLayer = false;
-
+var editedLayerType = "";
 var map = "";
 
 
@@ -87,6 +87,26 @@ if($('body').is('#mapBody')){
     };
     
     var drawControl = new L.Control.Draw(options);
+    
+    drawControl._toolbars.edit.disable =  function () {
+	  if (!this.enabled()) {
+	    /* If you need to do something right as the
+	       edit tool is enabled, do it here right
+	       before the return */
+	    return;
+	  }
+	
+	  this._activeMode.handler.revertLayers();
+	  /* If you need to do something when the
+	     cancel button is pressed and the edits
+	     are reverted, do it here. */
+	    if(editedLayerType == "Polygon" || editedLayerType == "polygon"){
+	    	editableLayers.clearLayers();
+	    }
+	    
+	  L.Toolbar.prototype.disable.call(this);
+	};
+
     map.addControl(drawControl);
     
 	var mapToolControls = L.Control.extend({
@@ -131,8 +151,9 @@ if($('body').is('#mapBody')){
 		
 		var layer = e.layers;
      	var geojson = layer.toGeoJSON();
-
+		
 		console.log(geojson);
+		console.log(editedLayer);
 		
 		if(editedLayer) {
 			if(geojson.features[0].geometry.type == "polygon" || geojson.features[0].geometry.type == "Polygon"){
@@ -326,6 +347,7 @@ function addLayers(){
 						  										layer.on('contextmenu', function(e){
 						  											editedLayer = true;
 						  											editableLayers.addLayer(layer);
+						  											editedLayerType = layer.type;
 						  											document.querySelector(".leaflet-draw-edit-edit").click();
 						  										});
 						  									}
@@ -362,6 +384,7 @@ function addLayers(){
 										        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
 
 										        editableLayers.addLayer(createGeoJson);
+										        editedLayerType = layer.type;
 										     } 
   											document.querySelector(".leaflet-draw-edit-edit").click();
   										});
@@ -384,6 +407,7 @@ function addLayers(){
 		  										layer.on('contextmenu', function(e){
 		  											editedLayer = true;
 		  											editableLayers.addLayer(layer);
+		  											editedLayerType = layer.type;
 		  											document.querySelector(".leaflet-draw-edit-edit").click();
 		  										});
 		  									}
@@ -450,9 +474,12 @@ function renderLayers(activeLayers){
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
 														layer.feature.properties.layer_table = layerTable;
+														layer.type = 'point';
 														layer.on('contextmenu', function(e){
 				  											editableLayers.addLayer(layer);
 				  											document.querySelector(".leaflet-draw-edit-edit").click();
+				  											editedLayer = true;
+				  											editedLayerType = layer.type;
 				  										});
 													}
 												  }).addTo(map);
@@ -464,9 +491,12 @@ function renderLayers(activeLayers){
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
 														layer.feature.properties.layer_table = layerTable;
+														layer.type = 'point';
 														layer.on('contextmenu', function(e){
 				  											editableLayers.addLayer(layer);
 				  											document.querySelector(".leaflet-draw-edit-edit").click();
+				  											editedLayer = true;
+				  											editedLayerType = layer.type;
 				  										});
 													}
 												  });
@@ -494,12 +524,13 @@ function renderLayers(activeLayers){
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
 														layer.feature.properties.layer_table = layerTable;
+														layer.type = 'polygon';
 														
 														layer.on('contextmenu', function(e){
 					  										var geom = feature.geometry; 
 														    var props = feature.properties;
 														    editedLayerProperties = props;
-				
+															
 														     if (geom.type === 'MultiPolygon'){
 														     	var newPolygon = "";
 														        for (var i = 0; i < geom.coordinates.length; i++){
@@ -512,6 +543,8 @@ function renderLayers(activeLayers){
 														        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
 				
 														        editableLayers.addLayer(createGeoJson);
+														        editedLayer = true;
+														        editedLayerType = layer.type;
 														     } 
 				  											document.querySelector(".leaflet-draw-edit-edit").click();
 				  										});
@@ -523,6 +556,7 @@ function renderLayers(activeLayers){
 													onEachFeature: function(feature, layer){
 														layer.feature.properties.layer_id = layerId;
 														layer.feature.properties.layer_table = layerTable;
+														layer.type = 'polygon';
 														
 														layer.on('contextmenu', function(e){
 					  										var geom = feature.geometry; 
@@ -541,6 +575,8 @@ function renderLayers(activeLayers){
 														        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
 				
 														        editableLayers.addLayer(createGeoJson);
+														        editedLayer = true;
+														        editedLayerType = layer.type;
 														     } 
 				  											document.querySelector(".leaflet-draw-edit-edit").click();
 				  										});
@@ -576,10 +612,13 @@ function renderLayers(activeLayers){
 											onEachFeature: function(feature, layer){
 												layer.feature.properties.layer_id = layerId;
 												layer.feature.properties.layer_table = layerTable;
+												layer.type = 'polygon';
 												
 												layer.on('contextmenu', function(e){
 		  											editableLayers.addLayer(layer);
 		  											document.querySelector(".leaflet-draw-edit-edit").click();
+		  											editedLayer = true;
+		  											editedLayerType = layer.type;
 		  										});
 											}
 										  });
@@ -647,6 +686,7 @@ function saveEditedLayer(geojson, e){
 				  	}else{
 				  		editableLayers.clearLayers();
 				  		removeLayers();
+				  		editedLayer = false;
 				  	}
 				  },
 				  done: function(data){
@@ -692,6 +732,7 @@ function saveEditedLayer(geojson, e){
 				  	}else{
 				  		editableLayers.clearLayers();
 				  		removeLayers();
+				  		editedLayer = false;
 				  	}
 				  },
 				  done: function(data){
