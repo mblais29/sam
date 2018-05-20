@@ -31,7 +31,12 @@ function getLayerInfo(id){
 	$.ajax('/maplayers/retrieveSelectedLayer?id=' + id,{
       success: function(data) {
       	addLayerInfoToEditPanel(data);
-      	var layerStyleId = data[0].layerstyle[0].id;
+      	var layerStyleId = "";
+      	if(data[0].layerstyle[0] != undefined){
+      		layerStyleId = data[0].layerstyle[0].id;
+      	}else{
+      		layerStyleId = '-1';
+      	}
       	
       	var layerForm = data[0].layerassignedform[0];
       	var layerFormId = "";
@@ -83,13 +88,16 @@ function getLayerStylesEditPanel(styleId){
 
 function addToEditLayerStyleDropdown(data, styleId){
 	$('#layer-edit-styles').append('<label class="control-label col-sm-3" for="layer-edit-style">Style:</label>');
-	$('#layer-edit-styles').append('<div class="dropdown col-sm-8"><button class="btn btn-default dropdown-toggle" type="button" id="layer-edit-style-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Style <span class="caret"></span></button><ul id="layerEditStyleDropdown" class="dropdown-menu" aria-labelledby="layer-edit-style-dropdown"></ul></div><input type="hidden" id="layerEditStyle" name="layerEditStyle" value="" />');
+	$('#layer-edit-styles').append('<div class="dropdown col-sm-8"><button class="btn btn-default dropdown-toggle" type="button" id="layer-edit-style-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Style <span class="caret"></span></button><ul id="layerEditStyleDropdown" class="dropdown-menu" aria-labelledby="layer-edit-style-dropdown"><li><a href="#" onclick="updateEditStyledropdown(-1, \'Default\'); return false;">Default</a></li></ul></div><input type="hidden" id="layerEditStyle" name="layerEditStyle" value="" />');
 	
 	var listOfStyles = "";
+
 	for(var i = 0; i < data.length; i++){
 		listOfStyles += '<li><a href="#" onclick="updateEditStyledropdown(' + data[i].id + ', \'' + data[i].description + '\'); return false;">' + data[i].description + '</a></li>';
 		if(data[i].id === styleId){
 			updateEditStyledropdown(data[i].id, data[i].description);
+		}else if(styleId === '-1'){
+			updateEditStyledropdown('-1', 'Default');
 		}
 	}
 	
@@ -161,7 +169,7 @@ function getLayerStyles(){
 
 function addToLayerStyleDropdown(data){
 	$('#layer-create-styles').append('<label class="control-label col-sm-3" for="layer-create-style">Style:</label>');
-	$('#layer-create-styles').append('<div class="dropdown col-sm-8"><button class="btn btn-default dropdown-toggle" type="button" id="layer-create-style-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Style <span class="caret"></span></button><ul id="layerCreateStyleDropdown" class="dropdown-menu" aria-labelledby="layer-create-style-dropdown"></ul></div><input type="hidden" id="layerCreateStyle" name="layerCreateStyle" value="" />');
+	$('#layer-create-styles').append('<div class="dropdown col-sm-8"><button class="btn btn-default dropdown-toggle" type="button" id="layer-create-style-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Style <span class="caret"></span></button><ul id="layerCreateStyleDropdown" class="dropdown-menu" aria-labelledby="layer-create-style-dropdown"><li><a href="#" onclick="updateCreateStyledropdown(-1, \'Default\'); return false;">Default</a></li></ul></div><input type="hidden" id="layerCreateStyle" name="layerCreateStyle" value="" />');
 	
 	var listOfStyles = "";
 	for(var i = 0; i < data.length; i++){

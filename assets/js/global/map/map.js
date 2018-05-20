@@ -7,7 +7,7 @@ var navBarMargin = 52;
 var layerControl = "";
 var currentLayers = [];
 var overlayLayers = {};
-var editedLayerProperties = {};
+var editedLayerProperties = [];
 var editedLayer = false;
 var editedLayerType = "";
 var dataObj = [];
@@ -156,10 +156,19 @@ if($('body').is('#mapBody')){
      	var geojson = layer.toGeoJSON();
 		
 		if(editedLayer) {
-			if(geojson.features[0].geometry.type == "polygon" || geojson.features[0].geometry.type == "Polygon"){
-		 		geojson.features[0].properties = editedLayerProperties;
-		 		editableLayers.clearLayers();
-		 	}
+			var geojsonFeatures = geojson.features;
+			var isLayerPolygon = false;
+			for(var i = 0; i < geojsonFeatures.length; i++){
+				if(geojson.features[i].geometry.type == "polygon" || geojson.features[i].geometry.type == "Polygon"){
+					isLayerPolygon = true;
+					geojsonFeatures[i].properties = editedLayerProperties[i];
+				}
+			}
+			if(isLayerPolygon){
+				editedLayerProperties = [];
+				editableLayers.clearLayers();
+			}
+
 			saveEditedLayer(geojson, e);
 		}
 	});
@@ -169,6 +178,7 @@ if($('body').is('#mapBody')){
 	});
 	
 	map.on('draw:editstop', function(){
+		editedLayerProperties = [];
 		editedLayer = false;
 	});
 	
@@ -281,6 +291,7 @@ function handleLayerData(data){
 		var layerid = data[i].layerid;
 		var layertableref = data[i].layertableref;
 		var layerForm = data[i].layerassignedform;
+		var layerType = data[i].layertype;
 		var layerstyle = data[i].layerstyle;
 		var minZoom = data[i].minzoom;
 		var maxZoom = data[i].maxzoom;
@@ -290,6 +301,7 @@ function handleLayerData(data){
 		layer["id"] = layerid;
 		layer["layertableref"] = layertableref;
 		layer["layerassignedform"] = layerForm;
+		layer["layertype"] = layerType;
 		layer["layerstyle"] = layerstyle;
 		layer["minzoom"] = minZoom;
 		layer["maxzoom"] = maxZoom;
@@ -316,12 +328,14 @@ function addLayersToPopup(){
 
 function addLayers(){
 	/* Loop through the layers in the database and add to the layercontrol */
+	console.log(currentLayers);
 	for (var k in currentLayers) {
 		(function (k) {
 	      	var layerUrl = currentLayers[k]["url"];
 			var layerId = currentLayers[k]["id"];
 			var layerName = currentLayers[k]["name"];
 			var layerTable = currentLayers[k]["layertableref"];
+			var layerType = currentLayers[k]["layertype"];
 			var layerStyle = currentLayers[k]["layerstyle"];
 			var layerMinZoom = currentLayers[k]["minzoom"];
 			var layerMaxZoom = currentLayers[k]["maxzoom"];
@@ -376,7 +390,7 @@ function addLayers(){
   										layer.on('contextmenu', function(e){
 	  										var geom = feature.geometry; 
 										    var props = feature.properties;
-										    editedLayerProperties = props;
+										    editedLayerProperties.push(props);
 											editedLayer = true;
 										     if (geom.type === 'MultiPolygon'){
 										     	var newPolygon = "";
@@ -388,7 +402,7 @@ function addLayers(){
 										               };
 										        }
 										        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
-
+												createGeoJson.layerId = layer.feature.properties.gid;
 										        editableLayers.addLayer(createGeoJson);
 										        editedLayerType = layer.type;
 										     } 
@@ -403,12 +417,25 @@ function addLayers(){
 				        break;
 				}
 			}else{
+				/* If the layer is not assigned a style */
 				$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
-				  	overlayLayers[layerId] = new L.GeoJSON(data, {
+				  	switch (layerType) {
+				    	case 'point':
+				    		currentLayerMarker = L.AwesomeMarkers.icon({
+								icon: 'circle',
+								prefix: 'fa',
+								markerColor: 'red',
+								iconColor: '#ffffff'
+						    });
+				  			overlayLayers[layerId] = new L.GeoJSON(data, {
+				  							pointToLayer: function(geoJsonPoint, latlng) {
+											    return L.marker(latlng, {icon: currentLayerMarker});
+											},
 		  									onEachFeature: function(feature, layer){
-		  										layer.feature.properties.layer_id = layerId;
+		  										
+		    									layer.feature.properties.layer_id = layerId;
 		  										layer.feature.properties.layer_table = layerTable;
-		  										layer.type = "polygon";
+		  										layer.type = "point";
 		  										
 		  										layer.on('contextmenu', function(e){
 		  											editedLayer = true;
@@ -416,15 +443,51 @@ function addLayers(){
 		  											editedLayerType = layer.type;
 		  											document.querySelector(".leaflet-draw-edit-edit").click();
 		  										});
-		  									}
-										  });
-					if(map.getZoom() >= layerMinZoom){
-						layerControl.addOverlay(overlayLayers[layerId], layerName);
-					}					  
-				  	
+				  							}
+				  		  });
+				  		  if(map.getZoom() >= layerMinZoom){
+							layerControl.addOverlay(overlayLayers[layerId], layerName);
+						  }
+				  		  break;
+				    	  case 'polygon':
+				    		overlayLayers[layerId] = new L.GeoJSON(data, {
+	  							style: currentLayerStyle,
+								onEachFeature: function(feature, layer){
+									layer.feature.properties.layer_id = layerId;
+									layer.feature.properties.layer_table = layerTable;
+									layer.type = "polygon";
+									
+									layer.on('contextmenu', function(e){
+  										var geom = feature.geometry; 
+									    var props = feature.properties;
+									    editedLayerProperties.push(props);
+										editedLayer = true;
+									     if (geom.type === 'MultiPolygon'){
+									     	var newPolygon = "";
+									        for (var i = 0; i < geom.coordinates.length; i++){
+									            newPolygon = {
+									               'type':'Polygon', 
+									               'coordinates':geom.coordinates[i],
+									               'properties': props
+									               };
+									        }
+									        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
+											createGeoJson.layerId = layer.feature.properties.gid;
+									        editableLayers.addLayer(createGeoJson);
+									        editedLayerType = layer.type;
+									     } 
+										document.querySelector(".leaflet-draw-edit-edit").click();
+									});
+								}
+							  });
+						if(map.getZoom() >= layerMinZoom){
+							layerControl.addOverlay(overlayLayers[layerId], layerName);
+						}
+						break;	
+					}				  
 				});
 			}
-	  	})(k);
+		})(k);
 	}
 }
 
@@ -456,6 +519,7 @@ function renderLayers(activeLayers){
 			var layerName = currentLayers[k]["name"];
 			var layerTable = currentLayers[k]["layertableref"];
 			var layerStyle = currentLayers[k]["layerstyle"];
+			var layerType = currentLayers[k]["layertype"];
 			var layerMinZoom = currentLayers[k]["minzoom"];
 			var layerMaxZoom = currentLayers[k]["maxzoom"];
 			var layersInList = layerControl._layers;
@@ -535,7 +599,7 @@ function renderLayers(activeLayers){
 														layer.on('contextmenu', function(e){
 					  										var geom = feature.geometry; 
 														    var props = feature.properties;
-														    editedLayerProperties = props;
+														    editedLayerProperties.push(props);
 															
 														     if (geom.type === 'MultiPolygon'){
 														     	var newPolygon = "";
@@ -567,7 +631,7 @@ function renderLayers(activeLayers){
 														layer.on('contextmenu', function(e){
 					  										var geom = feature.geometry; 
 														    var props = feature.properties;
-														    editedLayerProperties = props;
+														    editedLayerProperties.push(props);
 				
 														     if (geom.type === 'MultiPolygon'){
 														     	var newPolygon = "";
@@ -604,42 +668,146 @@ function renderLayers(activeLayers){
 						break;
 				}
 			}else{
+				/* If the layer is not assigned a style */
 				$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
-					/* Check to see if layer was active before refreshing the page */
-					if($.inArray( layerId, activeLayers ) > -1){
-						overlayLayers[layerId] = new L.GeoJSON(data, {
-											onEachFeature: function(feature, layer){
-												layer.feature.properties.layer_id = layerId;
-												layer.feature.properties.layer_table = layerTable;
-											}
-										  }).addTo(map);
-					}else{
-						overlayLayers[layerId] = new L.GeoJSON(data, {
-											onEachFeature: function(feature, layer){
-												layer.feature.properties.layer_id = layerId;
-												layer.feature.properties.layer_table = layerTable;
-												layer.type = 'polygon';
-												
-												layer.on('contextmenu', function(e){
-		  											editableLayers.addLayer(layer);
-		  											editedLayer = true;
-		  											editedLayerType = layer.type;
-		  											document.querySelector(".leaflet-draw-edit-edit").click();
-		  										});
-											}
-										  });
-					}
-					if(map.getZoom() >= layerMinZoom){
-						layerControl.removeLayer(overlayLayers[layerId]);
-						for(var i = 0; i < layersInList.length; i++){
-							if(layerControl._layers[i].name === layerName){
-								layerExists = true;
+				  	switch (layerType) {
+				    	case 'point':
+				    		currentLayerMarker = L.AwesomeMarkers.icon({
+								icon: 'circle',
+								prefix: 'fa',
+								markerColor: 'red',
+								iconColor: '#ffffff'
+						    });
+						    /* Check to see if layer was active before refreshing the page */
+							if($.inArray( layerId, activeLayers ) > -1){
+					  			overlayLayers[layerId] = new L.GeoJSON(data, {
+					  							pointToLayer: function(geoJsonPoint, latlng) {
+												    return L.marker(latlng, {icon: currentLayerMarker});
+												},
+			  									onEachFeature: function(feature, layer){
+			  										
+			    									layer.feature.properties.layer_id = layerId;
+			  										layer.feature.properties.layer_table = layerTable;
+			  										layer.type = "point";
+			  										
+			  										layer.on('contextmenu', function(e){
+			  											editedLayer = true;
+			  											editableLayers.addLayer(layer);
+			  											editedLayerType = layer.type;
+			  											document.querySelector(".leaflet-draw-edit-edit").click();
+			  										});
+					  							}
+					  		  }).addTo(map);
+					  	   }else{
+					  	   	overlayLayers[layerId] = new L.GeoJSON(data, {
+	  							pointToLayer: function(geoJsonPoint, latlng) {
+								    return L.marker(latlng, {icon: currentLayerMarker});
+								},
+								onEachFeature: function(feature, layer){
+									
+									layer.feature.properties.layer_id = layerId;
+									layer.feature.properties.layer_table = layerTable;
+									layer.type = "point";
+									
+									layer.on('contextmenu', function(e){
+										editedLayer = true;
+										editableLayers.addLayer(layer);
+										editedLayerType = layer.type;
+										document.querySelector(".leaflet-draw-edit-edit").click();
+									});
+	  							}
+					  		  });
+					  	   }
+				  		  if(map.getZoom() >= layerMinZoom){
+							layerControl.removeLayer(overlayLayers[layerId]);
+							for(var i = 0; i < layersInList.length; i++){
+								if(layerControl._layers[i].name === layerName){
+									layerExists = true;
+								}
+							}
+							if(!layerExists) {
+								layerControl.addOverlay(overlayLayers[layerId], layerName);
+							}
+						  }
+				  		  break;
+				    	  case 'polygon':
+				    	  	/* Check to see if layer was active before refreshing the page */
+							if($.inArray( layerId, activeLayers ) > -1){
+					    		overlayLayers[layerId] = new L.GeoJSON(data, {
+		  							style: currentLayerStyle,
+									onEachFeature: function(feature, layer){
+										layer.feature.properties.layer_id = layerId;
+										layer.feature.properties.layer_table = layerTable;
+										layer.type = "polygon";
+										
+										layer.on('contextmenu', function(e){
+	  										var geom = feature.geometry; 
+										    var props = feature.properties;
+										    editedLayerProperties.push(props);
+											editedLayer = true;
+										     if (geom.type === 'MultiPolygon'){
+										     	var newPolygon = "";
+										        for (var i = 0; i < geom.coordinates.length; i++){
+										            newPolygon = {
+										               'type':'Polygon', 
+										               'coordinates':geom.coordinates[i],
+										               'properties': props
+										               };
+										        }
+										        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
+												createGeoJson.layerId = layer.feature.properties.gid;
+										        editableLayers.addLayer(createGeoJson);
+										        editedLayerType = layer.type;
+										     } 
+											document.querySelector(".leaflet-draw-edit-edit").click();
+										});
+									}
+								  }).addTo(map);
+							 }else{
+							 	overlayLayers[layerId] = new L.GeoJSON(data, {
+		  							style: currentLayerStyle,
+									onEachFeature: function(feature, layer){
+										layer.feature.properties.layer_id = layerId;
+										layer.feature.properties.layer_table = layerTable;
+										layer.type = "polygon";
+										
+										layer.on('contextmenu', function(e){
+	  										var geom = feature.geometry; 
+										    var props = feature.properties;
+										    editedLayerProperties.push(props);
+											editedLayer = true;
+										     if (geom.type === 'MultiPolygon'){
+										     	var newPolygon = "";
+										        for (var i = 0; i < geom.coordinates.length; i++){
+										            newPolygon = {
+										               'type':'Polygon', 
+										               'coordinates':geom.coordinates[i],
+										               'properties': props
+										               };
+										        }
+										        var createGeoJson = L.GeoJSON.geometryToLayer(newPolygon);
+												createGeoJson.layerId = layer.feature.properties.gid;
+										        editableLayers.addLayer(createGeoJson);
+										        editedLayerType = layer.type;
+										     } 
+											document.querySelector(".leaflet-draw-edit-edit").click();
+										});
+									}
+								 });
+							 }
+						if(map.getZoom() >= layerMinZoom){
+							layerControl.removeLayer(overlayLayers[layerId]);
+							for(var i = 0; i < layersInList.length; i++){
+								if(layerControl._layers[i].name === layerName){
+									layerExists = true;
+								}
+							}
+							if(!layerExists) {
+								layerControl.addOverlay(overlayLayers[layerId], layerName);
 							}
 						}
-						if(!layerExists) {
-							layerControl.addOverlay(overlayLayers[layerId], layerName);
-						}
-					}
+						break;	
+					}				  
 				});
 			}
 	  	})(k);
@@ -648,8 +816,7 @@ function renderLayers(activeLayers){
 
 function saveEditedLayer(geojson, e){
 	var geojsonFeatures = geojson.features;
-	var ajaxDeferred = [];
-	
+
 	for(var a = 0; a < geojsonFeatures.length; a++){
 		numberOfEditedLayers++;
 		var updatedLayerGeojson = geojsonFeatures[a].geometry;

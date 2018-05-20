@@ -28,13 +28,20 @@ module.exports = {
 	},
 	
 	create: function(req,res,next){
+		var layerStyle = "";
+		if(req.param('layerCreateStyle') !== -1){
+			layerStyle = req.param('layerCreateStyle');
+		}else{
+			layerStyle = '';
+		}
+		
 		var obj = {
 				name: req.param('layer-create-name'),
 				layerid: req.param('layer-create-id'),
 				layertableref: req.param('layer-create-table'),
 				url: req.param('layer-create-url'),
 				layertype: req.param('layerCreateType'),
-				layerstyle: req.param('layerCreateStyle'),
+				layerstyle: layerStyle,
 				layerattributesonclick: req.param('layer-create-attr'),
 				layerassignedform: req.param('layerCreateForm'),
 				minzoom: req.param('layer-create-minzoom'),
@@ -61,7 +68,12 @@ module.exports = {
 		 obj['layertableref'] = record['layer-edit-table'];
 		 obj['url'] = record['layer-edit-url'];
 		 obj['layertype'] = record['layerEditType'];
-		 obj['layerstyle'] = record['layerEditStyle'];
+		 if(record['layerEditStyle'] !== -1){
+		 	obj['layerstyle'] = record['layerEditStyle'];
+		 }else{
+		 	obj['layerstyle'] = '';
+		 }
+		 
 		 obj['layerattributesonclick'] = record['layer-edit-attr'];
 		 obj['layerassignedform'] = record['layerEditForm'];
 		 obj['minzoom'] = record['layer-edit-minzoom'];
