@@ -48,7 +48,7 @@ if($('body').is('#mapBody')){
 	****************************************/
 	getAllMapLayers();
 	map.addLayer(esriStreet);
-	layerControl = L.control.layers(baseMaps);
+	layerControl = L.control.layers(baseMaps, {}, {sortLayers: true});
 	layerControl.addTo(map);
 	
     
@@ -328,7 +328,6 @@ function addLayersToPopup(){
 
 function addLayers(){
 	/* Loop through the layers in the database and add to the layercontrol */
-	console.log(currentLayers);
 	for (var k in currentLayers) {
 		(function (k) {
 	      	var layerUrl = currentLayers[k]["url"];
@@ -354,6 +353,7 @@ function addLayers(){
 							markerColor: layerStyle[0]["markerColour"],
 							iconColor: layerStyle[0]["markerIconColor"]
 					    });
+
 					    $.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
 							  	overlayLayers[layerId] = new L.GeoJSON(data, {
 								  							pointToLayer: function(geoJsonPoint, latlng) {
@@ -373,13 +373,16 @@ function addLayers(){
 						  									}
 														  });
 								if(map.getZoom() >= layerMinZoom){
-									layerControl.addOverlay(overlayLayers[layerId], layerName);
+									if(data.features.length > 0){	
+										var icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-' + layerStyle[0]["markerColour"] + ' awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: ' + layerStyle[0]["markerIconColor"] + '" class=" fa ' + layerStyle[0]["markerIcon"] + '"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+										layerControl.addOverlay(overlayLayers[layerId], icon);
+									}
 								}					  
 							});
 				        break;
 				    case 'polygon':
 				    	currentLayerStyle = layerStyle[0]["style"];
-				        $.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
+				    	$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
 							  	overlayLayers[layerId] = new L.GeoJSON(data, {
 		  							style: currentLayerStyle,
   									onEachFeature: function(feature, layer){
@@ -411,7 +414,10 @@ function addLayers(){
   									}
 								  });
 								if(map.getZoom() >= layerMinZoom){
-									layerControl.addOverlay(overlayLayers[layerId], layerName);
+									if(data.features.length > 0){
+										var legendStyle = '<svg width="12" height="12"><rect width="12" height="12" style="fill:'+ currentLayerStyle.color + '; stroke-width:3; stroke:' + currentLayerStyle.color + '; fill-opacity:' + currentLayerStyle.opacity + ';" />Sorry, your browser does not support inline SVG.</svg>' + " " + layerName;
+										layerControl.addOverlay(overlayLayers[layerId], legendStyle);
+									}
 								}					  
 							});
 				        break;
@@ -446,7 +452,9 @@ function addLayers(){
 				  							}
 				  		  });
 				  		  if(map.getZoom() >= layerMinZoom){
-							layerControl.addOverlay(overlayLayers[layerId], layerName);
+							if(data.features.length > 0){
+								layerControl.addOverlay(overlayLayers[layerId], layerName);
+							}
 						  }
 				  		  break;
 				    	  case 'polygon':
@@ -481,7 +489,9 @@ function addLayers(){
 								}
 							  });
 						if(map.getZoom() >= layerMinZoom){
-							layerControl.addOverlay(overlayLayers[layerId], layerName);
+							if(data.features.length > 0){
+								layerControl.addOverlay(overlayLayers[layerId], layerName);
+							}
 						}
 						break;	
 					}				  
@@ -524,6 +534,7 @@ function renderLayers(activeLayers){
 			var layerMaxZoom = currentLayers[k]["maxzoom"];
 			var layersInList = layerControl._layers;
 			var layerExists = false;
+			var currentLayerStyle = "";
 			
 			if(layerStyle[0]!== undefined ){
 				switch (layerStyle[0].type) {
@@ -580,12 +591,16 @@ function renderLayers(activeLayers){
 									}
 								}
 								if(!layerExists) {
-									layerControl.addOverlay(overlayLayers[layerId], layerName);
+									if(data.features.length > 0){
+										var icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-' + layerStyle[0]["markerColour"] + ' awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: ' + layerStyle[0]["markerIconColor"] + '" class=" fa ' + layerStyle[0]["markerIcon"] + '"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+										layerControl.addOverlay(overlayLayers[layerId], icon);
+									}
 								}
 							}
 						});
 						break;
 					case 'polygon':
+						currentLayerStyle = layerStyle[0]["style"];
 						$.getJSON(layerUrl + "&bbox=" + map.getBounds().toBBoxString(), function(data) {
 							/* Check to see if layer was active before refreshing the page */
 							if($.inArray( layerId, activeLayers ) > -1){
@@ -661,7 +676,10 @@ function renderLayers(activeLayers){
 									}
 								}
 								if(!layerExists) {
-									layerControl.addOverlay(overlayLayers[layerId], layerName);
+									if(data.features.length > 0){
+										var legendStyle = '<svg width="12" height="12"><rect width="12" height="12" style="fill:'+ currentLayerStyle.color + '; stroke-width:3; stroke:' + currentLayerStyle.color + '; fill-opacity:' + currentLayerStyle.opacity + ';" />Sorry, your browser does not support inline SVG.</svg>' + " " + layerName;
+										layerControl.addOverlay(overlayLayers[layerId], legendStyle);
+									}
 								}
 							}
 						});
@@ -726,7 +744,9 @@ function renderLayers(activeLayers){
 								}
 							}
 							if(!layerExists) {
-								layerControl.addOverlay(overlayLayers[layerId], layerName);
+								if(data.features.length > 0){
+									layerControl.addOverlay(overlayLayers[layerId], layerName);
+								}
 							}
 						  }
 				  		  break;
@@ -803,7 +823,9 @@ function renderLayers(activeLayers){
 								}
 							}
 							if(!layerExists) {
-								layerControl.addOverlay(overlayLayers[layerId], layerName);
+								if(data.features.length > 0){
+									layerControl.addOverlay(overlayLayers[layerId], layerName);
+								}
 							}
 						}
 						break;	
