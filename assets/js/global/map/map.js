@@ -10,6 +10,9 @@ var overlayLayers = {};
 var editedLayerProperties = {};
 var editedLayer = false;
 var editedLayerType = "";
+var dataObj = [];
+var numberOfEditedLayers = 0;
+var numberOfEditedLayersCompleted = 0;
 var map = "";
 
 
@@ -152,9 +155,6 @@ if($('body').is('#mapBody')){
 		var layer = e.layers;
      	var geojson = layer.toGeoJSON();
 		
-		console.log(geojson);
-		console.log(editedLayer);
-		
 		if(editedLayer) {
 			if(geojson.features[0].geometry.type == "polygon" || geojson.features[0].geometry.type == "Polygon"){
 		 		geojson.features[0].properties = editedLayerProperties;
@@ -168,9 +168,15 @@ if($('body').is('#mapBody')){
 		layerControl.removeLayer(editableLayers);
 	});
 	
+	map.on('draw:editstop', function(){
+		editedLayer = false;
+	});
+	
 	map.on('moveend', function(){
-		//editableLayers.clearLayers();
-		removeLayers();
+		if(editedLayer == false){
+			editableLayers.clearLayers();
+			removeLayers();
+		}
 	});
 
     
@@ -433,7 +439,7 @@ function removeLayers(){
 		layerControl.removeLayer(overlayLayers[k]);
 	}
 	overlayLayers = {};
-	
+
 	renderLayers(activeLayers);
 	
 	
@@ -477,9 +483,9 @@ function renderLayers(activeLayers){
 														layer.type = 'point';
 														layer.on('contextmenu', function(e){
 				  											editableLayers.addLayer(layer);
-				  											document.querySelector(".leaflet-draw-edit-edit").click();
 				  											editedLayer = true;
 				  											editedLayerType = layer.type;
+				  											document.querySelector(".leaflet-draw-edit-edit").click();
 				  										});
 													}
 												  }).addTo(map);
@@ -494,9 +500,9 @@ function renderLayers(activeLayers){
 														layer.type = 'point';
 														layer.on('contextmenu', function(e){
 				  											editableLayers.addLayer(layer);
-				  											document.querySelector(".leaflet-draw-edit-edit").click();
 				  											editedLayer = true;
 				  											editedLayerType = layer.type;
+				  											document.querySelector(".leaflet-draw-edit-edit").click();
 				  										});
 													}
 												  });
@@ -616,9 +622,9 @@ function renderLayers(activeLayers){
 												
 												layer.on('contextmenu', function(e){
 		  											editableLayers.addLayer(layer);
-		  											document.querySelector(".leaflet-draw-edit-edit").click();
 		  											editedLayer = true;
 		  											editedLayerType = layer.type;
+		  											document.querySelector(".leaflet-draw-edit-edit").click();
 		  										});
 											}
 										  });
@@ -641,112 +647,102 @@ function renderLayers(activeLayers){
 }
 
 function saveEditedLayer(geojson, e){
-	var newMultiPolygon = {};
-	var updatedLayerGeojsonGeometry = {};
-	var updatedLayerGeojsonId = "";
-	var updatedLayerGeojsonTable = "";
-	var updatedLayerGeojson = geojson.features[0].geometry;
-		
-	if (updatedLayerGeojson.type === 'Polygon'){
-        for (var i = 0; i < updatedLayerGeojson.coordinates.length; i++){
-            newMultiPolygon = {
-               'type':'MultiPolygon', 
-               'coordinates': [[updatedLayerGeojson.coordinates[i]]],
-               'properties': {}
-               };
-             newMultiPolygon.crs =  {
-				  "type": "name",
-				  "properties": {
-				    "name": "epsg:4326"
-				    }
-				 };
-        }
-        updatedLayerGeojsonGeometry = JSON.stringify(newMultiPolygon);
-		updatedLayerGeojsonId = geojson.features[0].properties.gid;
-		updatedLayerGeojsonTable = geojson.features[0].properties.layer_table;
-		
-		$.ajax({
-		url: window.location.origin + '/csrfToken',
-		success: function(response) {
-			  $.ajax({
-				  url: '/maplayers/saveEditedLayerRecord',
-				  type:"post",
-				  async: false,
-				  data: {
-				  	id: updatedLayerGeojsonId,
-				  	geom: updatedLayerGeojsonGeometry,
-				  	table: updatedLayerGeojsonTable
-				  },
-				   beforeSend: function(xhr, settings){
-				      xhr.setRequestHeader('X-CSRF-Token', response._csrf);
-				  },
-				  success: function(data) {
-				  	if(!data){
-				  		location.reload();
-				  	}else{
-				  		editableLayers.clearLayers();
-				  		removeLayers();
-				  		editedLayer = false;
-				  	}
-				  },
-				  done: function(data){
-				  	
-				  },
-				  error: function(err) {
-				     console.log(err);
-				  }
-				});
-			}
-		});
-		return;
-	}else{
-		updatedLayerGeojson = geojson.features[0].geometry;
-		updatedLayerGeojson.crs =  {
-		  "type": "name",
-		  "properties": {
-		    "name": "epsg:4326"
-		    }
-		 };
-		 
-		updatedLayerGeojsonGeometry = JSON.stringify(updatedLayerGeojson);
-		updatedLayerGeojsonId = geojson.features[0].properties.gid;
-		updatedLayerGeojsonTable = geojson.features[0].properties.layer_table;
-		
-		$.ajax({
-		url: window.location.origin + '/csrfToken',
-		success: function(response) {
-			  $.ajax({
-				  url: '/maplayers/saveEditedLayerRecord',
-				  type:"post",
-				  data: {
-				  	id: updatedLayerGeojsonId,
-				  	geom: updatedLayerGeojsonGeometry,
-				  	table: updatedLayerGeojsonTable
-				  },
-				   beforeSend: function(xhr, settings){
-				      xhr.setRequestHeader('X-CSRF-Token', response._csrf);
-				  },
-				  success: function(data) {
-				  	if(!data){
-				  		location.reload();
-				  	}else{
-				  		editableLayers.clearLayers();
-				  		removeLayers();
-				  		editedLayer = false;
-				  	}
-				  },
-				  done: function(data){
-				  	
-				  },
-				  error: function(err) {
-				     console.log(err);
-				  }
-				});
-			}
-		});
-		return;
-	} 
+	var geojsonFeatures = geojson.features;
+	var ajaxDeferred = [];
 	
+	for(var a = 0; a < geojsonFeatures.length; a++){
+		numberOfEditedLayers++;
+		var updatedLayerGeojson = geojsonFeatures[a].geometry;
+		var newMultiPolygon = {};
+		var updatedLayerGeojsonGeometry = {};
+		var updatedLayerGeojsonId = "";
+		var updatedLayerGeojsonTable = "";
+		
+		if (updatedLayerGeojson.type === 'Polygon'){
+	        for (var i = 0; i < updatedLayerGeojson.coordinates.length; i++){
+	            newMultiPolygon = {
+	               'type':'MultiPolygon', 
+	               'coordinates': [[updatedLayerGeojson.coordinates[i]]],
+	               'properties': {}
+	               };
+	             newMultiPolygon.crs =  {
+					  "type": "name",
+					  "properties": {
+					    "name": "epsg:4326"
+					    }
+					 };
+	        }
+	        updatedLayerGeojsonGeometry = JSON.stringify(newMultiPolygon);
+			updatedLayerGeojsonId = geojsonFeatures[a].properties.gid;
+		    updatedLayerGeojsonTable = geojsonFeatures[a].properties.layer_table;
+			
+			var data = {
+				  	id: updatedLayerGeojsonId,
+				  	table: updatedLayerGeojsonTable,
+				  	geom: updatedLayerGeojsonGeometry
+				  };
+		    dataObj.push(data);
+		}else if(updatedLayerGeojson.type === 'Point'){
+			updatedLayerGeojson = geojsonFeatures[a].geometry;
+			updatedLayerGeojson.crs =  {
+			  "type": "name",
+			  "properties": {
+			    "name": "epsg:4326"
+			    }
+			 };
+			updatedLayerGeojsonGeometry = JSON.stringify(updatedLayerGeojson);
+		    updatedLayerGeojsonId = geojsonFeatures[a].properties.gid;
+		    updatedLayerGeojsonTable = geojsonFeatures[a].properties.layer_table;
+		    var data = {
+				  	id: updatedLayerGeojsonId,
+				  	table: updatedLayerGeojsonTable,
+				  	geom: updatedLayerGeojsonGeometry
+				  };
+		    dataObj.push(data);
+		
+		} 
+		saveEditedLayersToDB();
+	}
+}
+
+function saveEditedLayersToDB(){
+	for(var i = 0; i < dataObj.length; i++){
+		var id = dataObj[i].id;
+		var table = dataObj[i].table;
+		var geom = dataObj[i].geom;
+
+		$.ajax({
+			url: window.location.origin + '/csrfToken',
+			success: function(response) {
+				  $.ajax({
+					  url: '/maplayers/saveEditedLayerRecord',
+					  type:"post",
+					  data: {
+					  	id: id,
+					  	table: table,
+					  	geom: geom
+					  },
+					   beforeSend: function(xhr, settings){
+					      xhr.setRequestHeader('X-CSRF-Token', response._csrf);
+					  },
+					  success: function(data){
+					  	if(data){
+					  		numberOfEditedLayersCompleted++;
+					  		if(numberOfEditedLayers == numberOfEditedLayersCompleted){
+					  			removeLayers();
+						  		editableLayers.clearLayers();
+						  		editedLayer = false;
+						  		numberOfEditedLayers = 0;
+						  		numberOfEditedLayersCompleted = 0;
+					  		}
+					  	}
+					  	
+					  },
+					  cache: false
+					});
+				}
+		});
+	}
 }
 
 

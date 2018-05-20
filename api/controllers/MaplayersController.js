@@ -141,7 +141,6 @@ module.exports = {
 		var recordId = req.param('id');
 		var layerTable = req.param('table');
 
-
 		var queryString = 'UPDATE public.' + layerTable + ' SET geom = ST_Force2D(ST_GeomFromGeoJSON(\'' + geometry + '\')) WHERE gid = ' + recordId + ';' ;
 		
 		//console.log(queryString);
