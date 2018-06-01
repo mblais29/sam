@@ -326,6 +326,10 @@ function addLayersToPopup(){
 	$('.selectLayerpicker').selectpicker();
 }
 
+/******
+ *
+ * NEED TO ADD THE BOOTSTRAP GLYPHICON INTO LEGEND FOR POINT LAYERS (ALREADY FINISHED FONT-AWESOME)
+ */
 function addLayers(){
 	/* Loop through the layers in the database and add to the layercontrol */
 	for (var k in currentLayers) {
@@ -373,8 +377,17 @@ function addLayers(){
 						  									}
 														  });
 								if(map.getZoom() >= layerMinZoom){
-									if(data.features.length > 0){	
-										var icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-' + layerStyle[0]["markerColour"] + ' awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: ' + layerStyle[0]["markerIconColor"] + '" class=" fa ' + layerStyle[0]["markerIcon"] + '"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+									if(data.features.length > 0){
+										var icon = "";
+										switch(layerStyle[0]["prefix"]){
+											case "fa":
+												icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-' + layerStyle[0]["markerColour"] + ' awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: ' + layerStyle[0]["markerIconColor"] + '" class=" fa ' + layerStyle[0]["markerIcon"] + '"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+											break;
+											case "glyphicon":
+												icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-' + layerStyle[0]["markerColour"] + ' awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: ' + layerStyle[0]["markerIconColor"] + '" class=" glyphicon glyphicon-' + layerStyle[0]["markerIcon"] + '"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+											break;
+										}
+										
 										layerControl.addOverlay(overlayLayers[layerId], icon);
 									}
 								}					  
@@ -453,7 +466,8 @@ function addLayers(){
 				  		  });
 				  		  if(map.getZoom() >= layerMinZoom){
 							if(data.features.length > 0){
-								layerControl.addOverlay(overlayLayers[layerId], layerName);
+								var icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-red awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: #fff" class=" fa fa-circle"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+								layerControl.addOverlay(overlayLayers[layerId], icon);
 							}
 						  }
 				  		  break;
@@ -592,7 +606,16 @@ function renderLayers(activeLayers){
 								}
 								if(!layerExists) {
 									if(data.features.length > 0){
-										var icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-' + layerStyle[0]["markerColour"] + ' awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: ' + layerStyle[0]["markerIconColor"] + '" class=" fa ' + layerStyle[0]["markerIcon"] + '"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+										var icon = "";
+										switch(layerStyle[0]["prefix"]){
+											case "fa":
+												icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-' + layerStyle[0]["markerColour"] + ' awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: ' + layerStyle[0]["markerIconColor"] + '" class=" fa ' + layerStyle[0]["markerIcon"] + '"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+											break;
+											case "glyphicon":
+												icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-' + layerStyle[0]["markerColour"] + ' awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: ' + layerStyle[0]["markerIconColor"] + '" class=" glyphicon glyphicon-' + layerStyle[0]["markerIcon"] + '"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+											break;
+										}
+										
 										layerControl.addOverlay(overlayLayers[layerId], icon);
 									}
 								}
@@ -745,7 +768,8 @@ function renderLayers(activeLayers){
 							}
 							if(!layerExists) {
 								if(data.features.length > 0){
-									layerControl.addOverlay(overlayLayers[layerId], layerName);
+									var icon = '<div style="display:inline-block;margin-bottom: -20px;"><div class="awesome-marker-icon-red awesome-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" style="width: 35px;height: 45px;z-index: 188;transform: scale(0.5);margin-left: -4px;display: inline-block;position:relative"><i style="color: #fff" class=" fa fa-circle"></i></div>' + ' <span style="display:inline-block;margin-left: -20px;">' + layerName + '</span></div>';
+									layerControl.addOverlay(overlayLayers[layerId], icon);
 								}
 							}
 						  }

@@ -68,7 +68,7 @@ module.exports = {
 		 obj['layertableref'] = record['layer-edit-table'];
 		 obj['url'] = record['layer-edit-url'];
 		 obj['layertype'] = record['layerEditType'];
-		 if(record['layerEditStyle'] !== -1){
+		 if(record['layerEditStyle'] != -1){
 		 	obj['layerstyle'] = record['layerEditStyle'];
 		 }else{
 		 	obj['layerstyle'] = '';
@@ -81,6 +81,8 @@ module.exports = {
 
 		 Maplayers.update(req.param('layer-edit-id'), obj, function mapLayerUpdated(err, maplayer){
 			if(err){
+				console.log(obj);
+				console.log(err);
 				AlertService.error(req, JSON.stringify(err));
 				res.redirect('/maplayers');
 				return;
@@ -93,6 +95,7 @@ module.exports = {
 	destroy: function(req, res, next){
 		Maplayers.findOne(req.param('layerId'), function foundMaplayer(err,layer){
 			if(err){
+				console.log(err);
 				AlertService.error(req, JSON.stringify(err));
 				res.redirect('/maplayers');
 			}
