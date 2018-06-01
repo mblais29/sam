@@ -71,7 +71,7 @@ module.exports = {
 		 if(record['layerEditStyle'] != -1){
 		 	obj['layerstyle'] = record['layerEditStyle'];
 		 }else{
-		 	obj['layerstyle'] = '';
+		 	obj['layerstyle'] = [];
 		 }
 		 
 		 obj['layerattributesonclick'] = record['layer-edit-attr'];
